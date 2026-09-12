@@ -22,6 +22,8 @@ class Result:
 def _ordered(tasks: Iterable[Task]) -> list[Task]:
     graph: dict[str, Task] = {}
     for task in tasks:
+        # Preserve the preflight plan if a caller supplied a mutable sequence.
+        task = Task(task.id, task.action, tuple(task.dependencies))
         if not isinstance(task.id, str) or not task.id.strip() or task.id in graph:
             raise ValueError("Task IDs must be nonempty and unique")
         if not callable(task.action):

@@ -63,6 +63,17 @@ class EngineTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "cycle"):
             run([Task("a", lambda: None, ("a",))])
 
+    def test_dependency_mutation_preserves_validated_plan(self):
+        dependencies = ["source"]
+        observed = []
+        def fail():
+            dependencies.clear()
+            raise ValueError("synthetic failure")
+        results = run([Task("source", fail),
+                       Task("consumer", lambda: observed.append("ran"), dependencies)])
+        self.assertEqual(observed, [])
+        self.assertEqual(results["consumer"].status, "blocked")
+
 
 if __name__ == "__main__":
     unittest.main()
