@@ -61,3 +61,72 @@ Current runnable instructions are in the README. As milestones ship, add install
 CSV schema/examples, CLI reference, persisted-run recovery, dashboard walkthrough,
 report interpretation, troubleshooting and extension instructions here or linked
 chapters. These chapters are planned, not currently implemented.
+
+## Completed-run evidence v1
+
+Implemented in P1; not a persistent runner or release-complete evidence bundle.
+From the repository root on Python 3.11+:
+
+```bash
+python -m unittest discover -s tests -v
+python -m examples.evidence_demo
+```
+
+The synthetic demo writes a temporary JSON file, reloads it and checks exact snapshot
+equality. It shows health/ingest succeeded, link-check failed and report blocked.
+The temporary file is removed on exit. No hardware or network is contacted.
+
+### Python API and retaining a file
+
+```python
+from pathlib import Path
+from chimera import RunEvidence, Task, run_with_evidence
+
+evidence = run_with_evidence([
+    Task("measure", lambda: {"source": "synthetic", "margin_db": 2.0}),
+])
+path = Path("run.json")
+with path.open("x", encoding="utf-8") as stream:
+    stream.write(evidence.to_json())
+reopened = RunEvidence.from_json(path.read_text(encoding="utf-8"))
+assert reopened == evidence
+print(reopened.to_dict()["tasks"])
+```
+
+Exclusive `x` mode refuses to overwrite existing evidence. Choose a new filename
+for another run. This caller-managed write is not atomic or crash-safe; disk failure
+can leave a partial file, which must not be treated as a successful durable save.
+
+Schema version 1 has exactly `schema_version`, `run_id`, `started_at`, `finished_at`
+and `tasks`. Each task records `task_id`, `status`, `value`, `error`, `dependencies`.
+Task order preserves execution order. Start/finish timestamps are UTC, run IDs are
+UUIDs, and new runs are intentionally not byte-identical. Scheduling is deterministic;
+arbitrary task behavior, wall-clock timestamps and IDs are not.
+
+Task status is `succeeded`, `failed` or `blocked`. A successful callable may return
+`False` or `None`; success means no exception, not a requirement pass verdict.
+Failed/blocked tasks have an error and null value. Dependency failures must agree
+with blocked status. Requirement verdicts and error categories will be separate work.
+
+Values may contain only finite JSON primitives, lists and string-key dictionaries.
+Unsupported values or malformed evidence raise `EvidenceError`; graph errors and
+interrupts propagate. Values are copied at completion, not at each task return.
+An evidence-encoding failure happens after tasks ran: do not automatically retry,
+because actions may have side effects. There is no partial-run recovery yet.
+
+Do not place secrets or personal data in task outputs/errors: snapshots retain both,
+without automatic redaction. Do not commit real operational evidence without review.
+Validation checks consistency, not authenticity; someone can edit a JSON file.
+No schema migration, input hashes, code/config provenance, requirement mapping,
+storage service, timeout, sandbox or resource-limited untrusted-file parser is provided.
+
+### Teaching note for Leo
+
+The saved snapshot is the test record; executing the procedure again is a new run.
+Separating the two lets another engineer inspect an outcome without repeating actions.
+We reject unsupported values instead of turning them into text because a description
+of an object is not necessarily enough to reconstruct its measurement.
+
+Exercise: after loading the demo's evidence, explain why `report: blocked` is not a
+failed measurement, and why a successfully saved file does not establish crash recovery.
+See [architecture decision 0002](ARCHITECTURE.md#decision-0002-strict-completed-run-json-snapshots).

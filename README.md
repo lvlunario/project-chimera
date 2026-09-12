@@ -14,10 +14,13 @@ Python 3.11 or newer; the foundation has no third-party runtime dependencies.
 ```bash
 python -m unittest discover -s tests -v
 python -m chimera
+python -m examples.evidence_demo
 ```
 
 The demo intentionally fails a link-margin check and shows its dependent report
 as blocked, while an independent health check succeeds.
+The evidence demo saves/reopens a versioned JSON snapshot in a temporary file.
+See the [manual](docs/MANUAL.md#completed-run-evidence-v1) for API and limitations.
 
 ## Program
 Prototype target: **December 12, 2026**. Leo is the program manager.

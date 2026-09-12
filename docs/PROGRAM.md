@@ -45,7 +45,8 @@ AI assistance cannot decide that missing evidence is a passing verification.
 - Avoid paid infrastructure and live hardware operations until separately authorized.
 
 ## Next tasks
-1. Add a versioned, serializable run-evidence schema and failure categorization.
+1. Completed-run JSON evidence v1 is implemented; next define verification verdict
+   versus execution-error categorization and full provenance without implying P1 closure.
 2. Add installable packaging and test CI; verify a clean install.
 3. Add CLI workflow input with strict validation and meaningful exit codes.
 4. Add durable run storage before concurrency/retries.
