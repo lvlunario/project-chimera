@@ -20,6 +20,10 @@ The demo intentionally fails a link-margin check and shows its dependent report
 as blocked, while an independent health check succeeds.
 
 ## Program
+Prototype target: **December 12, 2026**. Leo is the program manager.
+Start with the [project manual](docs/MANUAL.md), [dated roadmap](docs/ROADMAP.md),
+and [quality plan](docs/QUALITY.md). Weekly reviews explain concepts and demonstrate progress.
+
 See [program plan](docs/PROGRAM.md), [requirements](docs/REQUIREMENTS.md),
 [architecture](docs/ARCHITECTURE.md), and [daily log](docs/daily/2026-09-12.md).
 

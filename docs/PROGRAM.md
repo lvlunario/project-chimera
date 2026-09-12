@@ -14,7 +14,7 @@ The 100-developer framing expresses ambition, not actual staffing or throughput.
 ## Delivery phases
 | Phase | Deliverable | Exit criteria | State |
 |---|---|---|---|
-| P0 | Charter and architecture | Scope, requirements, risks, development policy recorded | Complete |
+| P0 | Charter and architecture | Scope, requirements, risks, development policy recorded and reviewed with Leo | Draft documented; PM review pending |
 | P1 | Local execution core | Graph validation, failure propagation, evidence schema, CLI, package install and CI verified | In progress |
 | P2 | Durable execution | SQLite run storage; restart recovery and idempotency tested | Planned |
 | P3 | Engineering adapters | Synthetic telemetry ingestion and deterministic fault injection with reference fixtures | Planned |
@@ -23,7 +23,11 @@ The 100-developer framing expresses ambition, not actual staffing or throughput.
 | P6 | AI assistance | Provider adapter, bounded permissions, evaluation dataset and measured baseline comparison | Planned |
 | P7 | Release | Reproducible deployment, performance results, threat model, demo and operator guide | Planned |
 
-No phase has a promised calendar completion date. Gates control sequencing.
+Prototype delivery target: December 12, 2026 (Asia/Manila). See [dated roadmap](ROADMAP.md).
+This supersedes the original undated plan. Dates are delivery targets; passing evidence and
+Leo's recorded acceptance control gate closure. Report forecast slips promptly.
+P6 AI assistance is a stretch goal after prototype-critical P1–P5 and P7 work.
+See [manual](MANUAL.md) and [quality plan](QUALITY.md) for participation and release policy.
 AI assistance cannot decide that missing evidence is a passing verification.
 
 ## Work policy
