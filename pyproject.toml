@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "project-chimera"
+version = "0.1.0.dev0"
+description = "Deterministic engineering verification orchestration"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+authors = [
+  { name = "Chimera contributors" },
+]
+classifiers = [
+  "Development Status :: 2 - Pre-Alpha",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Software Development :: Testing",
+]
+dependencies = []
+
+[project.scripts]
+chimera-demo = "chimera.__main__:main"
+
+[project.urls]
+Repository = "https://github.com/lvlunario/project-chimera"
+Issues = "https://github.com/lvlunario/project-chimera/issues"
+
+[tool.setuptools]
+packages = ["chimera"]

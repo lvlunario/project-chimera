@@ -31,3 +31,17 @@ The mutable-dependency regression is [defect #4](https://github.com/lvlunario/pr
 Local verification and independent QA recorded in the daily log. These are task
 execution outcomes, not requirement pass/fail verdicts. Input identity/hashes,
 requirement mapping, code/config provenance and crash-safe storage remain planned.
+
+## Packaging
+
+Tracked in [issue #5](https://github.com/lvlunario/project-chimera/issues/5).
+
+| ID | Requirement | Acceptance evidence |
+|---|---|---|
+| PACK-001 | Install as `project-chimera` on supported Python 3.11+ with no runtime dependencies | `scripts/verify_clean_install.sh`: distribution metadata and dependency check |
+| PACK-002 | Import the public API from an isolated environment outside the checkout | clean-install source-path guard and evidence round trip |
+| PACK-003 | Provide an installed `chimera-demo` entry point with expected synthetic failure/blocking behavior | clean-install demo output assertions |
+| PACK-004 | Leave the repository and host environment unchanged by clean-install verification | temporary source/build/venv with exit cleanup; worktree inspection |
+
+Python 3.12.14 is locally verified. Declaring 3.11 support is not equivalent to
+having run the suite on 3.11; the planned CI matrix must supply that evidence.

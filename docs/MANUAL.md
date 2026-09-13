@@ -130,3 +130,48 @@ of an object is not necessarily enough to reconstruct its measurement.
 Exercise: after loading the demo's evidence, explain why `report: blocked` is not a
 failed measurement, and why a successfully saved file does not establish crash recovery.
 See [architecture decision 0002](ARCHITECTURE.md#decision-0002-strict-completed-run-json-snapshots).
+
+## Installation
+
+The development package requires Python 3.11 or newer and has no third-party runtime
+dependencies. From a trusted checkout:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install .
+chimera-demo
+```
+
+The installed demo must show `link-check: failed` and `report: blocked`; both are
+intentional synthetic outcomes. The distribution version is `0.1.0.dev0`, meaning
+development build—not a supported release. Nothing is uploaded to a package index.
+
+Maintainers can exercise the stricter integration path:
+
+```bash
+scripts/verify_clean_install.sh
+```
+
+It copies only packaging inputs to a temporary directory, builds one wheel with the
+current interpreter/build backend, installs it without dependencies or index access
+into a new virtual environment, then changes outside the repository. It verifies
+distribution metadata, confirms `chimera` came from that environment, exercises the
+public evidence API, and checks the console demo. A trap removes temporary files.
+The offline build step requires Python 3.11+ and local setuptools 77+; the script
+checks both first and reports a direct error when the prerequisite is unavailable.
+
+This check does not prove every platform or declared interpreter works. Python 3.11
+and 3.12 CI remains required; the first local run used Linux/Python 3.12.14. It also
+does not sign the wheel, create a reproducible byte-for-byte build, publish a release,
+or protect against a malicious checkout/build backend.
+
+### Teaching note for Leo
+
+A source test answers “does the code work here?” A clean wheel install answers a
+different question: “did we package all required code and entry points so another
+environment can run it?” Changing directories after installation is the key guard;
+otherwise Python might quietly load the checkout and conceal a broken package.
+
+Exercise: if unit tests pass but `chimera-demo` is absent after installation, which
+gate failed—core execution or packaging—and why should P1 remain open?

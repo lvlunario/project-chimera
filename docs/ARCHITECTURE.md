@@ -46,3 +46,21 @@ value raises EvidenceError after execution; do not retry automatically. Interrup
 propagate and produce no completed record. A backward wall-clock jump is rejected.
 There are no authenticity, tamper-proofing, resource-limit or crash-safety guarantees.
 Requirement verdict/failure categorization and full provenance are still pending.
+
+## Decision 0003: standard wheel with zero runtime dependencies
+
+Status: implemented and locally integration-tested; independent review and P1 gate
+remain pending. September 13, 2026.
+
+Package the current kernel as the `project-chimera` Python distribution using
+PEP 517 metadata and setuptools. Keep the import package named `chimera`, expose
+the existing synthetic runner as `chimera-demo`, and retain zero runtime dependencies.
+The development version is `0.1.0.dev0`; it is not a release tag or stability claim.
+
+The clean-install check builds a wheel from a temporary source copy, creates a new
+virtual environment, installs the wheel with `--no-index --no-deps`, and changes to
+a directory outside the checkout before importing. This prevents a common false
+positive where tests accidentally import local source instead of installed files.
+Wheel building deliberately uses the maintainer environment's installed build backend
+with `--no-build-isolation`; the later CI matrix will test declared Python versions
+and build-backend setup. No package is uploaded to an index.
