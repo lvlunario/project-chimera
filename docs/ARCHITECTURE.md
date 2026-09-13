@@ -49,8 +49,8 @@ Requirement verdict/failure categorization and full provenance are still pending
 
 ## Decision 0003: standard wheel with zero runtime dependencies
 
-Status: implemented and locally integration-tested; independent review and P1 gate
-remain pending. September 13, 2026.
+Status: implemented, locally integration-tested and independently reviewed; P1 gate
+remains pending. September 13, 2026.
 
 Package the current kernel as the `project-chimera` Python distribution using
 PEP 517 metadata and setuptools. Keep the import package named `chimera`, expose
