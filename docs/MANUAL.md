@@ -203,3 +203,61 @@ The matrix checks compatibility, not just repetition: identical code runs under 
 Python interpreters on fresh machines. A local pass on 3.12 cannot prove 3.11 works.
 Pinning Actions makes the automation code reviewable; it does not eliminate the need
 to review and periodically update those dependencies.
+
+## Declarative workflow CLI
+
+After installation, run the bounded synthetic example from a trusted checkout:
+
+```bash
+chimera run examples/workflow.json --evidence run.json
+echo $?
+```
+
+The example prints health/ingest as succeeded, link-check as failed and report as
+blocked. It exits 1 and still creates `run.json`; inspect that file with the evidence
+API described above. Choose a new output name for every run because Chimera refuses
+to replace an existing file.
+
+Workflow schema version 1 contains exactly `schema_version` and `tasks`. Every task
+has an `id`, `operation`, optional `dependencies`, and one operation-specific field:
+
+```json
+{
+  "schema_version": 1,
+  "tasks": [
+    {"id": "ingest", "operation": "emit", "value": {"source": "synthetic"}},
+    {"id": "check", "operation": "fail", "message": "synthetic threshold miss", "dependencies": ["ingest"]}
+  ]
+}
+```
+
+`emit` returns its finite JSON `value`. `fail` records its nonempty `message` as an
+expected task failure. No field can import code, invoke a shell, contact a URL or name
+an arbitrary callable. Input must be UTF-8 and at most one MiB, with at most 1,000
+tasks and 1,000 dependencies per task. IDs use letters, digits, dot, underscore or
+hyphen, start alphanumerically, and are at most 128 characters. Duplicate keys/IDs/
+dependencies, unknown fields/operations, malformed graphs and non-finite numbers fail
+before a completed record is written.
+
+Exit codes:
+
+- 0: completed and every task succeeded.
+- 1: completed with at least one failed or blocked task; evidence was written.
+- 2: invalid workflow, invalid dependency graph or command usage; no run evidence.
+- 3: evidence output exists or cannot be created.
+
+These codes distinguish “the verification ran and found trouble” from “the procedure
+could not be established.” Current operations are synthetic and side-effect-free.
+Future measured-data and fault-injection adapters require their own schemas and safety
+review. The one-MiB limit reduces accidental resource use but is not hostile-input
+sandboxing. The evidence write is exclusive, not crash-safe or a P2 durable journal.
+
+### Teaching note for Leo
+
+A workflow file is treated as data, never as a program. This keeps review simple:
+operators can see the complete set of allowed effects from the schema. Exit 1 still
+produces evidence because a failed check is a valid, important test outcome; exit 2
+means Chimera could not safely start that test at all.
+
+Exercise: explain why a missing dependency should produce exit 2 with no evidence,
+while a deliberate `fail` task should produce exit 1 and a preserved record.

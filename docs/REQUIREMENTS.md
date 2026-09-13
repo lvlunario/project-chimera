@@ -63,3 +63,19 @@ both Python jobs and every named step completed successfully. Inspected logs rec
 31 tests in each job (3.11: 0.006 seconds; 3.12: 0.007 seconds), installed version
 `0.1.0.dev0` from the respective temporary venv `site-packages`, and
 `clean-install: passed`. This evidence does not close P1 or imply PM acceptance.
+
+## Declarative workflow CLI
+
+Tracked in [issue #7](https://github.com/lvlunario/project-chimera/issues/7).
+
+| ID | Requirement | Acceptance test |
+|---|---|---|
+| CLI-001 | Load only strict, versioned UTF-8 JSON with bounded bytes, tasks, dependencies, IDs and values | `test_workflow.py` invalid-document/task/size tests |
+| CLI-002 | Execute only allowlisted synthetic `emit` and `fail` operations; never import or evaluate workflow-supplied code | parser operation/field tests and independent QA negative tests |
+| CLI-003 | Validate graph errors before execution and avoid producing completed evidence for invalid input | `test_invalid_graph_returns_two_without_evidence` |
+| CLI-004 | Write reloadable completed-run evidence without overwriting an existing path | CLI success/failure/overwrite tests and clean-install check |
+| CLI-005 | Return 0 for all-success, 1 for completed unsuccessful runs, 2 for input/graph/usage errors, and 3 for output errors | `test_cli.py` and independent QA exit-code tests |
+
+The CLI converts a declaration into the existing trusted in-process kernel. Current
+operations are intentionally side-effect-free; this is not a sandbox for arbitrary
+Python and does not yet ingest engineering telemetry.

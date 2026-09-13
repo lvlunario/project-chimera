@@ -14,6 +14,7 @@ Python 3.11 or newer; the foundation has no third-party runtime dependencies.
 ```bash
 python -m pip install .
 chimera-demo
+chimera run examples/workflow.json --evidence run.json
 python -m unittest discover -s tests -v
 python -m chimera
 python -m examples.evidence_demo
@@ -22,7 +23,9 @@ python -m examples.evidence_demo
 The demo intentionally fails a link-margin check and shows its dependent report
 as blocked, while an independent health check succeeds.
 The evidence demo saves/reopens a versioned JSON snapshot in a temporary file.
-See the [manual](docs/MANUAL.md#completed-run-evidence-v1) for API and limitations.
+The workflow example intentionally exits 1 after saving evidence because its synthetic
+link check fails; Chimera never overwrites an existing evidence path. See the
+[manual](docs/MANUAL.md#declarative-workflow-cli) for schema, exit codes and limitations.
 Maintainers can verify an isolated wheel install with
 `scripts/verify_clean_install.sh`; it builds from a temporary source copy and does
 not publish a package.

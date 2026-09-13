@@ -64,3 +64,27 @@ positive where tests accidentally import local source instead of installed files
 Wheel building deliberately uses the maintainer environment's installed build backend
 with `--no-build-isolation`; the later CI matrix will test declared Python versions
 and build-backend setup. No package is uploaded to an index.
+
+## Decision 0004: declarative allowlist at the operator boundary
+
+Status: implemented and under independent review; P1 gate and PM acceptance pending.
+September 13, 2026.
+
+The operator CLI accepts schema-versioned JSON and converts only two allowlisted,
+side-effect-free operations into tasks: `emit` returns a finite JSON value and `fail`
+raises an expected synthetic task failure. Workflow fields cannot name a Python module,
+callable, shell command, URL or adapter. Strict fields, duplicate-key rejection,
+UTF-8 and finite-value checks, one MiB input, 1,000-task/dependency bounds and short
+IDs/messages constrain ambiguity and accidental resource use before graph execution.
+
+The command refuses an evidence path that exists and uses exclusive creation after
+the run to resist overwrite races. Exit 0 means all workflow tasks succeeded; exit 1
+means a completed record contains a failure or blocked task; exit 2 means no valid run
+was established; exit 3 means evidence could not be created. A completed failed run
+still writes evidence because failure is an outcome worth preserving.
+
+Alternative: import Python callables named in JSON. Rejected because it would turn a
+data file into an arbitrary code-execution interface. Future telemetry/fault adapters
+need separately reviewed, typed operation schemas. The current runner remains in-process
+and is not a security sandbox; bounded parsing is defense in depth, not hostile-input
+isolation. Exclusive creation is not an atomic durable journal or crash recovery.

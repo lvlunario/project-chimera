@@ -23,6 +23,7 @@ classifiers = [
 dependencies = []
 
 [project.scripts]
+chimera = "chimera.cli:entrypoint"
 chimera-demo = "chimera.__main__:main"
 
 [project.urls]

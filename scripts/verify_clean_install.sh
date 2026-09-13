@@ -82,4 +82,27 @@ DEMO_OUTPUT=$("$WORK/venv/bin/chimera-demo")
 printf '%s\n' "$DEMO_OUTPUT"
 grep -q '^link-check: failed' <<<"$DEMO_OUTPUT"
 grep -q '^report: blocked' <<<"$DEMO_OUTPUT"
+
+set +e
+CLI_OUTPUT=$("$WORK/venv/bin/chimera" run "$ROOT/examples/workflow.json" --evidence "$WORK/outside/cli-run.json")
+CLI_STATUS=$?
+set -e
+printf '%s\n' "$CLI_OUTPUT"
+if [[ $CLI_STATUS -ne 1 ]]; then
+  echo "Expected synthetic CLI workflow to exit 1; found $CLI_STATUS" >&2
+  exit 1
+fi
+grep -q '^link-check: failed' <<<"$CLI_OUTPUT"
+grep -q '^report: blocked' <<<"$CLI_OUTPUT"
+"$WORK/venv/bin/python" - "$WORK/outside/cli-run.json" <<'PY'
+from pathlib import Path
+import sys
+
+from chimera import RunEvidence
+
+evidence = RunEvidence.from_json(Path(sys.argv[1]).read_text(encoding="utf-8"))
+if len(evidence.to_dict()["tasks"]) != 4:
+    raise SystemExit("Installed CLI evidence task count mismatch")
+print("installed-cli: workflow and evidence passed")
+PY
 printf '%s\n' "clean-install: passed (temporary environment removed on exit)"
