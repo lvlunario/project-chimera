@@ -192,6 +192,11 @@ A workflow file in the repository is only a test plan. A CI claim requires an ac
 completed run for the relevant commit, both matrix jobs green, and inspected logs
 showing the regression and clean-install steps executed.
 
+First verified hosted evidence: [run 34744334003](https://github.com/lvlunario/project-chimera/actions/runs/34744334003)
+on development commit `35f3558d`, September 13, 2026. Python 3.11 and 3.12 jobs both
+completed successfully; inspected logs show 31 tests and the clean-install proof in
+each. Treat later commits as unverified until their own required checks complete.
+
 ### Teaching note for Leo
 
 The matrix checks compatibility, not just repetition: identical code runs under two

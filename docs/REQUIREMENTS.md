@@ -57,5 +57,9 @@ Tracked in [issue #6](https://github.com/lvlunario/project-chimera/issues/6).
 | CI-003 | Use read-only repository permissions, no persisted checkout credential and bounded execution | workflow `permissions`, checkout setting, timeout and concurrency |
 | CI-004 | Pin official third-party Actions to reviewed commit SHAs | checkout/setup-python `uses` references |
 
-Publishing the workflow is not passing evidence. CI requirements are verified only
-after both jobs on the target commit finish successfully and their logs are inspected.
+CI-001–004 are verified on development commit `35f3558d` by
+[test run 34744334003](https://github.com/lvlunario/project-chimera/actions/runs/34744334003):
+both Python jobs and every named step completed successfully. Inspected logs recorded
+31 tests in each job (3.11: 0.006 seconds; 3.12: 0.007 seconds), installed version
+`0.1.0.dev0` from the respective temporary venv `site-packages`, and
+`clean-install: passed`. This evidence does not close P1 or imply PM acceptance.
