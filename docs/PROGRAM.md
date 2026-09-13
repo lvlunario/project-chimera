@@ -49,8 +49,8 @@ AI assistance cannot decide that missing evidence is a passing verification.
    versus execution-error categorization and full provenance without implying P1 closure.
 2. Packaging and Python 3.11/3.12 CI are implemented and verified on the development
    branch; retain their evidence for P1 integration and final gate review.
-3. Strict declarative CLI workflow input is implemented; verify the published head in
-   CI and complete an independent negative-path review before claiming the criterion.
+3. Strict declarative CLI workflow input is implemented, independently reviewed and
+   verified on the published Python 3.11/3.12 CI head; retain its gate evidence.
 4. Next: define verification verdict versus execution-error categorization, then run
    the full P1 gate review.
 5. Add durable run storage before concurrency/retries; close P1 only after all exit

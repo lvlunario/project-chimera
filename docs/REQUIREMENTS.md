@@ -79,3 +79,9 @@ Tracked in [issue #7](https://github.com/lvlunario/project-chimera/issues/7).
 The CLI converts a declaration into the existing trusted in-process kernel. Current
 operations are intentionally side-effect-free; this is not a sandbox for arbitrary
 Python and does not yet ingest engineering telemetry.
+
+CLI-001–005 are verified on development head `1ea07c7e` by 49 local tests,
+independent negative-path QA, isolated installed-wheel execution and
+[hosted run 34753672209](https://github.com/lvlunario/project-chimera/actions/runs/34753672209)
+on Python 3.11/3.12. The preceding run's publication-mode failure and corrective
+evidence are preserved in the daily log. This does not close P1 or imply PM acceptance.

@@ -67,7 +67,8 @@ and build-backend setup. No package is uploaded to an index.
 
 ## Decision 0004: declarative allowlist at the operator boundary
 
-Status: implemented and under independent review; P1 gate and PM acceptance pending.
+Status: implemented, independently reviewed and hosted-CI verified; P1 gate and PM
+acceptance pending.
 September 13, 2026.
 
 The operator CLI accepts schema-versioned JSON and converts only two allowlisted,

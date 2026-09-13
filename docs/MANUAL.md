@@ -157,7 +157,8 @@ It copies only packaging inputs to a temporary directory, builds one wheel with 
 current interpreter/build backend, installs it without dependencies or index access
 into a new virtual environment, then changes outside the repository. It verifies
 distribution metadata, confirms `chimera` came from that environment, exercises the
-public evidence API, and checks the console demo. A trap removes temporary files.
+public evidence API, checks the console demo, and runs the installed declarative CLI
+through evidence reload. A trap removes temporary files.
 The offline build step requires Python 3.11+ and local setuptools 77+; the script
 checks both first and reports a direct error when the prerequisite is unavailable.
 
@@ -179,7 +180,7 @@ gate failed—core execution or packaging—and why should P1 remain open?
 ## Continuous integration
 
 The GitHub Actions `test` workflow is intended to run two independent Linux jobs:
-Python 3.11 and Python 3.12. Each runs the 31-test regression suite followed by the
+Python 3.11 and Python 3.12. Each runs the full regression suite followed by the
 isolated wheel-install verification. The workflow never deploys or publishes Chimera.
 
 The repository grants only read access. Checkout credentials are not retained, jobs
@@ -196,6 +197,10 @@ First verified hosted evidence: [run 34744334003](https://github.com/lvlunario/p
 on development commit `35f3558d`, September 13, 2026. Python 3.11 and 3.12 jobs both
 completed successfully; inspected logs show 31 tests and the clean-install proof in
 each. Treat later commits as unverified until their own required checks complete.
+
+Latest CLI integration evidence: [run 34753672209](https://github.com/lvlunario/project-chimera/actions/runs/34753672209)
+on development head `1ea07c7e`. Both jobs passed 49 tests and installed CLI/evidence
+verification. The earlier failed mode-publication run is recorded in the daily log.
 
 ### Teaching note for Leo
 
