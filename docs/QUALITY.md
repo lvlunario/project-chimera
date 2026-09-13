@@ -51,3 +51,17 @@ A separate AI QA planning reviewer recommended a single operational vertical sli
 clean-install evidence, negative-path coverage, requirement traceability, independent
 release review and explicit PM acceptance. These were incorporated into this plan.
 This was a planning review, not a code or release approval.
+
+## Continuous integration policy
+
+The `test` workflow exercises Python 3.11 and 3.12 on pull requests and pushes to
+the development or main branch. Each matrix job runs the unit regression suite and
+the same isolated wheel-install check used locally. Jobs have read-only repository
+permissions, do not retain checkout credentials, use no repository secrets, and
+are bounded by timeout and concurrency cancellation.
+
+Official checkout/setup Actions are pinned to commit SHAs; comments show the reviewed
+major tags. Build tools still come from the Python package index and GitHub-hosted
+runner images can change. Logs and action pins must be inspected at release review;
+a green badge alone is not complete release evidence. No deployment or publication
+occurs in this workflow.

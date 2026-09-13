@@ -47,8 +47,8 @@ AI assistance cannot decide that missing evidence is a passing verification.
 ## Next tasks
 1. Completed-run JSON evidence v1 is implemented; next define verification verdict
    versus execution-error categorization and full provenance without implying P1 closure.
-2. Packaging and a clean-install check are implemented locally; add test CI and
-   verify Python 3.11/3.12 before treating the packaging gate as complete.
+2. Packaging and clean-install verification are implemented; publish test CI and
+   inspect Python 3.11/3.12 job evidence before treating this gate as complete.
 3. Add CLI workflow input with strict validation and meaningful exit codes.
 4. Add durable run storage before concurrency/retries.
 5. Close P1 only after its full exit criteria pass.

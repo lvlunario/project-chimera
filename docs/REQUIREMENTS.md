@@ -45,3 +45,17 @@ Tracked in [issue #5](https://github.com/lvlunario/project-chimera/issues/5).
 
 Python 3.12.14 is locally verified. Declaring 3.11 support is not equivalent to
 having run the suite on 3.11; the planned CI matrix must supply that evidence.
+
+## Continuous integration
+
+Tracked in [issue #6](https://github.com/lvlunario/project-chimera/issues/6).
+
+| ID | Requirement | Acceptance evidence |
+|---|---|---|
+| CI-001 | Run every pull request and development/main push on Python 3.11 and 3.12 | GitHub Actions `test` workflow matrix |
+| CI-002 | Execute the full regression suite and isolated wheel-install check in each job | workflow steps and successful job logs |
+| CI-003 | Use read-only repository permissions, no persisted checkout credential and bounded execution | workflow `permissions`, checkout setting, timeout and concurrency |
+| CI-004 | Pin official third-party Actions to reviewed commit SHAs | checkout/setup-python `uses` references |
+
+Publishing the workflow is not passing evidence. CI requirements are verified only
+after both jobs on the target commit finish successfully and their logs are inspected.

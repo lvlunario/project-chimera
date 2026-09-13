@@ -175,3 +175,26 @@ otherwise Python might quietly load the checkout and conceal a broken package.
 
 Exercise: if unit tests pass but `chimera-demo` is absent after installation, which
 gate failed—core execution or packaging—and why should P1 remain open?
+
+## Continuous integration
+
+The GitHub Actions `test` workflow is intended to run two independent Linux jobs:
+Python 3.11 and Python 3.12. Each runs the 31-test regression suite followed by the
+isolated wheel-install verification. The workflow never deploys or publishes Chimera.
+
+The repository grants only read access. Checkout credentials are not retained, jobs
+time out after ten minutes, and newer work on the same branch cancels obsolete work.
+Official checkout and Python-setup actions are pinned to exact commits rather than
+floating tags. The preparation step downloads setuptools/wheel from the package
+index; CI therefore still depends on GitHub runners, those action commits and PyPI.
+
+A workflow file in the repository is only a test plan. A CI claim requires an actual
+completed run for the relevant commit, both matrix jobs green, and inspected logs
+showing the regression and clean-install steps executed.
+
+### Teaching note for Leo
+
+The matrix checks compatibility, not just repetition: identical code runs under two
+Python interpreters on fresh machines. A local pass on 3.12 cannot prove 3.11 works.
+Pinning Actions makes the automation code reviewable; it does not eliminate the need
+to review and periodically update those dependencies.
