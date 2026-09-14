@@ -55,7 +55,7 @@ from pathlib import Path
 import os
 
 import chimera
-from chimera import RunEvidence, Task, run_with_evidence
+from chimera import RunEvidence, Task, assess_requirements, run_with_evidence
 
 source_root = Path(os.environ["CHIMERA_SOURCE_ROOT"]).resolve()
 module_path = Path(chimera.__file__).resolve()
@@ -76,6 +76,11 @@ if reopened.to_dict()["tasks"][0]["value"] != "available":
 print(f"installed-version: {version('project-chimera')}")
 print(f"installed-module: {module_path}")
 print("installed-api: evidence round trip passed")
+checks = run_with_evidence([Task("boolean-check", lambda: False)])
+assessment = assess_requirements(RunEvidence.from_json(checks.to_json()), {"R1": "boolean-check"})
+if assessment.outcomes[0].verdict != "fail" or assessment.all_passed:
+    raise SystemExit("Installed requirement verdict classification failed")
+print("installed-verdicts: failed requirement preserved after reload")
 PY
 
 DEMO_OUTPUT=$("$WORK/venv/bin/chimera-demo")

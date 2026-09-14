@@ -18,6 +18,7 @@ chimera run examples/workflow.json --evidence run.json
 python -m unittest discover -s tests -v
 python -m chimera
 python -m examples.evidence_demo
+python -m examples.verdict_demo
 ```
 
 The demo intentionally fails a link-margin check and shows its dependent report
@@ -30,13 +31,17 @@ Maintainers can verify an isolated wheel install with
 `scripts/verify_clean_install.sh`; it builds from a temporary source copy and does
 not publish a package.
 
+The [verdict demo](docs/MANUAL.md#requirement-verdicts) shows a successfully executed
+check returning a failed requirement while its handoff task still runs. It also shows
+error and missing/blocked outcomes. This is synthetic, not a measured-data adapter.
+
 ## Program
 Prototype target: **December 12, 2026**. Leo is the program manager.
 Start with the [project manual](docs/MANUAL.md), [dated roadmap](docs/ROADMAP.md),
 and [quality plan](docs/QUALITY.md). Weekly reviews explain concepts and demonstrate progress.
 
 See [program plan](docs/PROGRAM.md), [requirements](docs/REQUIREMENTS.md),
-[architecture](docs/ARCHITECTURE.md), and [daily log](docs/daily/2026-09-12.md).
+[architecture](docs/ARCHITECTURE.md), and [daily logs](docs/daily/).
 
 Development takes place on `magnum-opus/development`. Progress means working,
 verified increments; phases close only when acceptance evidence exists.

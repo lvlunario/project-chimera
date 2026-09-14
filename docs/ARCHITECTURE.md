@@ -45,7 +45,11 @@ tasks mutate shared outputs, those final values are captured. An unrepresentable
 value raises EvidenceError after execution; do not retry automatically. Interrupts
 propagate and produce no completed record. A backward wall-clock jump is rejected.
 There are no authenticity, tamper-proofing, resource-limit or crash-safety guarantees.
-Requirement verdict/failure categorization and full provenance are still pending.
+At initial implementation, requirement verdict categorization and full provenance
+were still pending.
+
+Update September 14: decision 0005 implements a separate interpretation layer for
+explicit boolean checks. Full provenance and durable binding storage remain pending.
 
 ## Decision 0003: standard wheel with zero runtime dependencies
 
@@ -89,3 +93,27 @@ data file into an arbitrary code-execution interface. Future telemetry/fault ada
 need separately reviewed, typed operation schemas. The current runner remains in-process
 and is not a security sandbox; bounded parsing is defense in depth, not hostile-input
 isolation. Exclusive creation is not an atomic durable journal or crash recovery.
+
+## Decision 0005: interpret boolean checks separately from execution
+
+September 14, 2026. Implemented for P1; integration evidence is in the daily log.
+P1 gate and PM acceptance remain pending.
+
+`assess_requirements` takes validated `RunEvidence` plus explicit requirement-to-task
+bindings. Exact True/False values from succeeded tasks mean pass/fail. Other returned
+values mean error, raised exceptions mean error, and blocked/absent tasks mean
+not_evaluated. Assessment includes the run ID and immutable ordered outcomes with
+requirement ID, task ID and reason. Empty selections cannot claim all_passed.
+
+A boolean False is a completed check, so dependent handoff tasks may still execute.
+Dependency edges gate on execution success, not requirement verdict; this is unchanged.
+An explicit binding declares a task to be a trusted boolean check. We do not scan
+arbitrary values for pass-like strings or infer requirements from task names.
+
+Alternative: extend task status or reinterpret all False outputs as execution failures.
+Rejected because it conflates an engineering finding with a procedure fault, blocks
+useful handoff work, and changes the existing CLI contract. Schema-v1 evidence is
+unchanged. Assessments are derived in memory, not a new durable evidence schema.
+Reproduction requires the same snapshot AND the same caller-supplied bindings.
+Binding/procedure/input provenance must be persisted before P4 report acceptance.
+The current CLI still reports execution exit codes, not overall requirement acceptance.

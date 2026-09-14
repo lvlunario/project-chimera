@@ -106,7 +106,8 @@ arbitrary task behavior, wall-clock timestamps and IDs are not.
 Task status is `succeeded`, `failed` or `blocked`. A successful callable may return
 `False` or `None`; success means no exception, not a requirement pass verdict.
 Failed/blocked tasks have an error and null value. Dependency failures must agree
-with blocked status. Requirement verdicts and error categories will be separate work.
+with blocked status. The separate [requirement verdict API](#requirement-verdicts)
+now classifies explicitly bound boolean checks without changing this schema.
 
 Values may contain only finite JSON primitives, lists and string-key dictionaries.
 Unsupported values or malformed evidence raise `EvidenceError`; graph errors and
@@ -130,6 +131,55 @@ of an object is not necessarily enough to reconstruct its measurement.
 Exercise: after loading the demo's evidence, explain why `report: blocked` is not a
 failed measurement, and why a successfully saved file does not establish crash recovery.
 See [architecture decision 0002](ARCHITECTURE.md#decision-0002-strict-completed-run-json-snapshots).
+
+## Requirement verdicts
+
+Implemented Python API: `assess_requirements(evidence, bindings)`. Bindings map each
+selected requirement ID to its trusted boolean-check task ID. This is an explicit
+caller contract, not automatic discovery or validation of the requirement definition.
+From a trusted checkout, run `python -m examples.verdict_demo`.
+
+Expected: `link-check` and `handoff` execute successfully, COM-LINK-001 is `fail`,
+CONTROL is `pass`, INVALID is `error`, and BLOCKED/MISSING are `not_evaluated`.
+The demo saves/reopens evidence in a temporary directory and confirms an identical
+assessment using the same bindings. It removes the file on exit. Measurements and
+the 3 dB threshold are hard-coded synthetic examples, not a CSV or radio adapter.
+
+```python
+from chimera import Task, assess_requirements, run_with_evidence
+
+evidence = run_with_evidence([Task("check", lambda: 2.0 >= 3.0)])
+assessment = assess_requirements(evidence, {"COM-LINK-001": "check"})
+print(assessment.outcomes[0].verdict)  # fail
+print(assessment.all_passed)          # False
+```
+
+| Recorded task outcome | Requirement verdict |
+|---|---|
+| succeeded, exact boolean True | pass |
+| succeeded, exact boolean False | fail |
+| succeeded, any other value; or failed execution | error |
+| blocked; or selected task absent | not_evaluated |
+
+Strings, numbers (including 0/1), null and containers never count as boolean checks.
+Empty bindings never establish all_passed. Results are immutable and sorted by
+requirement ID, carrying the run ID, task ID and a reason. all_passed covers only
+the supplied selection, not every product requirement or phase acceptance.
+
+Schema-v1 evidence and CLI exit codes are unchanged. An `emit` of False still exits
+0 because the CLI reports task execution, NOT requirement acceptance. Use this API
+and explicit bindings to interpret it. A future operator verdict exit policy is
+separate integration work. The original synthetic `fail` operation still represents
+an execution error, not this new boolean requirement-failure model.
+
+Assessments are derived in memory; bindings are not yet persisted in the snapshot.
+Reproduce using the same snapshot AND bindings. No authentication, input hashes,
+versioned requirement definition or full provenance is claimed. Do not use this
+classification alone as physical verification or release acceptance.
+
+Teaching exercise: why should a report/handoff task run after a False check, but
+remain blocked after that check raises an exception? The first has a finding to
+explain; the second lacks a valid check result. See architecture decision 0005.
 
 ## Installation
 
@@ -163,7 +213,8 @@ The offline build step requires Python 3.11+ and local setuptools 77+; the scrip
 checks both first and reports a direct error when the prerequisite is unavailable.
 
 This check does not prove every platform or declared interpreter works. Python 3.11
-and 3.12 CI remains required; the first local run used Linux/Python 3.12.14. It also
+and 3.12 CI is verified for the commits cited below; new commits need their own evidence.
+The first local run used Linux/Python 3.12.14. It also
 does not sign the wheel, create a reproducible byte-for-byte build, publish a release,
 or protect against a malicious checkout/build backend.
 

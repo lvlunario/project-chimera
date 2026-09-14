@@ -43,8 +43,8 @@ Tracked in [issue #5](https://github.com/lvlunario/project-chimera/issues/5).
 | PACK-003 | Provide an installed `chimera-demo` entry point with expected synthetic failure/blocking behavior | clean-install demo output assertions |
 | PACK-004 | Leave the repository and host environment unchanged by clean-install verification | temporary source/build/venv with exit cleanup; worktree inspection |
 
-Python 3.12.14 is locally verified. Declaring 3.11 support is not equivalent to
-having run the suite on 3.11; the planned CI matrix must supply that evidence.
+Python 3.12.14 is locally verified. Python 3.11/3.12 hosted installation evidence
+is linked below under CI; each new candidate must pass its own matrix.
 
 ## Continuous integration
 
@@ -79,6 +79,24 @@ Tracked in [issue #7](https://github.com/lvlunario/project-chimera/issues/7).
 The CLI converts a declaration into the existing trusted in-process kernel. Current
 operations are intentionally side-effect-free; this is not a sandbox for arbitrary
 Python and does not yet ingest engineering telemetry.
+
+## Requirement verdict interpretation
+
+Tracked in [issue #9](https://github.com/lvlunario/project-chimera/issues/9).
+Implemented as a separate Python API; existing task status, snapshot v1 and CLI
+exit codes remain unchanged. `all_passed` covers only explicitly selected requirements.
+
+| ID | Requirement | Acceptance test in tests/test_verdicts.py |
+|---|---|---|
+| VERDICT-001 | Require explicit nonempty string requirement/task identifiers and deterministic ordering | test_invalid_bindings; test_boolean_verdicts_and_report_continuation |
+| VERDICT-002 | Exact boolean success produces pass/fail; execution/nonboolean errors never pass; missing/blocked means not_evaluated | test_boolean_verdicts_and_report_continuation; test_non_boolean_values_are_errors; test_error_blocked_and_missing |
+| VERDICT-003 | Reload and assess without executing or modifying evidence | test_round_trip_does_not_execute |
+| VERDICT-004 | Return detached immutable outcomes tied to run, task and requirement | test_binding_copy_and_immutable_result; test_round_trip_does_not_execute |
+| VERDICT-005 | all_passed requires a nonempty selection with only pass verdicts | test_empty_is_not_pass; test_complete_pass; negative outcome tests |
+
+The clean-install script also exercises the installed verdict API after snapshot reload.
+Durable requirement bindings, check/input provenance, measured data and operator verdict
+exit codes remain later integration work; this is not full P4 traceability or PM acceptance.
 
 CLI-001–005 are verified on development head `1ea07c7e` by 49 local tests,
 independent negative-path QA, isolated installed-wheel execution and

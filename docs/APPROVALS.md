@@ -66,6 +66,12 @@ Review [the CLI and evidence instructions](MANUAL.md) and candidate-specific CI 
       would hand another engineer. Ask for clearer feedback if the output is ambiguous.
 
 Expected: all P1 exit criteria evidenced and the core behavior understandable.
+Additional implemented exercise: run or observe `python -m examples.verdict_demo`.
+Verify COM-LINK-001 is fail while link-check/handoff executed successfully; INVALID
+is error and BLOCKED/MISSING are not_evaluated. Explain why a failed requirement is
+not a crashed check. Assessment recomputed from saved/reopened evidence must be
+identical using the same bindings. This API-only
+exercise does not change the CLI's execution exit codes or establish full provenance.
 The synthetic demo alone is insufficient for full P1 acceptance.
 Decision: **Pending**. Actual observations/conditions: **Not yet recorded**.
 
