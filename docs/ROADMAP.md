@@ -48,3 +48,11 @@ Report green when the next gate is achievable with current evidence and known wo
 amber when an unresolved dependency or scope threatens it; red when forecast exceeds
 the gate date or a release blocker prevents it. Show original deadline, forecast,
 cause and recovery options. Do not move the baseline date silently.
+
+## Phase approval instructions
+
+Use the [phase approval guide](APPROVALS.md) for P0–P7 verification and validation checklists,
+required evidence, walkthroughs, expected results and decision records.
+Each phase packet must include these checks and candidate-specific runnable instructions.
+Engineering verification and Leo's acceptance are tracked separately; no phase is
+accepted from silence or from a test count alone.

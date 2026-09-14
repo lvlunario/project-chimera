@@ -61,3 +61,11 @@ Trusted task functions execute in-process and can hang, mutate state or access t
 The prototype is not a sandbox. There is no timeout, cancellation, durable state,
 retry, concurrency, web UI or production isolation yet. Synthetic demonstrations
 must remain labeled synthetic; they do not establish physical-system performance.
+
+## Phase approval instructions
+
+Use the [phase approval guide](APPROVALS.md) for P0–P7 verification and validation checklists,
+required evidence, walkthroughs, expected results and decision records.
+Each phase packet must include these checks and candidate-specific runnable instructions.
+Engineering verification and Leo's acceptance are tracked separately; no phase is
+accepted from silence or from a test count alone.

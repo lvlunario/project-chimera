@@ -266,3 +266,11 @@ means Chimera could not safely start that test at all.
 
 Exercise: explain why a missing dependency should produce exit 2 with no evidence,
 while a deliberate `fail` task should produce exit 1 and a preserved record.
+
+## Phase approval instructions
+
+Use the [phase approval guide](APPROVALS.md) for P0–P7 verification and validation checklists,
+required evidence, walkthroughs, expected results and decision records.
+Each phase packet must include these checks and candidate-specific runnable instructions.
+Engineering verification and Leo's acceptance are tracked separately; no phase is
+accepted from silence or from a test count alone.

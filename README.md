@@ -42,3 +42,11 @@ Development takes place on `magnum-opus/development`. Progress means working,
 verified increments; phases close only when acceptance evidence exists.
 AI-assisted implementation is recorded as such. The program owner reviews scope
 and milestone outcomes; generated code is not evidence of owner proficiency.
+
+## Phase approval
+
+Leo: use the [phase approval guide](docs/APPROVALS.md) for P0–P7 verification and validation checklists,
+required evidence, walkthroughs, expected results and decision records.
+Each phase packet must include these checks and candidate-specific runnable instructions.
+Engineering verification and Leo's acceptance are tracked separately; no phase is
+accepted from silence or from a test count alone.
