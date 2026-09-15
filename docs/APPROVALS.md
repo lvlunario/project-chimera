@@ -61,7 +61,8 @@ Review [the CLI and evidence instructions](MANUAL.md) and candidate-specific CI 
       workflow exits 2 without run evidence; an existing evidence file is not overwritten.
 - [ ] For final P1 closure, review the completed requirement-verdict/error model demonstration:
       a valid failing measurement differs from an execution error and a blocked check.
-      This model remains outstanding as of this guide's creation.
+      This model and its separate versioned binding artifact are now implemented; use the
+      candidate packet for exact evidence and commit references.
 - [ ] Validation: explain which steps ran, why the report was blocked, and what evidence you
       would hand another engineer. Ask for clearer feedback if the output is ambiguous.
 
@@ -70,7 +71,8 @@ Additional implemented exercise: run or observe `python -m examples.verdict_demo
 Verify COM-LINK-001 is fail while link-check/handoff executed successfully; INVALID
 is error and BLOCKED/MISSING are not_evaluated. Explain why a failed requirement is
 not a crashed check. Assessment recomputed from saved/reopened evidence must be
-identical using the same bindings. This API-only
+identical using the same serialized bindings and confirm the assessment's binding digest
+matches that artifact. This API-only
 exercise does not change the CLI's execution exit codes or establish full provenance.
 The synthetic demo alone is insufficient for full P1 acceptance.
 Decision: **Pending**. Actual observations/conditions: **Not yet recorded**.

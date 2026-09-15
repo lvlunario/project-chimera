@@ -45,15 +45,16 @@ AI assistance cannot decide that missing evidence is a passing verification.
 - Avoid paid infrastructure and live hardware operations until separately authorized.
 
 ## Next tasks
-1. Completed-run JSON evidence v1 and separate boolean-check verdict classification
-   are implemented; full provenance and durable bindings remain planned for integration.
+1. Completed-run evidence, boolean-check verdict classification and versioned requirement
+   bindings are implemented; procedure/input provenance and durable multi-artifact storage
+   remain planned for integration.
 2. Packaging and Python 3.11/3.12 CI are implemented and verified on the development
    branch; retain their evidence for P1 integration and final gate review.
 3. Strict declarative CLI workflow input is implemented, independently reviewed and
    verified on the published Python 3.11/3.12 CI head; retain its gate evidence.
-4. September 14: explicit boolean requirement verdict/error interpretation is implemented
-   separately from schema-v1 task evidence (issue #9). Next run the full P1 gate review,
-   including interface/requirements baseline and candidate-specific approval instructions.
+4. September 15: the requirement-binding interface is versioned and serializable separately
+   from schema-v1 run evidence (issue #10). Complete candidate CI and the full P1 gate review,
+   including candidate-specific approval instructions.
 5. Add durable run storage before concurrency/retries; close P1 only after all exit
    criteria pass.
 

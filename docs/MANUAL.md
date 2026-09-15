@@ -135,8 +135,9 @@ See [architecture decision 0002](ARCHITECTURE.md#decision-0002-strict-completed-
 ## Requirement verdicts
 
 Implemented Python API: `assess_requirements(evidence, bindings)`. Bindings map each
-selected requirement ID to its trusted boolean-check task ID. This is an explicit
-caller contract, not automatic discovery or validation of the requirement definition.
+selected requirement ID to its trusted boolean-check task ID. They may be supplied as a
+mapping or a strict, versioned `RequirementBindings` artifact. This is an explicit caller
+contract, not automatic discovery or validation of the requirement definition.
 From a trusted checkout, run `python -m examples.verdict_demo`.
 
 Expected: `link-check` and `handoff` execute successfully, COM-LINK-001 is `fail`,
@@ -146,12 +147,15 @@ assessment using the same bindings. It removes the file on exit. Measurements an
 the 3 dB threshold are hard-coded synthetic examples, not a CSV or radio adapter.
 
 ```python
-from chimera import Task, assess_requirements, run_with_evidence
+from chimera import RequirementBindings, Task, assess_requirements, run_with_evidence
 
 evidence = run_with_evidence([Task("check", lambda: 2.0 >= 3.0)])
-assessment = assess_requirements(evidence, {"COM-LINK-001": "check"})
+bindings = RequirementBindings.from_mapping({"COM-LINK-001": "check"})
+reopened = RequirementBindings.from_json(bindings.to_json())
+assessment = assess_requirements(evidence, reopened)
 print(assessment.outcomes[0].verdict)  # fail
 print(assessment.all_passed)          # False
+print(assessment.bindings_sha256 == bindings.sha256)  # True
 ```
 
 | Recorded task outcome | Requirement verdict |
@@ -172,10 +176,12 @@ and explicit bindings to interpret it. A future operator verdict exit policy is
 separate integration work. The original synthetic `fail` operation still represents
 an execution error, not this new boolean requirement-failure model.
 
-Assessments are derived in memory; bindings are not yet persisted in the snapshot.
-Reproduce using the same snapshot AND bindings. No authentication, input hashes,
-versioned requirement definition or full provenance is claimed. Do not use this
-classification alone as physical verification or release acceptance.
+Bindings can now be serialized separately and identified by canonical SHA-256 content.
+They are deliberately not inserted into completed-run schema v1. Retain both artifacts to
+reproduce an assessment. The digest does not authenticate or approve a mapping. No input
+hashes, procedure/configuration identity, versioned requirement definition, signatures or
+full provenance are claimed. Do not use this classification alone as physical verification
+or release acceptance.
 
 Teaching exercise: why should a report/handoff task run after a False check, but
 remain blocked after that check raises an exception? The first has a finding to

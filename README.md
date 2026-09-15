@@ -33,7 +33,9 @@ not publish a package.
 
 The [verdict demo](docs/MANUAL.md#requirement-verdicts) shows a successfully executed
 check returning a failed requirement while its handoff task still runs. It also shows
-error and missing/blocked outcomes. This is synthetic, not a measured-data adapter.
+error and missing/blocked outcomes. Requirement-to-task bindings can now be saved as
+strict versioned JSON, and each assessment records their SHA-256 content identity.
+This is synthetic, not a measured-data adapter or proof that a binding is authentic.
 
 ## Program
 Prototype target: **December 12, 2026**. Leo is the program manager.

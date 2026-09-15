@@ -117,3 +117,25 @@ unchanged. Assessments are derived in memory, not a new durable evidence schema.
 Reproduction requires the same snapshot AND the same caller-supplied bindings.
 Binding/procedure/input provenance must be persisted before P4 report acceptance.
 The current CLI still reports execution exit codes, not overall requirement acceptance.
+
+## Decision 0006: version bindings separately and identify canonical content
+
+September 15, 2026. Implemented for the P1 interface baseline; gate and PM acceptance
+remain pending.
+
+`RequirementBindings` stores the requirement-to-task mapping as strict schema-version-1
+JSON, sorts entries by requirement ID, and calculates SHA-256 over that canonical UTF-8
+representation. `Assessment` records both the completed run ID and binding digest. Reloading
+the run and binding artifacts reproduces the same classification without executing tasks.
+Existing mapping-based calls remain supported and are converted to the same artifact.
+
+Keep bindings separate from completed-run evidence v1. A mapping describes how results are
+interpreted and can change independently of an immutable run; embedding it now would silently
+break the evidence schema contract. Later P2/P4 storage can retain both artifacts and their
+relationship explicitly.
+
+Alternative: store only the caller's dictionary or silently add bindings to evidence v1.
+Rejected because the first cannot be handed off reproducibly and the second violates strict
+schema versioning. The digest is a content identity, not authentication, approval, or tamper
+protection. Procedure/version, requirement text and thresholds, input hashes and signatures
+remain required before audit-ready reports.

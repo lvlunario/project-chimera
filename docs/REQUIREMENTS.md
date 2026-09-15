@@ -95,8 +95,25 @@ exit codes remain unchanged. `all_passed` covers only explicitly selected requir
 | VERDICT-005 | all_passed requires a nonempty selection with only pass verdicts | test_empty_is_not_pass; test_complete_pass; negative outcome tests |
 
 The clean-install script also exercises the installed verdict API after snapshot reload.
-Durable requirement bindings, check/input provenance, measured data and operator verdict
-exit codes remain later integration work; this is not full P4 traceability or PM acceptance.
+Versioned requirement bindings are implemented below. Procedure/input provenance, measured
+data and operator verdict exit codes remain later integration work; this is not full P4
+traceability or PM acceptance.
+
+## Requirement-binding artifact v1
+
+Tracked in [issue #10](https://github.com/lvlunario/project-chimera/issues/10).
+
+| ID | Requirement | Acceptance test |
+|---|---|---|
+| BIND-001 | Serialize an exact schema-versioned requirement-to-task mapping and reload it without task execution | `test_mapping_round_trip_is_canonical_and_detached`; `test_serialized_bindings_identify_assessment` |
+| BIND-002 | Reject malformed structure, duplicate fields/requirement IDs, unsupported versions and empty/non-string IDs | `test_rejects_invalid_documents`; `test_rejects_non_mapping_and_non_string_mapping_ids` |
+| BIND-003 | Canonicalize by requirement ID so equivalent mappings have identical JSON and SHA-256 identity | `test_equivalent_order_has_same_json_and_digest`; `test_json_is_utf8_stable` |
+| BIND-004 | Tie each assessment to both the completed run ID and exact binding content identity | `test_serialized_bindings_identify_assessment`; installed-wheel verification |
+
+The SHA-256 value identifies canonical content; it is not a signature and does not prove
+who approved the mapping. Bindings remain a separate artifact from completed-run schema v1,
+avoiding a silent schema change. Requirement text, thresholds, procedure/configuration identity,
+input hashes, signatures and durable multi-artifact storage remain P2/P4 work.
 
 CLI-001–005 are verified on development head `1ea07c7e` by 49 local tests,
 independent negative-path QA, isolated installed-wheel execution and
