@@ -189,6 +189,16 @@ explain; the second lacks a valid check result. See architecture decision 0005.
 
 ## Installation
 
+### P1 approval controls
+
+Run `python -m examples.approval_demo` from a trusted repository checkout to check
+passing, execution-error, no-overwrite, invalid-graph, requirement-failure and replay
+controls. Six `PASS:` lines are expected. The demo uses temporary synthetic artifacts
+and removes them; it does not establish PM acceptance or crash recovery. Follow the
+[P1 packet](reviews/2026-09-15-p1.md) for verification/validation and decision instructions.
+
+### Package installation
+
 The development package requires Python 3.11 or newer and has no third-party runtime
 dependencies. From a trusted checkout:
 

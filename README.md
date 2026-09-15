@@ -54,6 +54,8 @@ and milestone outcomes; generated code is not evidence of owner proficiency.
 
 Leo: use the [phase approval guide](docs/APPROVALS.md) for P0–P7 verification and validation checklists,
 required evidence, walkthroughs, expected results and decision records.
+The [P1 candidate packet](docs/reviews/2026-09-15-p1.md) consolidates the current core review
+and runnable synthetic approval controls.
 Each phase packet must include these checks and candidate-specific runnable instructions.
 Engineering verification and Leo's acceptance are tracked separately; no phase is
 accepted from silence or from a test count alone.

@@ -50,6 +50,8 @@ Decision: **Pending**. Actual observations/conditions: **Not yet recorded**.
 ## P1 — Core execution / M1, October 3
 
 Review [the CLI and evidence instructions](MANUAL.md) and candidate-specific CI evidence.
+Use the [September 15 P1 candidate packet](reviews/2026-09-15-p1.md) for the consolidated
+evidence map, executable controls and actual decision record.
 
 - [ ] Verification: inspect both supported Python CI jobs and clean-install results for the
       candidate. Confirm graph validation, failure propagation, evidence and CLI criteria have proof.

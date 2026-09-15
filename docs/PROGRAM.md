@@ -53,8 +53,9 @@ AI assistance cannot decide that missing evidence is a passing verification.
 3. Strict declarative CLI workflow input is implemented, independently reviewed and
    verified on the published Python 3.11/3.12 CI head; retain its gate evidence.
 4. September 15: the requirement-binding interface is versioned and serializable separately
-   from schema-v1 run evidence (issue #10). Complete candidate CI and the full P1 gate review,
-   including candidate-specific approval instructions.
+   from schema-v1 run evidence (issue #10). The consolidated [P1 packet](reviews/2026-09-15-p1.md)
+   and executable review controls are prepared (issue #11); inspect their candidate CI
+   and obtain Leo's actual verification/validation disposition before gate closure.
 5. Add durable run storage before concurrency/retries; close P1 only after all exit
    criteria pass.
 
