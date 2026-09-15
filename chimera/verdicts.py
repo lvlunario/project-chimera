@@ -7,6 +7,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Literal
 
+from .bindings import RequirementBindings
 from .evidence import RunEvidence
 
 
@@ -21,6 +22,7 @@ class RequirementOutcome:
 @dataclass(frozen=True)
 class Assessment:
     run_id: str
+    bindings_sha256: str
     outcomes: tuple[RequirementOutcome, ...]
 
     @property
@@ -30,7 +32,7 @@ class Assessment:
 
 
 def assess_requirements(
-    evidence: RunEvidence, bindings: Mapping[str, str]
+    evidence: RunEvidence, bindings: Mapping[str, str] | RequirementBindings
 ) -> Assessment:
     """Interpret a completed snapshot without executing tasks or modifying it.
 
@@ -40,12 +42,11 @@ from succeeded tasks are verdicts; no truthiness conversion is permitted.
 """
     if not isinstance(evidence, RunEvidence):
         raise TypeError("evidence must be validated RunEvidence")
-    if not isinstance(bindings, Mapping):
-        raise TypeError("bindings must map requirement IDs to task IDs")
-    selected = dict(bindings)
-    if any(type(value) is not str or not value.strip()
-           for pair in selected.items() for value in pair):
-        raise ValueError("Requirement and task IDs must be nonempty strings")
+    if isinstance(bindings, RequirementBindings):
+        binding_artifact = bindings
+    else:
+        binding_artifact = RequirementBindings.from_mapping(bindings)
+    selected = binding_artifact.to_mapping()
     document = evidence.to_dict()
     tasks = {task["task_id"]: task for task in document["tasks"]}
     outcomes = []
@@ -64,4 +65,4 @@ from succeeded tasks are verdicts; no truthiness conversion is permitted.
         else:
             verdict, reason = "fail", "Check returned False"
         outcomes.append(RequirementOutcome(requirement_id, task_id, verdict, reason))
-    return Assessment(document["run_id"], tuple(outcomes))
+    return Assessment(document["run_id"], binding_artifact.sha256, tuple(outcomes))

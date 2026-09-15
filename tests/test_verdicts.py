@@ -1,7 +1,7 @@
 from dataclasses import FrozenInstanceError
 import unittest
 
-from chimera import RunEvidence, Task, assess_requirements, run_with_evidence
+from chimera import RequirementBindings, RunEvidence, Task, assess_requirements, run_with_evidence
 
 
 class VerdictTests(unittest.TestCase):
@@ -46,6 +46,15 @@ class VerdictTests(unittest.TestCase):
     def test_complete_pass(self):
         evidence = run_with_evidence([Task("check", lambda: True)])
         self.assertTrue(assess_requirements(evidence, {"R1": "check"}).all_passed)
+
+    def test_serialized_bindings_identify_assessment(self):
+        evidence = run_with_evidence([Task("check", lambda: True)])
+        bindings = RequirementBindings.from_mapping({"R1": "check"})
+        reopened = RequirementBindings.from_json(bindings.to_json())
+        assessment = assess_requirements(evidence, reopened)
+        self.assertEqual(assessment.bindings_sha256, bindings.sha256)
+        self.assertEqual(assessment.run_id, evidence.to_dict()["run_id"])
+        self.assertTrue(assessment.all_passed)
 
     def test_round_trip_does_not_execute(self):
         calls = []
