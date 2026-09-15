@@ -334,6 +334,19 @@ means Chimera could not safely start that test at all.
 Exercise: explain why a missing dependency should produce exit 2 with no evidence,
 while a deliberate `fail` task should produce exit 1 and a preserved record.
 
+## Durable storage and recovery design (planned)
+
+The [P2 contract](STORAGE.md) defines atomic run/binding storage, per-task journaling,
+conservative recovery and planned negative tests ([issue #12](https://github.com/lvlunario/project-chimera/issues/12)).
+None of these storage/resume features is implemented yet. The first slice will store
+completed run/binding artifacts; journaled recovery follows separately. Existing
+P1 CLI/API behavior is unchanged. A snapshot database alone cannot satisfy P2.
+
+After an interruption, a running task has an uncertain outcome; missing evidence is
+not proof the action never happened. Proposed recovery defaults to attention rather
+than automatic repetition. Follow the P2 phase approval guide once a runnable packet
+exists; the design's practical exercise is illustrative, not executable.
+
 ## Phase approval instructions
 
 Use the [phase approval guide](APPROVALS.md) for P0–P7 verification and validation checklists,

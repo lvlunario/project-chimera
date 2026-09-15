@@ -1,5 +1,10 @@
 # Architecture decision 0001: deterministic core first
 
+Next design candidate: [P2 storage/recovery contract](STORAGE.md), September 15.
+It specifies planned atomic artifact associations, separate task journaling,
+lifetime runner ownership and conservative uncertain-outcome recovery. This is
+not implemented or accepted, and does not supersede the P1 decisions below.
+
 Status: accepted for foundation.
 
 Use a small Python standard-library execution kernel before network services or

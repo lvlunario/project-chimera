@@ -1,5 +1,11 @@
 # Foundation requirement traceability
 
+Planned P2 requirements STORE-001–004 and RECOVER-001–007 are defined in
+[the storage/recovery contract](STORAGE.md) and tracked in
+[issue #12](https://github.com/lvlunario/project-chimera/issues/12). They have no
+implemented acceptance tests or passing evidence yet; do not treat this planned
+matrix as shipped traceability.
+
 | ID | Requirement | Acceptance test |
 |---|---|---|
 | CORE-001 | Reject duplicate or empty task IDs before execution | test_invalid_ids |

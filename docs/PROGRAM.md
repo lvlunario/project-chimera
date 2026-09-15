@@ -58,6 +58,11 @@ AI assistance cannot decide that missing evidence is a passing verification.
    and obtain Leo's actual verification/validation disposition before gate closure.
 5. Add durable run storage before concurrency/retries; close P1 only after all exit
    criteria pass.
+6. September 15: [P2 storage/restart contract](STORAGE.md) and
+   [issue #12](https://github.com/lvlunario/project-chimera/issues/12) define planned
+   atomic artifacts, journaling and conservative recovery. Next implementation:
+   completed-run/binding SQLite repository with rollback/conflict/reopen tests.
+   Design review is not P2 implementation or gate acceptance.
 
 ## Risks
 Trusted task functions execute in-process and can hang, mutate state or access the host.
