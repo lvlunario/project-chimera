@@ -8,6 +8,14 @@ implemented below; this does not satisfy RECOVER-001–007 or close P2.
 
 ## Immutable completed-artifact storage v1
 
+RECOVER-005 prerequisite (September 16): `tests/test_ownership.py` and independent
+`tests/test_ownership_qa.py` verify the Linux/local-file ownership guard: second-owner
+refusal outside SQLite transactions, exception/SIGKILL release, fork/exec descriptor
+safety, same-inode alias contention and changed-path rejection. Installed-wheel
+exclusion/release is checked in `scripts/verify_clean_install.sh`. The guard is not
+integrated into any runner/recovery entry point; RECOVER-005 remains incomplete.
+No recovery requirement or phase gate is closed by these primitive-level tests.
+
 September 16: `tests/test_storage.py` and independently derived
 `tests/test_storage_qa.py` exercise the first P2 slice (issue #12).
 

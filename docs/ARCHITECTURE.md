@@ -1,10 +1,29 @@
 # Architecture decision 0001: deterministic core first
 
 Next contract: [P2 storage/recovery contract](STORAGE.md), September 15–16.
-It specifies planned atomic artifact associations, separate task journaling,
-lifetime runner ownership and conservative uncertain-outcome recovery. This is
-completed-artifact slice is implemented; journaling/recovery remain planned and
+It specifies atomic artifact associations, separate task journaling,
+lifetime runner ownership and conservative uncertain-outcome recovery. The
+completed-artifact slice and ownership primitive are implemented; journaling/recovery remain planned and
 PM acceptance pending. It does not supersede the P1 decisions below.
+
+## Decision 0008: lifetime ownership independent of SQLite transactions
+
+September 16, 2026. Linux/local-filesystem prerequisite, not integrated recovery.
+Use nonblocking advisory `flock` on an existing database inode rather than a PID
+file/expiry lease. The kernel releases descriptors on process death, avoiding a
+clock-based guess that a slow callback is dead. Keep the descriptor open across
+transactions; normal SQLite connection close does not release the independent lock.
+Fork children close inherited descriptors without explicit unlock; exec closes them.
+
+All future runner/recovery entry points must cooperate and check stable inode identity
+before transitions/callbacks. Reject hardlinks; require trusted stable paths and one
+owning context/thread. This does not defend against hostile pathname replacement,
+network filesystems, uncooperative programs or callbacks that bypass ownership.
+Existing P1 APIs remain unchanged. Separate sidecar locks were not selected because
+deletion/recreation and path aliases can accidentally create independent lock domains.
+Locking the database inode avoids that sidecar alias problem but still requires the
+database itself never be replaced during use. Unknown task outcomes need journaling;
+ownership does not establish exactly-once effects or recovery gate acceptance.
 
 ## Decision 0007: atomic immutable completed-artifact pairs
 
@@ -17,7 +36,7 @@ is not a guarantee against defective disks or external side effects. A failed CO
 can be ambiguous and requires inspection; no implicit retry is implemented.
 Alternative: separate JSON files with inferred filename relationships. Rejected for
 this slice because a failed second write could leave a misleading partial handoff.
-Per-task journal and lifetime runner ownership are separate later work.
+Per-task journal and runner integration of the ownership primitive are later work.
 
 Status: accepted for foundation.
 

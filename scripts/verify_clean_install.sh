@@ -96,6 +96,21 @@ with tempfile.TemporaryDirectory() as directory:
     if restored != assessment:
         raise SystemExit("Installed storage reopen changed assessment")
 print("installed-storage: immutable run/binding reopen passed")
+from chimera import DatabaseOwnership, OwnershipBusy
+with tempfile.TemporaryDirectory() as directory:
+    path = Path(directory, "ownership.sqlite")
+    with EvidenceStore(path):
+        pass
+    with DatabaseOwnership(path) as owner:
+        owner.check()
+        try:
+            with DatabaseOwnership(path):
+                raise SystemExit("Installed ownership admitted a second owner")
+        except OwnershipBusy:
+            pass
+    with DatabaseOwnership(path) as owner:
+        owner.check()
+print("installed-ownership: exclusion and release passed (Linux)")
 PY
 
 DEMO_OUTPUT=$("$WORK/venv/bin/chimera-demo")

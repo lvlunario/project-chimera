@@ -1,65 +1,100 @@
 # Chimera — Engineering Verification Platform
 
-Magnum Opus is the development program for Chimera: an open-source platform for
-orchestrating verification workflows and collecting evidence against requirements.
+**Magnum Opus** is the development program for Chimera: an open-source platform
+that runs engineering checks, evaluates requirements, and preserves the evidence
+needed to investigate failures and hand results to another engineer.
 
-Status: foundation prototype. No claim of production readiness or certification.
-The current implementation executes trusted Python tasks locally, in sequence,
-validates their dependency graph before execution, and blocks downstream tasks
-after a failure. AI orchestration and distributed execution are future milestones.
+**Prototype target: December 12, 2026. Program manager: Leonardo (Leo) Lunario.**
 
-## Install and run
-Python 3.11 or newer; the foundation has no third-party runtime dependencies.
+## Start here
+
+Implementation and detailed documentation currently live on
+[`magnum-opus/development`](https://github.com/lvlunario/project-chimera/tree/magnum-opus/development)
+in [draft PR #1](https://github.com/lvlunario/project-chimera/pull/1). The repository homepage is the project
+entry point; the implementation has not been merged into `main`.
+
+| What you need | Where to go |
+|---|---|
+| Current implementation and installation instructions | [Development README](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/README.md) |
+| Product concepts and operating instructions | [Project manual](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/MANUAL.md) |
+| Deadlines and deliverables | [Roadmap](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/ROADMAP.md) |
+| Your verification, validation and approval instructions | [Phase approval guide: P0–P7](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/APPROVALS.md) |
+| First concept review and scope decisions | [P0 review](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/reviews/2026-09-14.md) |
+| Core-engine evidence and practical approval exercise | [P1 approval packet](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/reviews/2026-09-15-p1.md) |
+| Ongoing changes, test evidence and next steps | [Daily engineering logs](https://github.com/lvlunario/project-chimera/tree/magnum-opus/development/docs/daily) |
+| Requirements and quality approach | [Requirements](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/REQUIREMENTS.md) · [Quality plan](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/QUALITY.md) |
+
+## Progress snapshot — September 16, 2026
+
+The development branch includes:
+
+- A local dependency-aware workflow engine and strict JSON workflow CLI.
+- Versioned JSON evidence that can be reopened without executing checks again.
+- Separate requirement verdicts and execution outcomes, plus versioned requirement bindings.
+- Atomic SQLite storage for completed runs and their selected bindings.
+- A Linux ownership-lock prerequisite; journaling/recovery integration is still pending.
+- An installable Python package and CI on Python 3.11 and 3.12.
+
+The [September 16 evidence log](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-09-16.md)
+records the morning's **86-test hosted verification** and afternoon's **105 passing
+local/independent tests** with isolated installation. Candidate-specific hosted
+results are tracked there and in the PR; do not infer them from earlier runs.
+
+**Phase status:** P0 scope acceptance and P1 acceptance remain pending Leo's response.
+P1's engineering review packet is ready. P2 storage work is in progress;
+per-task journaling and interrupted-task recovery are not implemented yet.
+The browser dashboard and measured-data workflow remain planned.
+Current demonstrations use synthetic data; this is not a production or certification release.
+
+## When you can try it
+
+All dates below are 2026 delivery targets, subject to the documented scope and reviews.
+
+| Target | What Leo can test or review |
+|---|---|
+| Now | Command-line synthetic workflows, failed checks, evidence replay, and completed-run storage |
+| September 19 | Concept, use cases, exclusions and scope decisions |
+| October 3 | Core-engine gate: review evidence and perform the P1 approval exercise |
+| October 17 | Complete communications-data-to-result workflow |
+| November 7 | Feature-complete prototype with a basic operator dashboard |
+| November 28 | Release candidate for structured acceptance testing |
+| December 12 | Stabilized prototype, manuals and final acceptance demonstration |
+
+The planned dashboard has a run list, check-by-check results, and an evidence/report view.
+The intended journey is to load communications-link data, run verification, inspect
+failing samples, then reopen or export the supporting evidence.
+
+## Try the current foundation
+
+Use Python 3.11 or newer. Clone the **development branch** to obtain the implementation:
 
 ```bash
+git clone --branch magnum-opus/development https://github.com/lvlunario/project-chimera.git
+cd project-chimera
 python -m pip install .
 chimera-demo
-chimera run examples/workflow.json --evidence run.json
-python -m unittest discover -s tests -v
-python -m chimera
-python -m examples.evidence_demo
-python -m examples.verdict_demo
+python -m examples.approval_demo
 python -m examples.storage_demo
 ```
 
-The demo intentionally fails a link-margin check and shows its dependent report
-as blocked, while an independent health check succeeds.
-The evidence demo saves/reopens a versioned JSON snapshot in a temporary file.
-The workflow example intentionally exits 1 after saving evidence because its synthetic
-link check fails; Chimera never overwrites an existing evidence path. See the
-[manual](docs/MANUAL.md#declarative-workflow-cli) for schema, exit codes and limitations.
-Maintainers can verify an isolated wheel install with
-`scripts/verify_clean_install.sh`; it builds from a temporary source copy and does
-not publish a package.
+Some demonstrations deliberately show failures to verify correct failure handling.
+Follow the [P1 packet](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/reviews/2026-09-15-p1.md)
+for expected results and your 20–30-minute verification/validation walkthrough.
 
-The [verdict demo](docs/MANUAL.md#requirement-verdicts) shows a successfully executed
-check returning a failed requirement while its handoff task still runs. It also shows
-error and missing/blocked outcomes. Requirement-to-task bindings can now be saved as
-strict versioned JSON, and each assessment records their SHA-256 content identity.
-This is synthetic, not a measured-data adapter or proof that a binding is authentic.
-Completed runs and selected bindings can now be saved atomically to local SQLite;
-the [storage exercise](docs/MANUAL.md#immutable-completed-evidence-storage) reopens
-their assessment without executing tasks. Interrupted-run recovery remains planned.
+For detailed CLI, evidence and verdict commands, use the [manual](docs/MANUAL.md).
+Maintainers run `python -m unittest discover -s tests -v` and
+`scripts/verify_clean_install.sh`; neither publishes a package. On Linux, try
+`python -m examples.ownership_demo` for the [ownership exercise](docs/MANUAL.md#database-ownership-guard-linux-prerequisite).
 
-## Program
-Prototype target: **December 12, 2026**. Leo is the program manager.
-Start with the [project manual](docs/MANUAL.md), [dated roadmap](docs/ROADMAP.md),
-and [quality plan](docs/QUALITY.md). Weekly reviews explain concepts and demonstrate progress.
+## How approvals work
 
-See [program plan](docs/PROGRAM.md), [requirements](docs/REQUIREMENTS.md),
-[architecture](docs/ARCHITECTURE.md), and [daily logs](docs/daily/).
+**Verification:** Does the implementation meet its documented requirements?
+**Validation:** Does the demonstrated workflow solve the intended engineering problem?
 
-Development takes place on `magnum-opus/development`. Progress means working,
-verified increments; phases close only when acceptance evidence exists.
-AI-assisted implementation is recorded as such. The program owner reviews scope
-and milestone outcomes; generated code is not evidence of owner proficiency.
+Each phase provides evidence, steps to try or observe, expected results, and a decision
+record. Leo can **Approve**, **Approve with conditions**, **Request changes**, or **Defer**.
+Passing tests do not constitute PM acceptance; no phase is accepted from silence.
 
-## Phase approval
-
-Leo: use the [phase approval guide](docs/APPROVALS.md) for P0–P7 verification and validation checklists,
-required evidence, walkthroughs, expected results and decision records.
-The [P1 candidate packet](docs/reviews/2026-09-15-p1.md) consolidates the current core review
-and runnable synthetic approval controls.
-Each phase packet must include these checks and candidate-specific runnable instructions.
-Engineering verification and Leo's acceptance are tracked separately; no phase is
-accepted from silence or from a test count alone.
+Development uses Conventional Commits, versioned phase documentation, daily evidence
+logs and weekly concept/demo reviews. AI-assisted implementation and independent AI
+QA are identified separately from Leo's acceptance and personal engineering proficiency.

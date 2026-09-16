@@ -1,5 +1,49 @@
 # Chimera project manual
 
+## Database ownership guard (Linux prerequisite)
+
+Implemented September 16: `DatabaseOwnership` protects an existing local database
+inode with a nonblocking, cooperative process-lifetime lock. It does not journal,
+execute, resume or recover tasks. P1 runners and `EvidenceStore` do not automatically
+acquire it. Future journal/recovery entry points must integrate it before RECOVER-005
+can be accepted end to end. Current support: Linux, local filesystem, one owning
+context/thread; no network filesystems or cross-thread transfer/fork during acquisition.
+
+```python
+from chimera import DatabaseOwnership, EvidenceStore
+
+with EvidenceStore("evidence.sqlite"):
+    pass  # Initialize the database first, without running tasks.
+with DatabaseOwnership("evidence.sqlite") as owner:
+    owner.check()
+    # Future journal transitions/callbacks must remain inside this lifetime.
+```
+
+Another guard on the same file raises `OwnershipBusy` immediately, even after a
+SQLite transaction or connection closes. Normal exit, exceptions and process death
+release ownership. Fork children drop their inherited guard descriptors without
+unlocking the parent; descriptors do not survive exec. Child code must acquire its
+own guard before use. No PID file, clock deadline or stale-lock deletion is used.
+Missing paths are not created; filesystem errors propagate. Non-Linux acquisition
+raises `OwnershipError` without preventing import/use of the existing P1 APIs.
+
+Use a trusted directory, stable path and no hardlinks. Symlink aliases contend on
+the same inode. **Never replace, rename, unlink or hardlink a database while in use.**
+`check()` detects identity changes at checkpoints, not hostile changes between
+checks. Advisory locks do not stop uncooperative programs, SQLite writes, or trusted
+callbacks that bypass the guard. This is not schema validation or security isolation.
+
+Run `python -m examples.ownership_demo` on Linux. Expected: two PASS lines showing
+second-owner refusal after SQLite close and acquisition after release. The temporary
+database is removed. Unit/independent QA tests additionally kill a synthetic owning
+process and prove a new owner can acquire the file; no hardware is accessed.
+
+Teaching note for Leo: a SQLite write lock protects a transaction, not the time
+spent performing a check between transactions. The lifetime guard fills that gap.
+Predict whether finishing a database write should permit a second recovery operator
+to act while the original check is still running: no. It still cannot tell us what
+an interrupted task did; per-task journaling and inspect-only recovery remain next.
+
 ## Immutable completed-evidence storage
 
 Implemented September 16, first P2 slice; no journal or resumable runner yet.

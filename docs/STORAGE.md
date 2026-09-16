@@ -4,6 +4,27 @@ September 15 design; September 16 completed-artifact slice implemented with AI
 assistance. Journal/recovery remain design candidates, not implemented or PM-accepted.
 P1 remains open. Target: M2 October 17, 2026.
 
+## Implemented ownership prerequisite (not runner integration)
+
+September 16: `DatabaseOwnership` holds a Linux local-file nonblocking advisory
+`flock` on the existing database inode, independently of SQLite transactions.
+It releases on context exit or process death; fork children close inherited guard
+descriptors without unlocking the parent, and exec does not inherit them. No stale
+PID/clock heuristic or lock-file deletion. `check()` requires the original inode,
+active owner process and a single filesystem link. Missing/special/hardlinked files
+are refused; symlink aliases lock the same inode. Import remains portable but guard
+acquisition currently supports Linux only. One context/thread, no cross-thread
+transfer or fork during acquisition; trusted stable paths/local filesystems only.
+
+Never replace/unlink/rename/hardlink the database during use. Identity checkpoints
+detect changes, not adversarial races between checks. Advisory ownership is not a
+SQLite write prohibition or sandbox. Existing `run`, `run_with_evidence` and
+`EvidenceStore` are unchanged and do not acquire the guard automatically. This slice
+proves the locking primitive only, **not RECOVER-005 end-to-end completion**. Future
+journal/recovery entry points must hold it across callbacks and between commits.
+Manual exercise and independent subprocess/fork/exec/SIGKILL evidence are provided;
+journal, inspect-only recovery and bounded resume remain unimplemented.
+
 ## Implemented completed-artifact boundary
 
 `EvidenceStore` uses schema version 1 and immutable runs/bindings/associations.
@@ -47,8 +68,8 @@ Use one sequential writer and local filesystem storage. Start with an explicit
 transaction boundary, foreign-key enforcement, FULL synchronous mode and a bounded
 busy timeout. Verify effective settings; refuse unknown storage schema versions.
 No distributed workers, network filesystem guarantees or concurrent runners.
-Writer transactions are not a runner ownership guard: a separate process-lifetime
-exclusive ownership mechanism must cover callback execution and recovery, including
+Writer transactions are not a runner ownership guard: the new process-lifetime
+ownership primitive must be integrated to cover callback execution and recovery, including
 the intervals between commits. Its supported platform and crash-release behavior
 must be declared and tested before any resumable runner ships.
 Readers cannot observe a half-written run/binding pair. Do not use REPLACE to hide

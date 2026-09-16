@@ -64,6 +64,10 @@ AI assistance cannot decide that missing evidence is a passing verification.
    completed-run/binding SQLite repository is implemented September 16 with
    rollback/conflict/reopen tests. Next: per-task journal and inspect-only recovery.
    Completed snapshots alone are not restart recovery or P2 gate acceptance.
+7. September 16: Linux local-file lifetime ownership primitive implemented as a
+   bounded prerequisite for RECOVER-005; journal integration remains pending.
+   Next: per-task running/terminal journal plus inspect-only recovery under this
+   ownership guard. No recovery gate closes from primitive tests alone.
 
 ## Risks
 Trusted task functions execute in-process and can hang, mutate state or access the host.
