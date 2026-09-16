@@ -16,7 +16,7 @@ The 100-developer framing expresses ambition, not actual staffing or throughput.
 |---|---|---|---|
 | P0 | Charter and architecture | Scope, requirements, risks, development policy recorded and reviewed with Leo | Draft documented; PM review pending |
 | P1 | Local execution core | Graph validation, failure propagation, evidence schema, CLI, package install and CI verified | In progress |
-| P2 | Durable execution | SQLite run storage; restart recovery and idempotency tested | Planned |
+| P2 | Durable execution | SQLite run storage; restart recovery and idempotency tested | In progress; completed artifacts implemented, journal/recovery pending |
 | P3 | Engineering adapters | Synthetic telemetry ingestion and deterministic fault injection with reference fixtures | Planned |
 | P4 | Verification evidence | Requirement mapping, reproducible JSON/HTML reports, missing-evidence detection | Planned |
 | P5 | Operator product | API and accessible dashboard; end-to-end acceptance tests | Planned |
@@ -61,12 +61,13 @@ AI assistance cannot decide that missing evidence is a passing verification.
 6. September 15: [P2 storage/restart contract](STORAGE.md) and
    [issue #12](https://github.com/lvlunario/project-chimera/issues/12) define planned
    atomic artifacts, journaling and conservative recovery. Next implementation:
-   completed-run/binding SQLite repository with rollback/conflict/reopen tests.
-   Design review is not P2 implementation or gate acceptance.
+   completed-run/binding SQLite repository is implemented September 16 with
+   rollback/conflict/reopen tests. Next: per-task journal and inspect-only recovery.
+   Completed snapshots alone are not restart recovery or P2 gate acceptance.
 
 ## Risks
 Trusted task functions execute in-process and can hang, mutate state or access the host.
-The prototype is not a sandbox. There is no timeout, cancellation, durable state,
+The prototype is not a sandbox. There is no timeout, cancellation, per-task durable state,
 retry, concurrency, web UI or production isolation yet. Synthetic demonstrations
 must remain labeled synthetic; they do not establish physical-system performance.
 

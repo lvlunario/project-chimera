@@ -19,6 +19,7 @@ python -m unittest discover -s tests -v
 python -m chimera
 python -m examples.evidence_demo
 python -m examples.verdict_demo
+python -m examples.storage_demo
 ```
 
 The demo intentionally fails a link-margin check and shows its dependent report
@@ -36,6 +37,9 @@ check returning a failed requirement while its handoff task still runs. It also 
 error and missing/blocked outcomes. Requirement-to-task bindings can now be saved as
 strict versioned JSON, and each assessment records their SHA-256 content identity.
 This is synthetic, not a measured-data adapter or proof that a binding is authentic.
+Completed runs and selected bindings can now be saved atomically to local SQLite;
+the [storage exercise](docs/MANUAL.md#immutable-completed-evidence-storage) reopens
+their assessment without executing tasks. Interrupted-run recovery remains planned.
 
 ## Program
 Prototype target: **December 12, 2026**. Leo is the program manager.

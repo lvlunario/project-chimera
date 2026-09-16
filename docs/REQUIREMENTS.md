@@ -3,8 +3,24 @@
 Planned P2 requirements STORE-001–004 and RECOVER-001–007 are defined in
 [the storage/recovery contract](STORAGE.md) and tracked in
 [issue #12](https://github.com/lvlunario/project-chimera/issues/12). They have no
-implemented acceptance tests or passing evidence yet; do not treat this planned
-matrix as shipped traceability.
+recovery acceptance evidence yet. STORE-001–004 completed-artifact coverage is
+implemented below; this does not satisfy RECOVER-001–007 or close P2.
+
+## Immutable completed-artifact storage v1
+
+September 16: `tests/test_storage.py` and independently derived
+`tests/test_storage_qa.py` exercise the first P2 slice (issue #12).
+
+| ID | Current completed-artifact evidence |
+|---|---|
+| STORE-001 | process/connection reopen reproduces assessment without callback execution; multiple selected mappings preserve originals |
+| STORE-002 | identical save is acknowledged; changed same-ID content conflicts; independent concurrent process saves serialize |
+| STORE-003 | denied binding INSERT after run INSERT rolls back all artifacts/association; healthy retry succeeds |
+| STORE-004 | schema version/definitions, JSON/digests and relationship corruption fail closed on reopen/read/write |
+
+Installed-wheel storage round trip is in `scripts/verify_clean_install.sh`.
+Process restart tests are not power-loss durability, resumable execution, authenticity
+or full procedure/input provenance evidence. Candidate results belong in the daily log.
 
 | ID | Requirement | Acceptance test |
 |---|---|---|

@@ -1,7 +1,27 @@
-# P2 durable execution contract — design candidate
+# P2 durable execution contract
 
-September 15, 2026. AI-assisted design; not implemented, independently approved,
-or PM-accepted. P1 remains open. Target: M2 October 17, 2026.
+September 15 design; September 16 completed-artifact slice implemented with AI
+assistance. Journal/recovery remain design candidates, not implemented or PM-accepted.
+P1 remains open. Target: M2 October 17, 2026.
+
+## Implemented completed-artifact boundary
+
+`EvidenceStore` uses schema version 1 and immutable runs/bindings/associations.
+`save` uses BEGIN IMMEDIATE for validation/conflict detection and all inserts in
+one transaction; `load` uses a read transaction for a consistent selected pair.
+Identical saves perform no content updates. Existing run identity with changed
+evidence raises StorageConflict. Unknown/forged schema, triggers/views, inconsistent
+JSON, hashes or relationships are rejected. SQL parameters carry operator IDs.
+FULL synchronous, foreign keys and a five-second busy timeout are verified.
+This initial implementation scans all artifacts for consistency on open/save/load;
+acceptable for bounded prototype fixtures, not a benchmarked large-data service.
+Use one local connection per caller, never across threads. Short SQLite write locks
+serialize artifact transactions; they are NOT process-lifetime runner ownership.
+SQLite errors propagate; failed commit can be ambiguous. Reopen and inspect the
+selected pair before deciding what to do; there is no automatic retry/reconciliation.
+Stored hashes detect accidental mismatch, not authenticated tampering. Coordinated
+edits to documents and hashes are not prevented. Only completed P1 snapshots are
+stored; no task plan/configuration identity, journal or partial-run export exists yet.
 
 ## Problem and boundary
 

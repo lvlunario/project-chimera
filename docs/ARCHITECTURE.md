@@ -1,9 +1,23 @@
 # Architecture decision 0001: deterministic core first
 
-Next design candidate: [P2 storage/recovery contract](STORAGE.md), September 15.
+Next contract: [P2 storage/recovery contract](STORAGE.md), September 15–16.
 It specifies planned atomic artifact associations, separate task journaling,
 lifetime runner ownership and conservative uncertain-outcome recovery. This is
-not implemented or accepted, and does not supersede the P1 decisions below.
+completed-artifact slice is implemented; journaling/recovery remain planned and
+PM acceptance pending. It does not supersede the P1 decisions below.
+
+## Decision 0007: atomic immutable completed-artifact pairs
+
+September 16, 2026. First P2 implementation slice; gate/PM acceptance pending.
+Use standard-library SQLite, explicit atomic run/binding/association transactions,
+strict schema/content validation and conflicts rather than REPLACE/upsert updates.
+This preserves an original run while allowing multiple separately selected binding
+interpretations. Load is read-only and never executes callbacks. FULL synchronous
+is not a guarantee against defective disks or external side effects. A failed COMMIT
+can be ambiguous and requires inspection; no implicit retry is implemented.
+Alternative: separate JSON files with inferred filename relationships. Rejected for
+this slice because a failed second write could leave a misleading partial handoff.
+Per-task journal and lifetime runner ownership are separate later work.
 
 Status: accepted for foundation.
 

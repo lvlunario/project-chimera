@@ -1,5 +1,39 @@
 # Chimera project manual
 
+## Immutable completed-evidence storage
+
+Implemented September 16, first P2 slice; no journal or resumable runner yet.
+Run `python -m examples.storage_demo` from the development checkout. Expected:
+original failed verdict preserved after reopen, identical save acknowledged,
+check invoked once, temporary database removed. This is synthetic evidence.
+
+To retain an artifact pair locally after trusted task execution:
+
+```python
+from chimera import EvidenceStore, RequirementBindings, Task, run_with_evidence
+
+evidence = run_with_evidence([Task("link-check", lambda: False)])
+bindings = RequirementBindings.from_mapping({"COM-LINK-001": "link-check"})
+with EvidenceStore("evidence.sqlite") as store:
+    store.save(evidence, bindings)
+with EvidenceStore("evidence.sqlite") as store:
+    reopened_run, reopened_bindings = store.load(
+        evidence.to_dict()["run_id"], bindings.sha256)
+```
+
+Save the run ID and binding digest for explicit selection. Missing associations
+raise KeyError; changed same-ID evidence raises StorageConflict; malformed schema
+or content raises StorageError. SQLite errors propagate, including busy/unavailable
+storage. Do not automatically rerun tasks or retry a failed COMMIT: close/reopen and
+inspect whether the association is durable first. CLI SQLite input/output is not
+implemented; the existing CLI still writes JSON. No recovery or partial-run API exists.
+Use local files and trusted completed snapshots, not network filesystems, secrets,
+or production hardware data. Hashes are not proof of approval/authenticity.
+
+Leo's exercise: predict whether reopening a stored False check calls the check
+again (it must not), then run/observe the demo and explain why the verdict stays fail.
+This demonstrates storage verification, not full P2 validation or acceptance.
+
 ## How to use this manual
 The README is the short entry point. This versioned Markdown manual is the living
 source of truth, so documentation changes can be reviewed with code in a PR.

@@ -85,6 +85,17 @@ if assessment.outcomes[0].verdict != "fail" or assessment.all_passed:
 if assessment.bindings_sha256 != bindings.sha256:
     raise SystemExit("Installed binding identity mismatch")
 print("installed-verdicts: failed requirement and binding identity preserved after reload")
+from chimera import EvidenceStore
+import tempfile
+with tempfile.TemporaryDirectory() as directory:
+    path = Path(directory, "installed.sqlite")
+    with EvidenceStore(path) as store:
+        store.save(checks, bindings)
+    with EvidenceStore(path) as store:
+        restored = assess_requirements(*store.load(assessment.run_id, bindings.sha256))
+    if restored != assessment:
+        raise SystemExit("Installed storage reopen changed assessment")
+print("installed-storage: immutable run/binding reopen passed")
 PY
 
 DEMO_OUTPUT=$("$WORK/venv/bin/chimera-demo")
