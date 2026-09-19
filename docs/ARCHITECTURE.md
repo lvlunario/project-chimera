@@ -3,8 +3,28 @@
 Next contract: [P2 storage/recovery contract](STORAGE.md), September 15–16.
 It specifies atomic artifact associations, separate task journaling,
 lifetime runner ownership and conservative uncertain-outcome recovery. The
-completed-artifact slice and ownership primitive are implemented; journaling/recovery remain planned and
-PM acceptance pending. It does not supersede the P1 decisions below.
+completed-artifact, ownership and inspect-only journal slices are implemented; resume,
+commit reconciliation and export remain planned, with PM acceptance pending. It does not
+supersede the P1 decisions below.
+
+## Decision 0009: separate owned journal and inspect-only recovery
+
+September 19, 2026. Implemented as a bounded P2 slice; gate/PM acceptance pending.
+Keep the task journal in its own strict SQLite schema rather than adding tables to the
+completed-artifact database. `EvidenceStore` deliberately validates an exact version-1
+schema; silently extending that database would break existing evidence stores or require
+a separately tested migration. Separation preserves both contracts while interfaces settle.
+
+Require a canonical plan containing stable operator-supplied operation identities.
+Hold `DatabaseOwnership` before schema initialization or lifecycle mutation and across
+every callback. Commit a running marker before an effect and a detached terminal JSON
+value before scheduling the next task. After interruption, matching-plan inspection marks
+the run needs_attention but accepts no callbacks and performs no retry.
+
+Tradeoff: the two databases are not an atomic evidence bundle, and operation identifiers
+are declarations rather than authenticated code hashes. Resume, ambiguous-commit
+reconciliation and completed export remain explicit later work. This conservative boundary
+prevents a missing result from being mistaken for proof that an effect never occurred.
 
 ## Decision 0008: lifetime ownership independent of SQLite transactions
 
@@ -36,7 +56,8 @@ is not a guarantee against defective disks or external side effects. A failed CO
 can be ambiguous and requires inspection; no implicit retry is implemented.
 Alternative: separate JSON files with inferred filename relationships. Rejected for
 this slice because a failed second write could leave a misleading partial handoff.
-Per-task journal and runner integration of the ownership primitive are later work.
+Update September 19: Decision 0009 implements the separate per-task journal and
+ownership integration; resume and cross-artifact bundling remain later work.
 
 Status: accepted for foundation.
 

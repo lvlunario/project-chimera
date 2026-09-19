@@ -24,7 +24,7 @@ entry point; the implementation has not been merged into `main`.
 | Ongoing changes, test evidence and next steps | [Daily engineering logs](https://github.com/lvlunario/project-chimera/tree/magnum-opus/development/docs/daily) |
 | Requirements and quality approach | [Requirements](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/REQUIREMENTS.md) · [Quality plan](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/QUALITY.md) |
 
-## Progress snapshot — September 16, 2026
+## Progress snapshot — September 19, 2026
 
 The development branch includes:
 
@@ -32,17 +32,16 @@ The development branch includes:
 - Versioned JSON evidence that can be reopened without executing checks again.
 - Separate requirement verdicts and execution outcomes, plus versioned requirement bindings.
 - Atomic SQLite storage for completed runs and their selected bindings.
-- A Linux ownership-lock prerequisite; journaling/recovery integration is still pending.
+- A Linux-owned per-task journal with immediate result commits and inspect-only recovery.
 - An installable Python package and CI on Python 3.11 and 3.12.
 
-The [September 16 evidence log](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-09-16.md)
-records the morning's **86-test hosted verification** and afternoon's **105 passing
-local/independent tests** with isolated installation. Candidate-specific hosted
-results are tracked there and in the PR; do not infer them from earlier runs.
+The [September 19 evidence log](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-09-19.md)
+records candidate-specific local, independent and hosted results. Do not infer a new
+candidate's status from an earlier successful run.
 
 **Phase status:** P0 scope acceptance and P1 acceptance remain pending Leo's response.
 P1's engineering review packet is ready. P2 storage work is in progress;
-per-task journaling and interrupted-task recovery are not implemented yet.
+automatic resume, ambiguous-commit reconciliation and completed-journal export remain pending.
 The browser dashboard and measured-data workflow remain planned.
 Current demonstrations use synthetic data; this is not a production or certification release.
 
@@ -52,7 +51,7 @@ All dates below are 2026 delivery targets, subject to the documented scope and r
 
 | Target | What Leo can test or review |
 |---|---|
-| Now | Command-line synthetic workflows, failed checks, evidence replay, and completed-run storage |
+| Now | Synthetic workflows, evidence replay, completed-run storage, and interrupted-run inspection |
 | September 19 | Concept, use cases, exclusions and scope decisions |
 | October 3 | Core-engine gate: review evidence and perform the P1 approval exercise |
 | October 17 | Complete communications-data-to-result workflow |
@@ -75,6 +74,7 @@ python -m pip install .
 chimera-demo
 python -m examples.approval_demo
 python -m examples.storage_demo
+python -m examples.journal_demo
 ```
 
 Some demonstrations deliberately show failures to verify correct failure handling.

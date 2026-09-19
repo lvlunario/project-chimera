@@ -111,6 +111,22 @@ with tempfile.TemporaryDirectory() as directory:
     with DatabaseOwnership(path) as owner:
         owner.check()
 print("installed-ownership: exclusion and release passed (Linux)")
+from chimera import JournalPlan, JournalTask, inspect_interrupted, run_journaled
+with tempfile.TemporaryDirectory() as directory:
+    path = Path(directory, "journal.sqlite")
+    result = run_journaled(
+        path,
+        [JournalTask("check", lambda: False, "installed:check:v1")],
+    )
+    if result.state != "completed" or result.tasks[0].value is not False:
+        raise SystemExit("Installed journal did not preserve boolean result")
+    plan = JournalPlan.from_tasks(
+        [JournalTask("check", lambda: (_ for _ in ()).throw(
+            SystemExit("inspection executed callback")), "installed:check:v1")]
+    )
+    if inspect_interrupted(path, result.run_id, plan) != result:
+        raise SystemExit("Installed completed-journal inspection changed the result")
+print("installed-journal: durable result and callback-free inspection passed")
 PY
 
 DEMO_OUTPUT=$("$WORK/venv/bin/chimera-demo")

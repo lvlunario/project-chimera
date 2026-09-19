@@ -412,18 +412,36 @@ means Chimera could not safely start that test at all.
 Exercise: explain why a missing dependency should produce exit 2 with no evidence,
 while a deliberate `fail` task should produce exit 1 and a preserved record.
 
-## Durable storage and recovery design (planned)
+## Durable storage and interrupted-run inspection
 
 The [P2 contract](STORAGE.md) defines atomic run/binding storage, per-task journaling,
-conservative recovery and planned negative tests ([issue #12](https://github.com/lvlunario/project-chimera/issues/12)).
-None of these storage/resume features is implemented yet. The first slice will store
-completed run/binding artifacts; journaled recovery follows separately. Existing
-P1 CLI/API behavior is unchanged. A snapshot database alone cannot satisfy P2.
+conservative recovery and negative tests ([issue #12](https://github.com/lvlunario/project-chimera/issues/12)).
+Completed artifact storage and the separate per-task journal are implemented. Existing
+P1 CLI/API behavior is unchanged. Resume and completed-journal export remain planned.
 
 After an interruption, a running task has an uncertain outcome; missing evidence is
-not proof the action never happened. Proposed recovery defaults to attention rather
-than automatic repetition. Follow the P2 phase approval guide once a runnable packet
-exists; the design's practical exercise is illustrative, not executable.
+not proof the action never happened. Recovery defaults to attention rather than automatic
+repetition. On Linux, run:
+
+```bash
+python -m examples.journal_demo
+```
+
+Expected output reports one performed effect, a `needs_attention` run, a `running`
+(unknown-outcome) task and zero recovery callback invocations. The temporary database
+and effect marker are removed. The fixture deliberately kills a child process; it does
+not kill the demo or contact hardware/network services.
+
+Developer API: construct `JournalTask(id, action, operation_id, dependencies)`, then call
+`run_journaled(path, tasks)`. `operation_id` is required provenance supplied by trusted
+code; it is not an authenticated code hash. Use `JournalPlan.from_tasks` and
+`inspect_interrupted(path, run_id, plan)` to inspect only. Recovery accepts no callbacks.
+
+Teaching note for Leo: Chimera writes “this task started” before allowing the effect.
+If the process dies afterward, it refuses to infer whether the effect finished. That is
+less convenient than retrying, but avoids silently performing an action twice. The next
+P2 slice will add a narrowly bounded resume policy for pending synthetic work—not for an
+unknown running task.
 
 ## Phase approval instructions
 

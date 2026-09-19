@@ -1,7 +1,8 @@
 # P2 durable execution contract
 
-September 15 design; September 16 completed-artifact slice implemented with AI
-assistance. Journal/recovery remain design candidates, not implemented or PM-accepted.
+September 15 design; completed-artifact storage landed September 16 and the separate
+per-task journal/inspect-only recovery slice landed September 19 with AI assistance.
+Bounded resume and commit reconciliation remain planned and nothing is PM-accepted.
 P1 remains open. Target: M2 October 17, 2026.
 
 ## Implemented ownership prerequisite (not runner integration)
@@ -22,8 +23,30 @@ SQLite write prohibition or sandbox. Existing `run`, `run_with_evidence` and
 `EvidenceStore` are unchanged and do not acquire the guard automatically. This slice
 proves the locking primitive only, **not RECOVER-005 end-to-end completion**. Future
 journal/recovery entry points must hold it across callbacks and between commits.
-Manual exercise and independent subprocess/fork/exec/SIGKILL evidence are provided;
-journal, inspect-only recovery and bounded resume remain unimplemented.
+The September 19 journal entry point now holds this guard across callbacks and commits.
+Manual exercise and subprocess SIGKILL evidence are provided. Bounded resume remains
+unimplemented.
+
+## Implemented journal and inspect-only recovery boundary
+
+`run_journaled` uses a separate SQLite journal database so adding task records cannot
+silently invalidate the exact version-1 `EvidenceStore` schema. A canonical plan records
+ordered task IDs, dependencies and required operator-supplied operation identities;
+callback code is never serialized. The runner commits `running` before a callback,
+serializes and detaches its finite JSON result immediately, commits the terminal state,
+and only then schedules another task. Linux database ownership spans the whole operation.
+
+Exceptions become durable failures, descendants become blocked and independent work
+continues. KeyboardInterrupt/SystemExit, invalid result serialization and storage errors
+stop scheduling; a task already marked running remains outcome-unknown. `inspect_interrupted`
+requires exclusive ownership and the identical canonical plan, changes an interrupted
+run to `needs_attention`, returns pending/running/terminal states, and accepts no callbacks.
+It is idempotent and never resumes or retries work. A completed run remains completed.
+
+The bounded implementation does not yet export a `RunEvidence` from journal rows, resume
+pending work, reconcile an injected ambiguous commit, authenticate the operation identity,
+or prove power-loss durability. The separate journal and completed-artifact databases are
+not yet one atomic bundle. These limits keep RECOVER-003, RECOVER-006 and RECOVER-007 open.
 
 ## Implemented completed-artifact boundary
 
@@ -140,8 +163,10 @@ No gate closure from this design or a future happy-path round trip alone.
 ## Delivery slices and Leo's participation
 
 1. Immutable completed-run/binding save/load with rollback/conflict evidence.
-2. Per-task journal with immediate detached outputs and inspect-only recovery.
-3. Explicit bounded synthetic resume; integration with CSV slice and P2 packet.
+2. Per-task journal with immediate detached outputs and inspect-only recovery. Implemented
+   September 19; gate remains open.
+3. Explicit bounded synthetic resume, ambiguous-commit reconciliation, completed export;
+   integration with CSV slice and P2 packet.
 
 Each slice stays in draft PR #1 while open. P0/P1 decisions remain pending; this
 reversible design does not authorize merge or change scope. M2 remains October 17;
@@ -150,8 +175,8 @@ that snapshot persistence satisfies recovery. November 29–December 12 is stabi
 
 Teaching note: after a crash, “I have no saved result” does not mean “the task never
 ran.” Conservative recovery trades convenience for avoiding duplicated effects.
-Practical review exercise: a synthetic task increments a counter then the process
-dies before result commit. Expected proposed outcome: needs_attention, no automatic
-second increment, no completed export. This exercise is not runnable yet.
+Practical review exercise: run `python -m examples.journal_demo`. A synthetic task
+performs an effect then its process dies before result commit. Expected: needs_attention,
+running/unknown task, zero callback invocations during recovery and no automatic retry.
 Recommendation: retain conservative recovery; no additional PM decision required
 until a runnable P2 candidate is presented under the phase approval guide.

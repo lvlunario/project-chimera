@@ -1,10 +1,27 @@
 # Foundation requirement traceability
 
+## Per-task journal and inspect-only recovery
+
+September 19 bounded P2 evidence is in `tests/test_journal.py`; it does not close P2.
+
+| ID | Current journal evidence |
+|---|---|
+| RECOVER-001 | committed results are visible to the next task and survive reopen; SIGKILL preserves a running marker |
+| RECOVER-002 | death after a synthetic effect yields needs_attention/running without callback retry; repeated inspection is idempotent |
+| RECOVER-004 | non-finite result and KeyboardInterrupt stop scheduling and preserve attention-required state |
+| RECOVER-005 | journal ownership spans callbacks; a second recovery/runner is refused while active and process death releases ownership |
+
+Canonical changed-plan rejection, strict schema/state validation, immediate mutable-result
+detachment, exceptions/blocking/independent continuation, empty runs and installed-wheel
+inspection are also tested. RECOVER-003 bounded resume, RECOVER-006 ambiguous commit
+reconciliation and RECOVER-007 completed export remain open. The journal uses a separate
+database from immutable completed evidence; cross-database atomic bundling is not claimed.
+
 Planned P2 requirements STORE-001–004 and RECOVER-001–007 are defined in
 [the storage/recovery contract](STORAGE.md) and tracked in
-[issue #12](https://github.com/lvlunario/project-chimera/issues/12). They have no
-recovery acceptance evidence yet. STORE-001–004 completed-artifact coverage is
-implemented below; this does not satisfy RECOVER-001–007 or close P2.
+[issue #12](https://github.com/lvlunario/project-chimera/issues/12). Partial journal
+evidence exists for RECOVER-001/002/004/005 above; no recovery requirement or P2 gate
+is fully accepted. STORE-001–004 completed-artifact coverage is implemented below.
 
 ## Immutable completed-artifact storage v1
 
@@ -12,9 +29,10 @@ RECOVER-005 prerequisite (September 16): `tests/test_ownership.py` and independe
 `tests/test_ownership_qa.py` verify the Linux/local-file ownership guard: second-owner
 refusal outside SQLite transactions, exception/SIGKILL release, fork/exec descriptor
 safety, same-inode alias contention and changed-path rejection. Installed-wheel
-exclusion/release is checked in `scripts/verify_clean_install.sh`. The guard is not
-integrated into any runner/recovery entry point; RECOVER-005 remains incomplete.
-No recovery requirement or phase gate is closed by these primitive-level tests.
+exclusion/release is checked in `scripts/verify_clean_install.sh`. Decision 0009 later
+integrates the guard into the journal runner and inspect-only recovery. RECOVER-005
+remains incomplete for future resume/reconciliation entry points; no phase gate closes
+from primitive or bounded journal tests alone.
 
 September 16: `tests/test_storage.py` and independently derived
 `tests/test_storage_qa.py` exercise the first P2 slice (issue #12).
