@@ -2,7 +2,7 @@
 
 September 15 design; completed-artifact storage landed September 16 and the separate
 per-task journal/inspect-only recovery slice landed September 19 with AI assistance.
-Pending-only bounded resume landed September 20; commit reconciliation/export remain
+Pending-only bounded resume and commit reconciliation landed September 20; export remains
 planned and nothing is PM-accepted.
 P1 remains open. Target: M2 October 17, 2026.
 
@@ -51,10 +51,16 @@ durably pending. A running task makes the entire run outcome-uncertain; resume p
 Completed resume is callback-free. Resumed failures block descendants while independent
 pending work continues; interrupts and invalid values again leave running/unknown state.
 
+The September 20 bounded reconciliation slice reopens a fresh connection after injected
+task-transition or finish errors, validates all durable content, and compares the exact
+intended state/value/error before continuing. A durable `running` task after its callback
+stops scheduling and persists attention; unavailable storage makes no such claim.
+
 The bounded implementation does not yet export a `RunEvidence` from journal rows,
-reconcile an injected ambiguous commit, authenticate the operation identity, or prove
+authenticate the operation identity or prove
 power-loss durability. The separate journal and completed-artifact databases are not yet
-one atomic bundle. These limits keep RECOVER-003 integration, RECOVER-006 and RECOVER-007 open.
+one atomic bundle. RECOVER-006 has bounded synthetic evidence but is not accepted before
+the integrated P2 review; these limits also keep RECOVER-003 integration and RECOVER-007 open.
 
 ## Implemented completed-artifact boundary
 
@@ -174,7 +180,8 @@ No gate closure from this design or a future happy-path round trip alone.
 2. Per-task journal with immediate detached outputs and inspect-only recovery. Implemented
    September 19; gate remains open.
 3. Explicit bounded synthetic resume. Implemented September 20; gate remains open.
-4. Ambiguous-commit reconciliation, completed export, CSV integration and P2 packet.
+4. Creation/task/finish/inspection/claim ambiguous-commit reconciliation implemented
+   September 20; completed export, CSV integration and P2 packet remain.
 
 Each slice stays in draft PR #1 while open. P0/P1 decisions remain pending; this
 reversible design does not authorize merge or change scope. M2 remains October 17;

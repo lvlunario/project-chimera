@@ -3,9 +3,29 @@
 Next contract: [P2 storage/recovery contract](STORAGE.md), September 15–16.
 It specifies atomic artifact associations, separate task journaling,
 lifetime runner ownership and conservative uncertain-outcome recovery. The
-completed-artifact, ownership, journal and pending-only resume slices are implemented;
-commit reconciliation and export remain planned, with PM acceptance pending. It does not
+completed-artifact, ownership, journal, pending-only resume and task-commit reconciliation
+slices are implemented; export remains planned, with PM acceptance pending. It does not
 supersede the P1 decisions below.
+
+## Decision 0011: reopen and compare an ambiguous task commit
+
+September 20, 2026. Implemented as a bounded P2 slice; gate/PM acceptance pending.
+When SQLite reports an error around a task transition, keep lifetime database ownership,
+discard the suspect connection, reopen the existing database without creating it, validate
+the full schema/plan, and compare state, canonical result JSON and error text with the exact
+intended write. Continue only when that complete record matches.
+
+If a pending-to-running marker was not committed, repeating that marker is safe because the
+callback has not been entered. If a callback returned but its terminal write is still
+`running`, persist `needs_attention` and stop all later scheduling; never repeat the callback.
+A final run-state write can be retried after all task records are terminal because it invokes
+no callback. Missing/replaced/corrupt storage raises an explicit unavailable error and never
+claims attention was persisted.
+
+This is not general exactly-once execution: external systems still need adapter-specific
+idempotency/reconciliation. Creation, resume-claim and attention-inspection mutations use
+the same callback-free reopen/retry rule. RECOVER-006 has bounded synthetic evidence but
+remains unaccepted until integrated P2 review; completed journal export remains RECOVER-007.
 
 ## Decision 0010: resume only a proven pending suffix
 
@@ -20,8 +40,9 @@ This chooses safety over availability: Chimera will not guess that an unknown ta
 safe just because later work is independent. Resumed exceptions retain normal failure/
 blocking semantics; interrupts, invalid results and storage errors stop scheduling and
 leave the current task unknown. An already completed run is returned without callbacks.
-Operation IDs remain trusted declarations, not authenticated code hashes. Ambiguous
-commit reconciliation, completed export and adapter-specific idempotency remain later work.
+Operation IDs remain trusted declarations, not authenticated code hashes. Decision 0011
+adds bounded creation/task/finish/inspection/claim reconciliation; completed export and adapter-specific
+idempotency remain later work.
 
 ## Decision 0009: separate owned journal and inspect-only recovery
 
@@ -39,7 +60,7 @@ the run needs_attention but accepts no callbacks and performs no retry.
 
 Tradeoff: the two databases are not an atomic evidence bundle, and operation identifiers
 are declarations rather than authenticated code hashes. Decision 0010 later adds bounded
-pending-only resume; ambiguous-commit reconciliation and completed export remain. This conservative boundary
+pending-only resume; Decision 0011 adds reconciliation, while completed export remains. This conservative boundary
 prevents a missing result from being mistaken for proof that an effect never occurred.
 
 ## Decision 0008: lifetime ownership independent of SQLite transactions

@@ -16,7 +16,7 @@ The 100-developer framing expresses ambition, not actual staffing or throughput.
 |---|---|---|---|
 | P0 | Charter and architecture | Scope, requirements, risks, development policy recorded and reviewed with Leo | Draft documented; PM review pending |
 | P1 | Local execution core | Graph validation, failure propagation, evidence schema, CLI, package install and CI verified | In progress |
-| P2 | Durable execution | SQLite run storage; restart recovery and idempotency tested | In progress; pending-only resume implemented, reconciliation/export pending |
+| P2 | Durable execution | SQLite run storage; restart recovery and idempotency tested | In progress; bounded resume and task-commit reconciliation implemented; export pending |
 | P3 | Engineering adapters | Synthetic telemetry ingestion and deterministic fault injection with reference fixtures | Planned |
 | P4 | Verification evidence | Requirement mapping, reproducible JSON/HTML reports, missing-evidence detection | Planned |
 | P5 | Operator product | API and accessible dashboard; end-to-end acceptance tests | Planned |
@@ -64,8 +64,9 @@ AI assistance cannot decide that missing evidence is a passing verification.
    completed-run/binding SQLite repository is implemented September 16 with
    rollback/conflict/reopen tests. A separate, lifetime-owned per-task journal and
    inspect-only recovery are implemented September 19. September 20 adds explicit
-   pending-only resume while refusing every unknown running task. Ambiguous-commit
-   reconciliation and completed export remain; these slices do not close P2.
+   pending-only resume while refusing every unknown running task. Exact task-transition
+   creation, task transition, finish, inspection and resume-claim reconciliation is
+   implemented September 20; completed export remains. These slices do not close P2.
 7. September 16: Linux local-file lifetime ownership primitive implemented as a
    bounded prerequisite for RECOVER-005; journal integration remains pending.
    September 19 runner integration holds this guard from plan creation through callbacks

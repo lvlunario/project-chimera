@@ -14,7 +14,7 @@ from typing import Callable, Literal
 from uuid import UUID, uuid4
 
 from .engine import Task, _ordered
-from .ownership import DatabaseOwnership
+from .ownership import DatabaseOwnership, OwnershipError
 
 
 class JournalError(RuntimeError):
@@ -23,6 +23,20 @@ class JournalError(RuntimeError):
 
 class JournalConflict(JournalError):
     """A run identity or lifecycle transition conflicts with durable state."""
+
+
+class JournalCommitUncertain(JournalError):
+    """A callback outcome is known locally but its journal commit is not durable."""
+
+    def __init__(self, message: str, *, last_verified_state: str,
+                 durable_attention: bool):
+        super().__init__(message)
+        self.last_verified_state = last_verified_state
+        self.durable_attention = durable_attention
+
+
+class JournalStorageUnavailable(JournalError):
+    """Durable state could not be reopened and verified after a storage error."""
 
 
 @dataclass(frozen=True)
@@ -124,7 +138,7 @@ class TaskInspection:
 @dataclass(frozen=True)
 class RunInspection:
     run_id: str
-    state: Literal["running", "needs_attention", "completed"]
+    state: Literal["running", "needs_attention", "commit_conflict", "completed"]
     plan_sha256: str
     tasks: tuple[TaskInspection, ...]
 
@@ -194,9 +208,7 @@ class _OwnedJournal:
         self.owner = DatabaseOwnership(self.path).__enter__()
         try:
             self.db = sqlite3.connect(self.path, timeout=5)
-            self.db.execute("PRAGMA foreign_keys = ON")
-            self.db.execute("PRAGMA synchronous = FULL")
-            self.db.execute("PRAGMA busy_timeout = 5000")
+            self._configure()
             _initialize_connected(self.db)
             self._validate()
             return self
@@ -218,6 +230,39 @@ class _OwnedJournal:
     def checkpoint(self) -> None:
         assert self.owner is not None
         self.owner.check()
+
+    def _configure(self) -> None:
+        assert self.db is not None
+        self.db.execute("PRAGMA foreign_keys = ON")
+        self.db.execute("PRAGMA synchronous = FULL")
+        self.db.execute("PRAGMA busy_timeout = 5000")
+
+    def _reopen(self) -> None:
+        """Replace a suspect connection while retaining lifetime ownership."""
+        try:
+            self.checkpoint()
+            if self.db is not None:
+                try:
+                    self.db.close()
+                except sqlite3.Error:
+                    pass
+                self.db = None
+            # mode=rw prevents a missing/replaced database from being recreated.
+            uri = self.path.resolve().as_uri() + "?mode=rw"
+            self.db = sqlite3.connect(uri, uri=True, timeout=5)
+            self._configure()
+            self._validate()
+            self.checkpoint()
+        except (sqlite3.Error, OSError, OwnershipError, JournalError) as exc:
+            if self.db is not None:
+                try:
+                    self.db.close()
+                except sqlite3.Error:
+                    pass
+                self.db = None
+            raise JournalStorageUnavailable(
+                "Journal storage unavailable; durable state was not verified"
+            ) from exc
 
     def _validate(self) -> None:
         assert self.db is not None
@@ -250,7 +295,8 @@ class _OwnedJournal:
                          or finished_at < started_at))):
                 raise JournalError("Journal timestamps must be ordered UTC values")
             plan = JournalPlan.from_json(plan_json)
-            if plan.sha256 != digest or state not in ("running", "needs_attention", "completed"):
+            if plan.sha256 != digest or state not in (
+                    "running", "needs_attention", "commit_conflict", "completed"):
                 raise JournalError("Invalid journal run content")
             if (state == "completed") != (finished_at is not None):
                 raise JournalError("Journal completion timestamp/state mismatch")
@@ -308,6 +354,39 @@ class _OwnedJournal:
                                 ((run_id, index, task.task_id, "pending")
                                  for index, task in enumerate(plan.tasks)))
 
+    def reconcile_create(self, run_id: str, plan: JournalPlan) -> None:
+        """Resolve an ambiguous run creation before any callback can execute."""
+        self._reopen()
+        assert self.db is not None
+        row = self.db.execute(
+            "SELECT plan_json,plan_digest,state,finished_at FROM journal_runs WHERE run_id=?",
+            (run_id,),
+        ).fetchone()
+        if row is None:
+            try:
+                self.create(run_id, plan)
+            except sqlite3.Error as exc:
+                self._reopen()
+                assert self.db is not None
+                row = self.db.execute(
+                    "SELECT plan_json,plan_digest,state,finished_at FROM journal_runs "
+                    "WHERE run_id=?", (run_id,)
+                ).fetchone()
+                if row != (plan.to_json(), plan.sha256, "running", None):
+                    raise JournalStorageUnavailable(
+                        "Run creation could not be verified"
+                    ) from exc
+            return
+        if row != (plan.to_json(), plan.sha256, "running", None):
+            raise JournalConflict("Created run conflicts with the intended plan")
+        tasks = self.db.execute(
+            "SELECT task_id,state,value_json,error FROM journal_tasks "
+            "WHERE run_id=? ORDER BY position", (run_id,)
+        ).fetchall()
+        expected = [(task.task_id, "pending", None, None) for task in plan.tasks]
+        if tasks != expected:
+            raise JournalConflict("Created run contains unexpected task state")
+
     def task_state(self, run_id: str, task_id: str) -> str:
         assert self.db is not None
         row = self.db.execute(
@@ -330,6 +409,125 @@ class _OwnedJournal:
             if changed != 1:
                 raise JournalConflict(f"Task {task_id} is not {expected}")
 
+    def reconcile_transition(self, run_id: str, task_id: str, expected: str,
+                             state: str, value_json: str | None,
+                             error: str | None) -> None:
+        """Reopen and resolve an ambiguous transition without rerunning a callback."""
+        self._reopen()
+        assert self.db is not None
+        row = self.db.execute(
+            "SELECT state,value_json,error FROM journal_tasks "
+            "WHERE run_id=? AND task_id=?", (run_id, task_id)
+        ).fetchone()
+        if row is None:
+            raise JournalError("Task disappeared during commit reconciliation")
+        intended = (state, value_json, error)
+        source = (expected, None, None)
+        if row == intended:
+            return
+        if row != source:
+            self._mark_commit_conflict(run_id)
+            raise JournalError("Task content conflicts with the intended commit")
+        if expected == "pending":
+            # No callback was entered, so repeating only this marker/derived write
+            # on the fresh connection is safe.
+            try:
+                self.transition(run_id, task_id, expected, state, value_json, error)
+            except sqlite3.Error as exc:
+                self._reopen()
+                assert self.db is not None
+                durable = self.db.execute(
+                    "SELECT state,value_json,error FROM journal_tasks "
+                    "WHERE run_id=? AND task_id=?", (run_id, task_id)
+                ).fetchone()
+                if durable != intended:
+                    raise JournalStorageUnavailable(
+                        "Retried task marker could not be verified"
+                    ) from exc
+            return
+        self._mark_attention(run_id)
+        raise JournalCommitUncertain(
+            f"Task {task_id} callback completed but its terminal commit did not",
+            last_verified_state=expected,
+            durable_attention=True,
+        )
+
+    def _mark_attention(self, run_id: str) -> None:
+        """Persist attention or report that persistence could not be verified."""
+        assert self.db is not None
+        try:
+            with self.db:
+                self.db.execute("BEGIN IMMEDIATE")
+                changed = self.db.execute(
+                    "UPDATE journal_runs SET state='needs_attention' "
+                    "WHERE run_id=? AND state='running'", (run_id,)
+                ).rowcount
+                if changed != 1:
+                    row = self.db.execute(
+                        "SELECT state FROM journal_runs WHERE run_id=?", (run_id,)
+                    ).fetchone()
+                    if row != ("needs_attention",):
+                        raise JournalConflict("Run cannot be marked for attention")
+        except sqlite3.Error as exc:
+            self._reopen()
+            assert self.db is not None
+            row = self.db.execute(
+                "SELECT state FROM journal_runs WHERE run_id=?", (run_id,)
+            ).fetchone()
+            if row != ("needs_attention",):
+                raise JournalStorageUnavailable(
+                    "Attention persistence could not be verified"
+                ) from exc
+
+    def _mark_commit_conflict(self, run_id: str) -> None:
+        """Persist a non-resumable state after exact-record reconciliation fails."""
+        assert self.db is not None
+        try:
+            with self.db:
+                self.db.execute("BEGIN IMMEDIATE")
+                changed = self.db.execute(
+                    "UPDATE journal_runs SET state='commit_conflict' "
+                    "WHERE run_id=? AND state IN ('running','needs_attention')", (run_id,)
+                ).rowcount
+                if changed != 1:
+                    row = self.db.execute(
+                        "SELECT state FROM journal_runs WHERE run_id=?", (run_id,)
+                    ).fetchone()
+                    if row != ("commit_conflict",):
+                        raise JournalConflict("Run cannot be marked commit-conflicted")
+        except sqlite3.Error as exc:
+            self._reopen()
+            assert self.db is not None
+            row = self.db.execute(
+                "SELECT state FROM journal_runs WHERE run_id=?", (run_id,)
+            ).fetchone()
+            if row == ("commit_conflict",):
+                return
+            if row not in (("running",), ("needs_attention",)):
+                raise JournalStorageUnavailable(
+                    "Commit-conflict persistence could not be verified"
+                ) from exc
+            try:
+                with self.db:
+                    self.db.execute("BEGIN IMMEDIATE")
+                    changed = self.db.execute(
+                        "UPDATE journal_runs SET state='commit_conflict' "
+                        "WHERE run_id=? AND state IN ('running','needs_attention')",
+                        (run_id,),
+                    ).rowcount
+                    if changed != 1:
+                        raise JournalConflict("Run cannot be marked commit-conflicted")
+            except sqlite3.Error as retry_exc:
+                self._reopen()
+                assert self.db is not None
+                durable = self.db.execute(
+                    "SELECT state FROM journal_runs WHERE run_id=?", (run_id,)
+                ).fetchone()
+                if durable != ("commit_conflict",):
+                    raise JournalStorageUnavailable(
+                        "Commit-conflict persistence could not be verified"
+                    ) from retry_exc
+
     def finish(self, run_id: str) -> None:
         assert self.db is not None
         self.checkpoint()
@@ -344,6 +542,34 @@ class _OwnedJournal:
                 "WHERE run_id=? AND state='running'", (_now(), run_id)).rowcount
             if changed != 1:
                 raise JournalConflict("Run is not running")
+
+    def reconcile_finish(self, run_id: str) -> None:
+        """Resolve an ambiguous final run commit without invoking callbacks."""
+        self._reopen()
+        assert self.db is not None
+        row = self.db.execute(
+            "SELECT state,finished_at FROM journal_runs WHERE run_id=?", (run_id,)
+        ).fetchone()
+        if row is None:
+            raise JournalError("Run disappeared during commit reconciliation")
+        if row[0] == "completed" and row[1] is not None:
+            return
+        if row != ("running", None):
+            raise JournalError("Run content conflicts with the intended completion")
+        # All callbacks and task transitions completed before finish was called;
+        # retrying only this metadata commit cannot repeat an effect.
+        try:
+            self.finish(run_id)
+        except sqlite3.Error as exc:
+            self._reopen()
+            assert self.db is not None
+            durable = self.db.execute(
+                "SELECT state,finished_at FROM journal_runs WHERE run_id=?", (run_id,)
+            ).fetchone()
+            if durable is None or durable[0] != "completed" or durable[1] is None:
+                raise JournalStorageUnavailable(
+                    "Run completion could not be verified"
+                ) from exc
 
     def prepare_resume(self, run_id: str, plan: JournalPlan) -> bool:
         """Validate and claim resumable work; never change or retry a running task.
@@ -368,6 +594,8 @@ class _OwnedJournal:
                 raise JournalConflict("Recovery plan does not match durable plan")
             if row[2] == "completed":
                 return False
+            if row[2] == "commit_conflict":
+                raise JournalConflict("Commit-conflicted run cannot resume")
             if self.db.execute(
                     "SELECT 1 FROM journal_tasks WHERE run_id=? AND state='running'",
                     (run_id,)).fetchone():
@@ -432,6 +660,60 @@ def _initialize_connected(db: sqlite3.Connection) -> None:
         raise
 
 
+def _transition_reconciled(journal: _OwnedJournal, run_id: str, task_id: str,
+                           expected: str, state: str,
+                           value_json: str | None = None,
+                           error: str | None = None) -> None:
+    try:
+        journal.transition(run_id, task_id, expected, state, value_json, error)
+    except sqlite3.Error:
+        journal.reconcile_transition(
+            run_id, task_id, expected, state, value_json, error
+        )
+
+
+def _create_reconciled(journal: _OwnedJournal, run_id: str, plan: JournalPlan) -> None:
+    try:
+        journal.create(run_id, plan)
+    except sqlite3.Error:
+        journal.reconcile_create(run_id, plan)
+
+
+def _prepare_resume_reconciled(journal: _OwnedJournal, run_id: str,
+                               plan: JournalPlan) -> bool:
+    try:
+        return journal.prepare_resume(run_id, plan)
+    except sqlite3.Error:
+        journal._reopen()
+        try:
+            return journal.prepare_resume(run_id, plan)
+        except sqlite3.Error as retry_exc:
+            raise JournalStorageUnavailable(
+                "Resume claim could not be verified"
+            ) from retry_exc
+
+
+def _finish_reconciled(journal: _OwnedJournal, run_id: str) -> None:
+    try:
+        journal.finish(run_id)
+    except sqlite3.Error:
+        journal.reconcile_finish(run_id)
+
+
+def _inspect_reconciled(journal: _OwnedJournal, run_id: str,
+                        plan: JournalPlan, recover: bool) -> RunInspection:
+    try:
+        return journal.inspect(run_id, plan, recover)
+    except sqlite3.Error:
+        journal._reopen()
+        try:
+            return journal.inspect(run_id, plan, recover)
+        except sqlite3.Error as exc:
+            raise JournalStorageUnavailable(
+                "Journal inspection could not be verified"
+            ) from exc
+
+
 def run_journaled(path: str | Path, tasks: Iterable[JournalTask], *,
                   run_id: str | None = None) -> RunInspection:
     """Execute once under ownership, committing every transition before continuing.
@@ -444,31 +726,39 @@ def run_journaled(path: str | Path, tasks: Iterable[JournalTask], *,
     actions = {task.id: task.action for task in task_tuple}
     run_id = str(uuid4()) if run_id is None else run_id
     with _OwnedJournal(path) as journal:
-        journal.create(run_id, plan)
+        _create_reconciled(journal, run_id, plan)
         states: dict[str, str] = {}
         for task in plan.tasks:
             unsuccessful = [dep for dep in task.dependencies if states[dep] != "succeeded"]
             if unsuccessful:
-                journal.transition(run_id, task.task_id, "pending", "blocked", error=
-                                   f"Unsuccessful dependencies: {', '.join(unsuccessful)}")
+                _transition_reconciled(
+                    journal, run_id, task.task_id, "pending", "blocked",
+                    error=f"Unsuccessful dependencies: {', '.join(unsuccessful)}",
+                )
                 states[task.task_id] = "blocked"
                 continue
-            journal.transition(run_id, task.task_id, "pending", "running")
+            _transition_reconciled(
+                journal, run_id, task.task_id, "pending", "running"
+            )
             journal.checkpoint()
             try:
                 value = actions[task.task_id]()
             except Exception as exc:
-                journal.transition(run_id, task.task_id, "running", "failed",
-                                   error=f"{type(exc).__name__}: {exc}")
+                _transition_reconciled(
+                    journal, run_id, task.task_id, "running", "failed",
+                    error=f"{type(exc).__name__}: {exc}",
+                )
                 states[task.task_id] = "failed"
             else:
                 # Detach before committing and before any later callback can mutate it.
                 value_json = _result_json(value)
-                journal.transition(run_id, task.task_id, "running", "succeeded",
-                                   value_json=value_json)
+                _transition_reconciled(
+                    journal, run_id, task.task_id, "running", "succeeded",
+                    value_json=value_json,
+                )
                 states[task.task_id] = "succeeded"
-        journal.finish(run_id)
-        return journal.inspect(run_id, plan, recover=False)
+        _finish_reconciled(journal, run_id)
+        return _inspect_reconciled(journal, run_id, plan, recover=False)
 
 
 def resume_journaled(path: str | Path, run_id: str,
@@ -483,9 +773,9 @@ def resume_journaled(path: str | Path, run_id: str,
     plan = JournalPlan.from_tasks(task_tuple)
     actions = {task.id: task.action for task in task_tuple}
     with _OwnedJournal(path) as journal:
-        if not journal.prepare_resume(run_id, plan):
-            return journal.inspect(run_id, plan, recover=False)
-        current = journal.inspect(run_id, plan, recover=False)
+        if not _prepare_resume_reconciled(journal, run_id, plan):
+            return _inspect_reconciled(journal, run_id, plan, recover=False)
+        current = _inspect_reconciled(journal, run_id, plan, recover=False)
         states = {task.task_id: task.state for task in current.tasks}
         for task in plan.tasks:
             if states[task.task_id] != "pending":
@@ -493,31 +783,36 @@ def resume_journaled(path: str | Path, run_id: str,
             unsuccessful = [dep for dep in task.dependencies
                             if states[dep] != "succeeded"]
             if unsuccessful:
-                journal.transition(
+                _transition_reconciled(
+                    journal,
                     run_id, task.task_id, "pending", "blocked",
                     error=f"Unsuccessful dependencies: {', '.join(unsuccessful)}",
                 )
                 states[task.task_id] = "blocked"
                 continue
-            journal.transition(run_id, task.task_id, "pending", "running")
+            _transition_reconciled(
+                journal, run_id, task.task_id, "pending", "running"
+            )
             journal.checkpoint()
             try:
                 value = actions[task.task_id]()
             except Exception as exc:
-                journal.transition(
+                _transition_reconciled(
+                    journal,
                     run_id, task.task_id, "running", "failed",
                     error=f"{type(exc).__name__}: {exc}",
                 )
                 states[task.task_id] = "failed"
             else:
                 value_json = _result_json(value)
-                journal.transition(
+                _transition_reconciled(
+                    journal,
                     run_id, task.task_id, "running", "succeeded",
                     value_json=value_json,
                 )
                 states[task.task_id] = "succeeded"
-        journal.finish(run_id)
-        return journal.inspect(run_id, plan, recover=False)
+        _finish_reconciled(journal, run_id)
+        return _inspect_reconciled(journal, run_id, plan, recover=False)
 
 
 def inspect_interrupted(path: str | Path, run_id: str, plan: JournalPlan) -> RunInspection:
@@ -529,4 +824,4 @@ def inspect_interrupted(path: str | Path, run_id: str, plan: JournalPlan) -> Run
     if not isinstance(plan, JournalPlan):
         raise TypeError("Expected JournalPlan")
     with _OwnedJournal(path) as journal:
-        return journal.inspect(run_id, plan, recover=True)
+        return _inspect_reconciled(journal, run_id, plan, recover=True)

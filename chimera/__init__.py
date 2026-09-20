@@ -6,7 +6,8 @@ from .workflow import WorkflowError, load_workflow, parse_workflow
 from .verdicts import Assessment, RequirementOutcome, assess_requirements
 from .storage import EvidenceStore, StorageError, StorageConflict
 from .ownership import DatabaseOwnership, OwnershipBusy, OwnershipError
-from .journal import (JournalConflict, JournalError, JournalPlan, JournalTask,
+from .journal import (JournalCommitUncertain, JournalConflict, JournalError,
+                      JournalPlan, JournalStorageUnavailable, JournalTask,
                       PlannedTask, RunInspection, TaskInspection,
                       inspect_interrupted, resume_journaled, run_journaled)
 
@@ -17,7 +18,8 @@ __all__ = [
     "Assessment", "RequirementOutcome", "assess_requirements",
     "EvidenceStore", "StorageError", "StorageConflict",
     "DatabaseOwnership", "OwnershipBusy", "OwnershipError",
-    "JournalConflict", "JournalError", "JournalPlan", "JournalTask",
+    "JournalCommitUncertain", "JournalConflict", "JournalError", "JournalPlan",
+    "JournalStorageUnavailable", "JournalTask",
     "PlannedTask", "RunInspection", "TaskInspection",
     "inspect_interrupted", "resume_journaled", "run_journaled",
 ]

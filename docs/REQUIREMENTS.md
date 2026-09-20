@@ -3,7 +3,8 @@
 ## Per-task journal and bounded recovery
 
 September 19 journal evidence is in `tests/test_journal.py`; September 20 bounded-resume
-evidence is in `tests/test_resume.py`. Neither closes P2 or records PM acceptance.
+and commit-reconciliation evidence is in `tests/test_resume.py` and
+`tests/test_commit_recovery.py`. Neither closes P2 or records PM acceptance.
 
 | ID | Current journal evidence |
 |---|---|
@@ -12,18 +13,20 @@ evidence is in `tests/test_resume.py`. Neither closes P2 or records PM acceptanc
 | RECOVER-003 | September 20 bounded resume preserves terminal tasks, validates the exact plan, executes only a pending suffix, blocks descendants of prior failure and continues independent pending work |
 | RECOVER-004 | non-finite result and KeyboardInterrupt stop scheduling and preserve attention-required state |
 | RECOVER-005 | journal ownership spans callbacks; a second recovery/runner is refused while active and process death releases ownership |
+| RECOVER-006 | creation, task-marker, exact terminal-payload, final-run, inspection and resume-claim commits reopen on a fresh connection after injected pre/post-COMMIT errors; callbacks execute at most once; conflicts become non-resumable; missing storage never claims durable attention |
 
 Canonical changed-plan rejection, strict schema/state validation, immediate mutable-result
 detachment, exceptions/blocking/independent continuation, empty runs and installed-wheel
 inspection are also tested. RECOVER-003 has bounded synthetic evidence; integration and
-PM acceptance remain pending. RECOVER-006 ambiguous commit reconciliation and
-RECOVER-007 completed export remain open. The journal uses a separate
+PM acceptance remain pending. RECOVER-006 now has bounded synthetic reconciliation
+evidence but remains unaccepted until the integrated P2 gate review.
+RECOVER-007 completed export remains open. The journal uses a separate
 database from immutable completed evidence; cross-database atomic bundling is not claimed.
 
 Planned P2 requirements STORE-001–004 and RECOVER-001–007 are defined in
 [the storage/recovery contract](STORAGE.md) and tracked in
 [issue #12](https://github.com/lvlunario/project-chimera/issues/12). Partial journal
-evidence exists for RECOVER-001–005 above; no recovery requirement or P2 gate
+evidence exists for RECOVER-001–006 above; no recovery requirement or P2 gate
 is fully accepted. STORE-001–004 completed-artifact coverage is implemented below.
 
 ## Immutable completed-artifact storage v1

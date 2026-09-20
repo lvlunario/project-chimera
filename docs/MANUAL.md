@@ -417,8 +417,8 @@ while a deliberate `fail` task should produce exit 1 and a preserved record.
 The [P2 contract](STORAGE.md) defines atomic run/binding storage, per-task journaling,
 conservative recovery and negative tests ([issue #12](https://github.com/lvlunario/project-chimera/issues/12)).
 Completed artifact storage, the separate per-task journal and bounded pending-only resume
-are implemented. Existing P1 CLI/API behavior is unchanged. Ambiguous-commit
-reconciliation and completed-journal export remain planned.
+are implemented. Existing P1 CLI/API behavior is unchanged. Task-transition and final-run
+commit reconciliation are implemented; completed-journal export remains planned.
 
 After an interruption, a running task has an uncertain outcome; missing evidence is
 not proof the action never happened. Recovery defaults to attention rather than automatic
@@ -466,6 +466,28 @@ Teaching note for Leo: Chimera writes “this task started” before allowing th
 If the process dies afterward, it refuses to infer whether the effect finished. That is
 less convenient than retrying, but avoids silently performing an action twice. Pending-only
 resume is now implemented; unknown running work remains deliberately non-resumable.
+
+### Ambiguous commit exercise
+
+On Linux, run:
+
+```bash
+python -m examples.commit_recovery_demo
+```
+
+The synthetic connection reports an error after the first task's terminal COMMIT. Chimera
+discards that connection, reopens the existing database under the same owner, validates the
+whole journal and continues only because the exact state and canonical result match. Expected
+output reports one `measure` callback, one `report` callback and a completed run.
+
+If reopen instead finds `running` after the callback returned, Chimera records
+`needs_attention`, stops later work and raises `JournalCommitUncertain`. If the database
+cannot be reopened and validated, it raises `JournalStorageUnavailable` without claiming
+that attention was saved. This is local synthetic fault injection, not power-loss evidence.
+
+Teaching note for Leo: an error message cannot tell us which side of COMMIT occurred. The
+durable row can. Comparing the entire intended record lets Chimera accept a commit that did
+happen without ever repeating the engineering action that produced it.
 
 ## Phase approval instructions
 

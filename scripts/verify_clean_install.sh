@@ -111,7 +111,8 @@ with tempfile.TemporaryDirectory() as directory:
     with DatabaseOwnership(path) as owner:
         owner.check()
 print("installed-ownership: exclusion and release passed (Linux)")
-from chimera import (JournalPlan, JournalTask, inspect_interrupted,
+from chimera import (JournalCommitUncertain, JournalPlan, JournalStorageUnavailable,
+                     JournalTask, inspect_interrupted,
                      resume_journaled, run_journaled)
 with tempfile.TemporaryDirectory() as directory:
     path = Path(directory, "journal.sqlite")
@@ -133,6 +134,11 @@ with tempfile.TemporaryDirectory() as directory:
     ]) != result:
         raise SystemExit("Installed completed resume changed the result")
 print("installed-journal: durable result, callback-free inspection/resume passed")
+if not issubclass(JournalCommitUncertain, RuntimeError):
+    raise SystemExit("Installed uncertain-commit exception is unavailable")
+if not issubclass(JournalStorageUnavailable, RuntimeError):
+    raise SystemExit("Installed storage-unavailable exception is unavailable")
+print("installed-reconciliation: public fail-closed exceptions available")
 PY
 
 DEMO_OUTPUT=$("$WORK/venv/bin/chimera-demo")
