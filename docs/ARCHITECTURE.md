@@ -3,9 +3,25 @@
 Next contract: [P2 storage/recovery contract](STORAGE.md), September 15–16.
 It specifies atomic artifact associations, separate task journaling,
 lifetime runner ownership and conservative uncertain-outcome recovery. The
-completed-artifact, ownership and inspect-only journal slices are implemented; resume,
+completed-artifact, ownership, journal and pending-only resume slices are implemented;
 commit reconciliation and export remain planned, with PM acceptance pending. It does not
 supersede the P1 decisions below.
+
+## Decision 0010: resume only a proven pending suffix
+
+September 20, 2026. Implemented as a bounded P2 slice; gate/PM acceptance pending.
+An explicit `resume_journaled` call acquires lifetime ownership, validates the complete
+canonical plan and durable state, preserves every terminal task, and executes only the
+remaining pending suffix. A run abandoned between commits may resume because no callback
+was marked running. A run containing any running task is changed to `needs_attention`
+and refused in full, including independent pending work.
+
+This chooses safety over availability: Chimera will not guess that an unknown task is
+safe just because later work is independent. Resumed exceptions retain normal failure/
+blocking semantics; interrupts, invalid results and storage errors stop scheduling and
+leave the current task unknown. An already completed run is returned without callbacks.
+Operation IDs remain trusted declarations, not authenticated code hashes. Ambiguous
+commit reconciliation, completed export and adapter-specific idempotency remain later work.
 
 ## Decision 0009: separate owned journal and inspect-only recovery
 
@@ -22,8 +38,8 @@ value before scheduling the next task. After interruption, matching-plan inspect
 the run needs_attention but accepts no callbacks and performs no retry.
 
 Tradeoff: the two databases are not an atomic evidence bundle, and operation identifiers
-are declarations rather than authenticated code hashes. Resume, ambiguous-commit
-reconciliation and completed export remain explicit later work. This conservative boundary
+are declarations rather than authenticated code hashes. Decision 0010 later adds bounded
+pending-only resume; ambiguous-commit reconciliation and completed export remain. This conservative boundary
 prevents a missing result from being mistaken for proof that an effect never occurred.
 
 ## Decision 0008: lifetime ownership independent of SQLite transactions
@@ -56,8 +72,8 @@ is not a guarantee against defective disks or external side effects. A failed CO
 can be ambiguous and requires inspection; no implicit retry is implemented.
 Alternative: separate JSON files with inferred filename relationships. Rejected for
 this slice because a failed second write could leave a misleading partial handoff.
-Update September 19: Decision 0009 implements the separate per-task journal and
-ownership integration; resume and cross-artifact bundling remain later work.
+Update September 19–20: Decisions 0009–0010 implement the separate per-task journal,
+ownership integration and pending-only resume; cross-artifact bundling remains later work.
 
 Status: accepted for foundation.
 

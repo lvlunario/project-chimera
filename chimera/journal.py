@@ -1,4 +1,4 @@
-"""Durable sequential task journal with conservative inspect-only recovery."""
+"""Durable sequential task journal with conservative bounded recovery."""
 from __future__ import annotations
 
 from collections.abc import Iterable
@@ -345,6 +345,47 @@ class _OwnedJournal:
             if changed != 1:
                 raise JournalConflict("Run is not running")
 
+    def prepare_resume(self, run_id: str, plan: JournalPlan) -> bool:
+        """Validate and claim resumable work; never change or retry a running task.
+
+        Returns false for an already completed run. An interrupted run may still
+        say ``running`` when its prior owner died between task commits; exclusive
+        ownership plus the absence of a running task makes its pending suffix safe.
+        """
+        assert self.db is not None
+        self.checkpoint()
+        unknown_running = False
+        with self.db:
+            self.db.execute("BEGIN IMMEDIATE")
+            self._validate()
+            row = self.db.execute(
+                "SELECT plan_json,plan_digest,state FROM journal_runs WHERE run_id=?",
+                (run_id,),
+            ).fetchone()
+            if row is None:
+                raise KeyError(run_id)
+            if row[0] != plan.to_json() or row[1] != plan.sha256:
+                raise JournalConflict("Recovery plan does not match durable plan")
+            if row[2] == "completed":
+                return False
+            if self.db.execute(
+                    "SELECT 1 FROM journal_tasks WHERE run_id=? AND state='running'",
+                    (run_id,)).fetchone():
+                if row[2] == "running":
+                    self.db.execute(
+                        "UPDATE journal_runs SET state='needs_attention' WHERE run_id=?",
+                        (run_id,),
+                    )
+                unknown_running = True
+            elif row[2] == "needs_attention":
+                self.db.execute(
+                    "UPDATE journal_runs SET state='running' WHERE run_id=?",
+                    (run_id,),
+                )
+        if unknown_running:
+            raise JournalConflict("Unknown running task prevents resume")
+        return True
+
     def inspect(self, run_id: str, plan: JournalPlan, recover: bool) -> RunInspection:
         assert self.db is not None
         self.checkpoint()
@@ -425,6 +466,55 @@ def run_journaled(path: str | Path, tasks: Iterable[JournalTask], *,
                 value_json = _result_json(value)
                 journal.transition(run_id, task.task_id, "running", "succeeded",
                                    value_json=value_json)
+                states[task.task_id] = "succeeded"
+        journal.finish(run_id)
+        return journal.inspect(run_id, plan, recover=False)
+
+
+def resume_journaled(path: str | Path, run_id: str,
+                     tasks: Iterable[JournalTask]) -> RunInspection:
+    """Continue only a validated pending suffix under exclusive ownership.
+
+    Terminal tasks are never invoked again. If any task is durably ``running``, its
+    outcome is unknown and the entire resume is refused without invoking callbacks.
+    The operation identity is trusted caller-supplied provenance, not authentication.
+    """
+    task_tuple = tuple(tasks)
+    plan = JournalPlan.from_tasks(task_tuple)
+    actions = {task.id: task.action for task in task_tuple}
+    with _OwnedJournal(path) as journal:
+        if not journal.prepare_resume(run_id, plan):
+            return journal.inspect(run_id, plan, recover=False)
+        current = journal.inspect(run_id, plan, recover=False)
+        states = {task.task_id: task.state for task in current.tasks}
+        for task in plan.tasks:
+            if states[task.task_id] != "pending":
+                continue
+            unsuccessful = [dep for dep in task.dependencies
+                            if states[dep] != "succeeded"]
+            if unsuccessful:
+                journal.transition(
+                    run_id, task.task_id, "pending", "blocked",
+                    error=f"Unsuccessful dependencies: {', '.join(unsuccessful)}",
+                )
+                states[task.task_id] = "blocked"
+                continue
+            journal.transition(run_id, task.task_id, "pending", "running")
+            journal.checkpoint()
+            try:
+                value = actions[task.task_id]()
+            except Exception as exc:
+                journal.transition(
+                    run_id, task.task_id, "running", "failed",
+                    error=f"{type(exc).__name__}: {exc}",
+                )
+                states[task.task_id] = "failed"
+            else:
+                value_json = _result_json(value)
+                journal.transition(
+                    run_id, task.task_id, "running", "succeeded",
+                    value_json=value_json,
+                )
                 states[task.task_id] = "succeeded"
         journal.finish(run_id)
         return journal.inspect(run_id, plan, recover=False)

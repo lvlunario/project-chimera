@@ -2,7 +2,8 @@
 
 September 15 design; completed-artifact storage landed September 16 and the separate
 per-task journal/inspect-only recovery slice landed September 19 with AI assistance.
-Bounded resume and commit reconciliation remain planned and nothing is PM-accepted.
+Pending-only bounded resume landed September 20; commit reconciliation/export remain
+planned and nothing is PM-accepted.
 P1 remains open. Target: M2 October 17, 2026.
 
 ## Implemented ownership prerequisite (not runner integration)
@@ -43,10 +44,17 @@ requires exclusive ownership and the identical canonical plan, changes an interr
 run to `needs_attention`, returns pending/running/terminal states, and accepts no callbacks.
 It is idempotent and never resumes or retries work. A completed run remains completed.
 
-The bounded implementation does not yet export a `RunEvidence` from journal rows, resume
-pending work, reconcile an injected ambiguous commit, authenticate the operation identity,
-or prove power-loss durability. The separate journal and completed-artifact databases are
-not yet one atomic bundle. These limits keep RECOVER-003, RECOVER-006 and RECOVER-007 open.
+September 20 adds explicit `resume_journaled`: under exclusive ownership it accepts the
+identical canonical plan, preserves the terminal prefix and executes only tasks still
+durably pending. A running task makes the entire run outcome-uncertain; resume persists
+`needs_attention`, invokes zero callbacks and refuses even independent pending tasks.
+Completed resume is callback-free. Resumed failures block descendants while independent
+pending work continues; interrupts and invalid values again leave running/unknown state.
+
+The bounded implementation does not yet export a `RunEvidence` from journal rows,
+reconcile an injected ambiguous commit, authenticate the operation identity, or prove
+power-loss durability. The separate journal and completed-artifact databases are not yet
+one atomic bundle. These limits keep RECOVER-003 integration, RECOVER-006 and RECOVER-007 open.
 
 ## Implemented completed-artifact boundary
 
@@ -165,8 +173,8 @@ No gate closure from this design or a future happy-path round trip alone.
 1. Immutable completed-run/binding save/load with rollback/conflict evidence.
 2. Per-task journal with immediate detached outputs and inspect-only recovery. Implemented
    September 19; gate remains open.
-3. Explicit bounded synthetic resume, ambiguous-commit reconciliation, completed export;
-   integration with CSV slice and P2 packet.
+3. Explicit bounded synthetic resume. Implemented September 20; gate remains open.
+4. Ambiguous-commit reconciliation, completed export, CSV integration and P2 packet.
 
 Each slice stays in draft PR #1 while open. P0/P1 decisions remain pending; this
 reversible design does not authorize merge or change scope. M2 remains October 17;

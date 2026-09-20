@@ -16,7 +16,7 @@ The 100-developer framing expresses ambition, not actual staffing or throughput.
 |---|---|---|---|
 | P0 | Charter and architecture | Scope, requirements, risks, development policy recorded and reviewed with Leo | Draft documented; PM review pending |
 | P1 | Local execution core | Graph validation, failure propagation, evidence schema, CLI, package install and CI verified | In progress |
-| P2 | Durable execution | SQLite run storage; restart recovery and idempotency tested | In progress; completed artifacts and inspect-only journal implemented, resume/reconciliation pending |
+| P2 | Durable execution | SQLite run storage; restart recovery and idempotency tested | In progress; pending-only resume implemented, reconciliation/export pending |
 | P3 | Engineering adapters | Synthetic telemetry ingestion and deterministic fault injection with reference fixtures | Planned |
 | P4 | Verification evidence | Requirement mapping, reproducible JSON/HTML reports, missing-evidence detection | Planned |
 | P5 | Operator product | API and accessible dashboard; end-to-end acceptance tests | Planned |
@@ -63,9 +63,9 @@ AI assistance cannot decide that missing evidence is a passing verification.
    atomic artifacts, journaling and conservative recovery. Next implementation:
    completed-run/binding SQLite repository is implemented September 16 with
    rollback/conflict/reopen tests. A separate, lifetime-owned per-task journal and
-   inspect-only recovery are implemented September 19. Explicit bounded resume,
-   ambiguous-commit reconciliation and completed export remain. Completed snapshots
-   or inspect-only recovery alone are not P2 gate acceptance.
+   inspect-only recovery are implemented September 19. September 20 adds explicit
+   pending-only resume while refusing every unknown running task. Ambiguous-commit
+   reconciliation and completed export remain; these slices do not close P2.
 7. September 16: Linux local-file lifetime ownership primitive implemented as a
    bounded prerequisite for RECOVER-005; journal integration remains pending.
    September 19 runner integration holds this guard from plan creation through callbacks
@@ -73,8 +73,9 @@ AI assistance cannot decide that missing evidence is a passing verification.
 
 ## Risks
 Trusted task functions execute in-process and can hang, mutate state or access the host.
-The prototype is not a sandbox. There is no timeout, cancellation, per-task durable state,
-retry, concurrency, web UI or production isolation yet. Synthetic demonstrations
+The prototype is not a sandbox. There is no timeout, cancellation, general adapter retry,
+concurrency, web UI or production isolation yet. Bounded resume applies only to tasks
+durably proven pending; running/unknown work is never retried. Synthetic demonstrations
 must remain labeled synthetic; they do not establish physical-system performance.
 
 ## Phase approval instructions

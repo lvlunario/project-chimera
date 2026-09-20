@@ -32,7 +32,7 @@ The development branch includes:
 - Versioned JSON evidence that can be reopened without executing checks again.
 - Separate requirement verdicts and execution outcomes, plus versioned requirement bindings.
 - Atomic SQLite storage for completed runs and their selected bindings.
-- A Linux-owned per-task journal with immediate result commits and inspect-only recovery.
+- A Linux-owned per-task journal with conservative pending-only restart recovery.
 - An installable Python package and CI on Python 3.11 and 3.12.
 
 The [September 19 evidence log](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-09-19.md)
@@ -41,7 +41,7 @@ candidate's status from an earlier successful run.
 
 **Phase status:** P0 scope acceptance and P1 acceptance remain pending Leo's response.
 P1's engineering review packet is ready. P2 storage work is in progress;
-automatic resume, ambiguous-commit reconciliation and completed-journal export remain pending.
+ambiguous-commit reconciliation and completed-journal export remain pending.
 The browser dashboard and measured-data workflow remain planned.
 Current demonstrations use synthetic data; this is not a production or certification release.
 
@@ -75,6 +75,7 @@ chimera-demo
 python -m examples.approval_demo
 python -m examples.storage_demo
 python -m examples.journal_demo
+python -m examples.resume_demo
 ```
 
 Some demonstrations deliberately show failures to verify correct failure handling.

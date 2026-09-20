@@ -416,8 +416,9 @@ while a deliberate `fail` task should produce exit 1 and a preserved record.
 
 The [P2 contract](STORAGE.md) defines atomic run/binding storage, per-task journaling,
 conservative recovery and negative tests ([issue #12](https://github.com/lvlunario/project-chimera/issues/12)).
-Completed artifact storage and the separate per-task journal are implemented. Existing
-P1 CLI/API behavior is unchanged. Resume and completed-journal export remain planned.
+Completed artifact storage, the separate per-task journal and bounded pending-only resume
+are implemented. Existing P1 CLI/API behavior is unchanged. Ambiguous-commit
+reconciliation and completed-journal export remain planned.
 
 After an interruption, a running task has an uncertain outcome; missing evidence is
 not proof the action never happened. Recovery defaults to attention rather than automatic
@@ -435,13 +436,36 @@ not kill the demo or contact hardware/network services.
 Developer API: construct `JournalTask(id, action, operation_id, dependencies)`, then call
 `run_journaled(path, tasks)`. `operation_id` is required provenance supplied by trusted
 code; it is not an authenticated code hash. Use `JournalPlan.from_tasks` and
-`inspect_interrupted(path, run_id, plan)` to inspect only. Recovery accepts no callbacks.
+`inspect_interrupted(path, run_id, plan)` to inspect only. Inspection accepts no callbacks.
+
+### Pending-only restart exercise
+
+On Linux, run:
+
+```bash
+python -m examples.resume_demo
+```
+
+The synthetic child process dies after committing the first task's successful result but
+before starting the second. A new process preserves the first result, invokes only the
+pending second task and completes the same run. The demo uses a private test-only fault
+injection point to make the crash boundary deterministic; no hardware/network is contacted.
+
+Use `resume_journaled(path, run_id, tasks)` with the identical task IDs, dependencies and
+operation IDs. The function holds exclusive ownership, revalidates all durable content and
+never calls terminal tasks. It returns an already completed run without callbacks. If any
+task is `running`, resume refuses the entire run and persists `needs_attention`; it does
+not run otherwise independent pending tasks. The caller must investigate/reconcile that
+unknown effect rather than relabel or repeat it.
+
+Teaching exercise: compare two crashes. If task A is durably succeeded and task B is
+pending, B may resume. If A is running, neither A nor B may execute. Explain why B's
+independence cannot make A's unknown external effect safe to ignore.
 
 Teaching note for Leo: Chimera writes “this task started” before allowing the effect.
 If the process dies afterward, it refuses to infer whether the effect finished. That is
-less convenient than retrying, but avoids silently performing an action twice. The next
-P2 slice will add a narrowly bounded resume policy for pending synthetic work—not for an
-unknown running task.
+less convenient than retrying, but avoids silently performing an action twice. Pending-only
+resume is now implemented; unknown running work remains deliberately non-resumable.
 
 ## Phase approval instructions
 

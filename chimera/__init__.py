@@ -8,7 +8,7 @@ from .storage import EvidenceStore, StorageError, StorageConflict
 from .ownership import DatabaseOwnership, OwnershipBusy, OwnershipError
 from .journal import (JournalConflict, JournalError, JournalPlan, JournalTask,
                       PlannedTask, RunInspection, TaskInspection,
-                      inspect_interrupted, run_journaled)
+                      inspect_interrupted, resume_journaled, run_journaled)
 
 __all__ = [
     "Result", "Task", "run", "BindingError", "RequirementBindings",
@@ -19,5 +19,5 @@ __all__ = [
     "DatabaseOwnership", "OwnershipBusy", "OwnershipError",
     "JournalConflict", "JournalError", "JournalPlan", "JournalTask",
     "PlannedTask", "RunInspection", "TaskInspection",
-    "inspect_interrupted", "run_journaled",
+    "inspect_interrupted", "resume_journaled", "run_journaled",
 ]
