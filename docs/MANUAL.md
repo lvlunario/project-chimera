@@ -42,11 +42,13 @@ Teaching note for Leo: a SQLite write lock protects a transaction, not the time
 spent performing a check between transactions. The lifetime guard fills that gap.
 Predict whether finishing a database write should permit a second recovery operator
 to act while the original check is still running: no. It still cannot tell us what
-an interrupted task did; per-task journaling and inspect-only recovery remain next.
+an interrupted task did; the later journal/recovery sections show how Chimera records
+that uncertainty and refuses an unsafe retry.
 
 ## Immutable completed-evidence storage
 
-Implemented September 16, first P2 slice; no journal or resumable runner yet.
+Implemented September 16 as the first P2 slice; the separate journal, bounded resume and
+completed-evidence handoff are documented later in this manual.
 Run `python -m examples.storage_demo` from the development checkout. Expected:
 original failed verdict preserved after reopen, identical save acknowledged,
 check invoked once, temporary database removed. This is synthetic evidence.
@@ -418,7 +420,9 @@ The [P2 contract](STORAGE.md) defines atomic run/binding storage, per-task journ
 conservative recovery and negative tests ([issue #12](https://github.com/lvlunario/project-chimera/issues/12)).
 Completed artifact storage, the separate per-task journal and bounded pending-only resume
 are implemented. Existing P1 CLI/API behavior is unchanged. Task-transition and final-run
-commit reconciliation are implemented; completed-journal export remains planned.
+commit reconciliation are implemented. Completed journals can now be exported into
+existing schema-v1 evidence; communications
+CSV integration and the full P2 approval packet remain planned.
 
 After an interruption, a running task has an uncertain outcome; missing evidence is
 not proof the action never happened. Recovery defaults to attention rather than automatic
@@ -488,6 +492,30 @@ that attention was saved. This is local synthetic fault injection, not power-los
 Teaching note for Leo: an error message cannot tell us which side of COMMIT occurred. The
 durable row can. Comparing the entire intended record lets Chimera accept a commit that did
 happen without ever repeating the engineering action that produced it.
+
+### Completed journal evidence handoff
+
+On Linux, run:
+
+```bash
+python -m examples.journal_export_demo
+```
+
+The demonstration runs one synthetic link-margin check, exports the completed journal as
+schema-v1 `RunEvidence`, saves/reopens it through `EvidenceStore`, and evaluates its
+requirement verdict. Expected output shows the same run ID, a failed requirement, and
+exactly one callback invocation even though the evidence is reopened and assessed.
+
+Developer API: call `export_journal_evidence(path, run_id, plan)` with the exact
+`JournalPlan`. Export opens only an existing journal, validates all rows in one read
+transaction, and refuses running, needs-attention, commit-conflicted, wrong-plan or corrupt
+runs. It never accepts callbacks. Missing paths remain missing rather than being initialized.
+
+Teaching note for Leo: a journal is the execution record; schema-v1 evidence is the portable
+handoff. Chimera copies only a fully completed, internally consistent run. The current
+handoff does not atomically join the two databases, and schema v1 does not preserve the
+operation IDs or plan digest after conversion—those provenance fields require a future
+versioned evidence contract rather than a silent format change.
 
 ## Phase approval instructions
 

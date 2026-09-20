@@ -4,8 +4,29 @@ Next contract: [P2 storage/recovery contract](STORAGE.md), September 15–16.
 It specifies atomic artifact associations, separate task journaling,
 lifetime runner ownership and conservative uncertain-outcome recovery. The
 completed-artifact, ownership, journal, pending-only resume and task-commit reconciliation
-slices are implemented; export remains planned, with PM acceptance pending. It does not
+slices plus completed-journal export are implemented; vertical integration remains, with
+PM acceptance pending. It does not
 supersede the P1 decisions below.
+
+## Decision 0012: export completed journals through the existing evidence schema
+
+September 20, 2026. Implemented as a bounded P2 slice; gate/PM acceptance pending.
+`export_journal_evidence` opens an existing journal without creating files or directories,
+holds lifetime ownership, validates the entire database and exact `JournalPlan` in one read
+transaction, and accepts only lifecycle state `completed`. It maps durable task rows into
+the existing schema-v1 `RunEvidence`, preserving the original run ID, timestamps, plan
+order, dependencies, canonical values and exact error text. `RunEvidence` performs the
+final schema validation and returns detached JSON.
+
+Incomplete, needs-attention and commit-conflicted runs are storage views, not completed
+evidence. Missing/wrong task rows, corrupt state or a changed plan fail closed. Export is
+callback-free and interoperates with the immutable artifact store, but that handoff is a
+copy across two databases—not an atomic bundle.
+
+Tradeoff: schema-v1 evidence does not contain operation IDs or the journal plan digest.
+The export proves exact plan agreement during conversion, but the standalone artifact
+cannot later prove which operation identities were checked. Expanding provenance requires
+a separately versioned evidence contract; this slice does not silently change P1 schema.
 
 ## Decision 0011: reopen and compare an ambiguous task commit
 
@@ -25,7 +46,7 @@ claims attention was persisted.
 This is not general exactly-once execution: external systems still need adapter-specific
 idempotency/reconciliation. Creation, resume-claim and attention-inspection mutations use
 the same callback-free reopen/retry rule. RECOVER-006 has bounded synthetic evidence but
-remains unaccepted until integrated P2 review; completed journal export remains RECOVER-007.
+remains unaccepted until integrated P2 review; Decision 0012 adds completed journal export.
 
 ## Decision 0010: resume only a proven pending suffix
 
@@ -41,8 +62,8 @@ safe just because later work is independent. Resumed exceptions retain normal fa
 blocking semantics; interrupts, invalid results and storage errors stop scheduling and
 leave the current task unknown. An already completed run is returned without callbacks.
 Operation IDs remain trusted declarations, not authenticated code hashes. Decision 0011
-adds bounded creation/task/finish/inspection/claim reconciliation; completed export and adapter-specific
-idempotency remain later work.
+adds bounded creation/task/finish/inspection/claim reconciliation; Decision 0012 adds
+completed export. Adapter-specific idempotency remains later work.
 
 ## Decision 0009: separate owned journal and inspect-only recovery
 
@@ -60,7 +81,7 @@ the run needs_attention but accepts no callbacks and performs no retry.
 
 Tradeoff: the two databases are not an atomic evidence bundle, and operation identifiers
 are declarations rather than authenticated code hashes. Decision 0010 later adds bounded
-pending-only resume; Decision 0011 adds reconciliation, while completed export remains. This conservative boundary
+pending-only resume; Decisions 0011–0012 add reconciliation and completed export. This conservative boundary
 prevents a missing result from being mistaken for proof that an effect never occurred.
 
 ## Decision 0008: lifetime ownership independent of SQLite transactions

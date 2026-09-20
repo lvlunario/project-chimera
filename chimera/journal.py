@@ -14,6 +14,7 @@ from typing import Callable, Literal
 from uuid import UUID, uuid4
 
 from .engine import Task, _ordered
+from .evidence import RunEvidence
 from .ownership import DatabaseOwnership, OwnershipError
 
 
@@ -194,22 +195,37 @@ def _now() -> str:
 class _OwnedJournal:
     """Internal single-owner journal connection."""
 
-    def __init__(self, path: str | Path):
+    def __init__(self, path: str | Path, *, initialize: bool = True):
         self.path = Path(path)
+        self.initialize = initialize
         self.owner: DatabaseOwnership | None = None
         self.db: sqlite3.Connection | None = None
 
     def __enter__(self) -> "_OwnedJournal":
-        self.path.parent.mkdir(parents=True, exist_ok=True)
-        # Create only the inode before locking it. Schema initialization and every
-        # later SQLite write occur after lifetime ownership is established.
-        fd = os.open(self.path, os.O_CREAT | os.O_RDWR | os.O_CLOEXEC, 0o600)
-        os.close(fd)
-        self.owner = DatabaseOwnership(self.path).__enter__()
+        if self.initialize:
+            self.path.parent.mkdir(parents=True, exist_ok=True)
+            # Create only the inode before locking it. Schema initialization and every
+            # later SQLite write occur after lifetime ownership is established.
+            fd = os.open(self.path, os.O_CREAT | os.O_RDWR | os.O_CLOEXEC, 0o600)
+            os.close(fd)
         try:
-            self.db = sqlite3.connect(self.path, timeout=5)
+            self.owner = DatabaseOwnership(self.path).__enter__()
+        except OSError as exc:
+            if not self.initialize:
+                raise JournalStorageUnavailable(
+                    "Existing journal storage is unavailable"
+                ) from exc
+            raise
+        try:
+            if self.initialize:
+                self.db = sqlite3.connect(self.path, timeout=5)
+            else:
+                self.db = sqlite3.connect(
+                    self.path.resolve().as_uri() + "?mode=rw", uri=True, timeout=5
+                )
             self._configure()
-            _initialize_connected(self.db)
+            if self.initialize:
+                _initialize_connected(self.db)
             self._validate()
             return self
         except BaseException:
@@ -641,6 +657,51 @@ class _OwnedJournal:
                           for task_id, task_state, value_json, error in rows)
             return RunInspection(run_id, state, row[1], tasks)
 
+    def export_evidence(self, run_id: str, plan: JournalPlan) -> RunEvidence:
+        """Build schema-v1 evidence only from one validated completed journal."""
+        assert self.db is not None
+        self.checkpoint()
+        with self.db:
+            self.db.execute("BEGIN")
+            self._validate()
+            row = self.db.execute(
+                "SELECT plan_json,plan_digest,state,started_at,finished_at "
+                "FROM journal_runs WHERE run_id=?", (run_id,)
+            ).fetchone()
+            if row is None:
+                raise KeyError(run_id)
+            plan_json, digest, state, started_at, finished_at = row
+            if plan_json != plan.to_json() or digest != plan.sha256:
+                raise JournalConflict("Export plan does not match durable plan")
+            if state != "completed" or finished_at is None:
+                raise JournalConflict("Only a completed journal can be exported")
+            rows = self.db.execute(
+                "SELECT position,task_id,state,value_json,error FROM journal_tasks "
+                "WHERE run_id=? ORDER BY position", (run_id,)
+            ).fetchall()
+            if len(rows) != len(plan.tasks):
+                raise JournalError("Journal task plan/result mismatch")
+            tasks = []
+            for position, (stored, expected) in enumerate(zip(rows, plan.tasks, strict=True)):
+                stored_position, task_id, task_state, value_json, error = stored
+                if stored_position != position or task_id != expected.task_id:
+                    raise JournalError("Journal task order mismatch")
+                tasks.append({
+                    "task_id": task_id,
+                    "status": task_state,
+                    "value": json.loads(value_json) if value_json is not None else None,
+                    "error": error,
+                    "dependencies": list(expected.dependencies),
+                })
+            document = {
+                "schema_version": 1,
+                "run_id": run_id,
+                "started_at": started_at,
+                "finished_at": finished_at,
+                "tasks": tasks,
+            }
+            return RunEvidence.from_json(json.dumps(document, allow_nan=False))
+
 
 def _initialize_connected(db: sqlite3.Connection) -> None:
     try:
@@ -711,6 +772,20 @@ def _inspect_reconciled(journal: _OwnedJournal, run_id: str,
         except sqlite3.Error as exc:
             raise JournalStorageUnavailable(
                 "Journal inspection could not be verified"
+            ) from exc
+
+
+def _export_reconciled(journal: _OwnedJournal, run_id: str,
+                       plan: JournalPlan) -> RunEvidence:
+    try:
+        return journal.export_evidence(run_id, plan)
+    except sqlite3.Error:
+        journal._reopen()
+        try:
+            return journal.export_evidence(run_id, plan)
+        except sqlite3.Error as exc:
+            raise JournalStorageUnavailable(
+                "Completed journal export could not be verified"
             ) from exc
 
 
@@ -825,3 +900,12 @@ def inspect_interrupted(path: str | Path, run_id: str, plan: JournalPlan) -> Run
         raise TypeError("Expected JournalPlan")
     with _OwnedJournal(path) as journal:
         return _inspect_reconciled(journal, run_id, plan, recover=True)
+
+
+def export_journal_evidence(path: str | Path, run_id: str,
+                            plan: JournalPlan) -> RunEvidence:
+    """Export validated completed journal rows without executing task callbacks."""
+    if not isinstance(plan, JournalPlan):
+        raise TypeError("Expected JournalPlan")
+    with _OwnedJournal(path, initialize=False) as journal:
+        return _export_reconciled(journal, run_id, plan)

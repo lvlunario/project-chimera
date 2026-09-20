@@ -33,6 +33,7 @@ The development branch includes:
 - Separate requirement verdicts and execution outcomes, plus versioned requirement bindings.
 - Atomic SQLite storage for completed runs and their selected bindings.
 - A Linux-owned per-task journal with pending-only restart and exact task-commit reconciliation.
+- Callback-free completed-journal export into the existing evidence/storage/verdict workflow.
 - An installable Python package and CI on Python 3.11 and 3.12.
 
 The [September 19 evidence log](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-09-19.md)
@@ -41,7 +42,7 @@ candidate's status from an earlier successful run.
 
 **Phase status:** P0 scope acceptance and P1 acceptance remain pending Leo's response.
 P1's engineering review packet is ready. P2 storage work is in progress;
-completed-journal export and integrated gate evidence remain pending.
+communications CSV integration and integrated gate evidence remain pending.
 The browser dashboard and measured-data workflow remain planned.
 Current demonstrations use synthetic data; this is not a production or certification release.
 
@@ -77,6 +78,7 @@ python -m examples.storage_demo
 python -m examples.journal_demo
 python -m examples.resume_demo
 python -m examples.commit_recovery_demo
+python -m examples.journal_export_demo
 ```
 
 Some demonstrations deliberately show failures to verify correct failure handling.

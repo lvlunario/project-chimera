@@ -112,7 +112,7 @@ with tempfile.TemporaryDirectory() as directory:
         owner.check()
 print("installed-ownership: exclusion and release passed (Linux)")
 from chimera import (JournalCommitUncertain, JournalPlan, JournalStorageUnavailable,
-                     JournalTask, inspect_interrupted,
+                     JournalTask, export_journal_evidence, inspect_interrupted,
                      resume_journaled, run_journaled)
 with tempfile.TemporaryDirectory() as directory:
     path = Path(directory, "journal.sqlite")
@@ -133,7 +133,21 @@ with tempfile.TemporaryDirectory() as directory:
                 SystemExit("completed resume executed callback")), "installed:check:v1")
     ]) != result:
         raise SystemExit("Installed completed resume changed the result")
+    exported = export_journal_evidence(path, result.run_id, plan)
+    if exported.to_dict()["tasks"][0]["value"] is not False:
+        raise SystemExit("Installed journal export changed the committed result")
+    export_bindings = RequirementBindings.from_mapping({"R-INSTALLED": "check"})
+    export_path = Path(directory, "export.sqlite")
+    with EvidenceStore(export_path) as store:
+        store.save(exported, export_bindings)
+    with EvidenceStore(export_path) as store:
+        export_assessment = assess_requirements(
+            *store.load(result.run_id, export_bindings.sha256)
+        )
+    if export_assessment.outcomes[0].verdict != "fail":
+        raise SystemExit("Installed journal export/storage verdict changed")
 print("installed-journal: durable result, callback-free inspection/resume passed")
+print("installed-export: journal evidence/storage/verdict handoff passed")
 if not issubclass(JournalCommitUncertain, RuntimeError):
     raise SystemExit("Installed uncertain-commit exception is unavailable")
 if not issubclass(JournalStorageUnavailable, RuntimeError):

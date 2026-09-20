@@ -9,7 +9,8 @@ from .ownership import DatabaseOwnership, OwnershipBusy, OwnershipError
 from .journal import (JournalCommitUncertain, JournalConflict, JournalError,
                       JournalPlan, JournalStorageUnavailable, JournalTask,
                       PlannedTask, RunInspection, TaskInspection,
-                      inspect_interrupted, resume_journaled, run_journaled)
+                      export_journal_evidence, inspect_interrupted,
+                      resume_journaled, run_journaled)
 
 __all__ = [
     "Result", "Task", "run", "BindingError", "RequirementBindings",
@@ -21,5 +22,6 @@ __all__ = [
     "JournalCommitUncertain", "JournalConflict", "JournalError", "JournalPlan",
     "JournalStorageUnavailable", "JournalTask",
     "PlannedTask", "RunInspection", "TaskInspection",
-    "inspect_interrupted", "resume_journaled", "run_journaled",
+    "export_journal_evidence", "inspect_interrupted",
+    "resume_journaled", "run_journaled",
 ]
