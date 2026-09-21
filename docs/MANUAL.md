@@ -535,10 +535,10 @@ timestamp_utc,link_margin_db
 ```
 
 Expected output identifies the exact bytes by SHA-256, completes and reopens the durable
-journal/evidence handoff, reports `COM-LINK-001: fail`, and shows ingestion/check callback
-counts of one. The 2.0 dB minimum is valid data below the 3.0 dB threshold; it is a
-requirement failure, not a software error. A separate evidence task preserves the exact
-threshold, unit and minimum-margin rule used by the check.
+journal/evidence handoff, reports `COM-LINK-001: fail`, preserves the one failing sample,
+and shows ingestion/check/report callback counts of one. It also proves the passing fixture
+passes and the malformed fixture is rejected. The 2.0 dB minimum is valid data below the
+3.0 dB threshold; it is a requirement failure, not a software error.
 
 CSV contract: UTF-8 without BOM; exact header `timestamp_utc,link_margin_db`; 1–10,000
 samples; at most 1 MiB; UTC timestamps in `YYYY-MM-DDTHH:MM:SS[.ffffff](Z|+00:00)` form
@@ -546,16 +546,21 @@ that strictly increase; margin values are finite, unpadded ASCII-decimal/scienti
 in dB. `identify_link_csv` hashes the exact source bytes.
 `load_link_csv(..., expected_sha256=digest)` refuses a changed file before using its
 values. `link_margin_passes` uses exact decimal comparison and returns an exact boolean
-only from validated telemetry.
+only from validated telemetry. `evaluate_link_margin` returns a canonical schema-v1
+`LinkMarginReport`; `to_json()` is stable and `from_json()` validates and reopens it
+without reading the source file.
 
-Malformed timestamps/columns/numbers fail ingestion and block the requirement check, so
-the verdict is `not_evaluated`, never PASS or threshold FAIL. The manifest records input
-identity, counts, time range, unit and exact-decimal minimum as text. It does not yet
-retain each failing sample, authenticate the data producer or support live/streaming radios.
+Malformed timestamps/columns/numbers fail ingestion and block the requirement check and
+report, so the verdict is `not_evaluated`, never PASS or threshold FAIL. A valid Boolean
+FAIL does not block the report: task execution succeeded even though the requirement did
+not. The report records input identity, exact configuration/verdict and every failing
+sample; it does not copy all source rows, authenticate the producer, sign the artifact,
+or support live/streaming radios.
 
 Teaching note for Leo: a hash answers “are these exactly the same input bytes?” It does
-not answer “did a trusted instrument produce them?” Chimera uses identity now to prevent
-quiet file substitution; signed acquisition provenance is a later boundary.
+not answer “did a trusted instrument produce them?” Keeping the Boolean verdict separate
+from the report also means an investigation view cannot quietly redefine pass/fail.
+Signed acquisition provenance and general human-readable reports are later boundaries.
 
 ## Phase approval instructions
 

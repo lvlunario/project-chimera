@@ -16,9 +16,9 @@ The 100-developer framing expresses ambition, not actual staffing or throughput.
 |---|---|---|---|
 | P0 | Charter and architecture | Scope, requirements, risks, development policy recorded and reviewed with Leo | Draft documented; PM review pending |
 | P1 | Local execution core | Graph validation, failure propagation, evidence schema, CLI, package install and CI verified | In progress |
-| P2 | Durable execution | SQLite run storage; restart recovery and idempotency tested | In progress; bounded recovery and completed-journal export implemented; vertical integration pending |
-| P3 | Engineering adapters | Synthetic telemetry ingestion and deterministic fault injection with reference fixtures | In progress; strict link CSV ingestion slice implemented |
-| P4 | Verification evidence | Requirement mapping, reproducible JSON/HTML reports, missing-evidence detection | Planned |
+| P2 | Durable execution | SQLite run storage; restart recovery and idempotency tested | In progress; bounded recovery, export and communications evidence handoff implemented; combined gate pending |
+| P3 | Engineering adapters | Synthetic telemetry ingestion and deterministic fault injection with reference fixtures | In progress; strict link CSV ingestion and pass/fail/malformed fixtures implemented |
+| P4 | Verification evidence | Requirement mapping, reproducible JSON/HTML reports, missing-evidence detection | In progress; canonical link-margin JSON report slice implemented; HTML/general reports pending |
 | P5 | Operator product | API and accessible dashboard; end-to-end acceptance tests | Planned |
 | P6 | AI assistance | Provider adapter, bounded permissions, evaluation dataset and measured baseline comparison | Planned |
 | P7 | Release | Reproducible deployment, performance results, threat model, demo and operator guide | Planned |
@@ -67,9 +67,10 @@ AI assistance cannot decide that missing evidence is a passing verification.
    pending-only resume while refusing every unknown running task. Creation, task
    transition, finish, inspection and resume-claim reconciliation is implemented
    September 20. Completed-journal schema-v1 export is also implemented. September 21
-   adds strict communications CSV identity/ingestion and a durable failed-verdict path;
-   failing-sample evidence, report integration and the P2 packet remain. These slices do
-   not close P2 or P3.
+   adds strict communications CSV identity/ingestion and a durable failed-verdict path,
+   followed by versioned failing-sample JSON reports and passing/malformed reference
+   controls. The combined P2 packet, fault injection, general/HTML reports and PM review
+   remain. These slices do not close P2, P3 or P4.
 7. September 16: Linux local-file lifetime ownership primitive implemented as a
    bounded prerequisite for RECOVER-005. September 19 runner integration holds this
    guard from plan creation through callbacks and terminal commits; September 20 resume,

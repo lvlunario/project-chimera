@@ -6,8 +6,27 @@ lifetime runner ownership and conservative uncertain-outcome recovery. The
 completed-artifact, ownership, journal, pending-only resume and task-commit reconciliation
 slices plus completed-journal export are implemented; vertical integration remains, with
 PM acceptance pending. The first strict communications CSV adapter slice is also
-implemented; report integration remains. These decisions do not supersede the P1
-decisions below.
+implemented, including a versioned failing-sample JSON report; combined phase-gate and
+general report integration remain. These decisions do not supersede the P1 decisions below.
+
+## Decision 0014: report findings separately from the Boolean requirement check
+
+September 21, 2026. Implemented as a bounded P3/P4 slice; gate/PM acceptance pending.
+Generate a canonical schema-v1 link-margin report from validated telemetry with the exact
+input digest/length, rule, unit, decimal threshold and minimum, Boolean verdict, sample
+count and every below-threshold sample in source order. Validate the complete document on
+construction/reopen and serialize with stable key ordering and separators.
+
+Keep `COM-LINK-001` bound to a separate exact Boolean task. A valid `False` is a successful
+check execution, so its dependent report still runs and preserves investigation details.
+Malformed or changed input fails ingestion and blocks both check and report, producing
+`not_evaluated` rather than a misleading threshold failure. This separation prevents a
+presentation artifact from redefining requirement semantics.
+
+Tradeoffs: the report proves agreement with its own fields and exact input identity, but
+does not embed all source bytes, authenticate the producer, sign the artifact or support a
+general/HTML report model. It is stored as a task value inside existing run evidence rather
+than as a separately indexed atomic artifact. Those are later P4/release concerns.
 
 ## Decision 0013: hash exact CSV bytes and reload against that identity
 
@@ -31,9 +50,9 @@ measurements below threshold are requirement FAIL; malformed, changed or missing
 an execution error and can never pass or become a threshold FAIL.
 
 Tradeoffs: callbacks reread a small bounded file, and local paths/producers are trusted.
-The evidence retains a summary, exact input identity and threshold configuration, but not
-every failing sample;
-signatures, atomic file/database bundling, streaming/live-radio input, fault injection and
+The evidence retains a summary, exact input identity and threshold configuration. Decision
+0014 adds every failing sample in a canonical JSON task value. Signatures, atomic
+file/database bundling, streaming/live-radio input, fault injection and authenticated
 report provenance remain later work. SHA-256 proves sameness of bytes, not truth or
 authorization of the measurement.
 

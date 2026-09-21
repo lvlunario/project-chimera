@@ -153,7 +153,8 @@ if not issubclass(JournalCommitUncertain, RuntimeError):
 if not issubclass(JournalStorageUnavailable, RuntimeError):
     raise SystemExit("Installed storage-unavailable exception is unavailable")
 print("installed-reconciliation: public fail-closed exceptions available")
-from chimera import identify_link_csv, link_margin_passes, load_link_csv
+from chimera import (LinkMarginReport, evaluate_link_margin, identify_link_csv,
+                     link_margin_passes, load_link_csv)
 with tempfile.TemporaryDirectory() as directory:
     path = Path(directory, "link.csv")
     path.write_text(
@@ -168,7 +169,14 @@ with tempfile.TemporaryDirectory() as directory:
         raise SystemExit("Installed telemetry threshold verdict changed")
     if telemetry.manifest()["input_sha256"] != identity.sha256:
         raise SystemExit("Installed telemetry manifest lost input identity")
+    report = evaluate_link_margin(telemetry, 3.0)
+    reopened_report = LinkMarginReport.from_json(report.to_json())
+    if reopened_report != report or reopened_report.to_dict()["failure_count"] != 1:
+        raise SystemExit("Installed link-margin report round trip failed")
+    if reopened_report.to_dict()["failing_samples"][0]["link_margin_db"] != "2.0":
+        raise SystemExit("Installed link-margin report lost failing sample")
 print("installed-telemetry: strict CSV identity and failed threshold passed")
+print("installed-link-report: canonical failing-sample round trip passed")
 PY
 
 DEMO_OUTPUT=$("$WORK/venv/bin/chimera-demo")

@@ -2,9 +2,9 @@
 
 ## Communications-link CSV adapter v1
 
-September 21 bounded adapter evidence is in `tests/test_telemetry.py`. This begins P3 and
-integrates one synthetic CSV-to-durable-verdict path; it does not close P2/P3 or record PM
-acceptance.
+September 21 bounded adapter/report evidence is in `tests/test_telemetry.py`. This begins
+P3/P4 and integrates one synthetic CSV-to-durable-verdict/report path; it does not close
+P2/P3/P4 or record PM acceptance.
 
 | ID | Requirement | Current acceptance evidence |
 |---|---|---|
@@ -14,11 +14,16 @@ acceptance.
 | ADAPT-004 | Identify exact input bytes with lowercase SHA-256 and reject changes before each load | identity/change and LF/CRLF tests |
 | ADAPT-005 | Compare minimum margin with exact decimal arithmetic; invalid data/thresholds never become requirement FAIL | boundary, excessive-precision, malformed and threshold tests |
 | ADAPT-006 | Journal ingestion/config/check, preserve threshold and input summary, export completed evidence, reopen immutable storage and reproduce verdict without callback replay | durable integration test and installed-wheel check |
+| ADAPT-007 | Produce a versioned canonical JSON report containing input identity, exact threshold/minimum, verdict and every below-threshold sample in source order | report round-trip, detachment and exact-finding tests |
+| ADAPT-008 | Run the report after a valid Boolean FAIL while keeping the requirement binding on the Boolean check; malformed ingestion blocks both | durable failed-report and malformed-control integration tests |
+| ADAPT-009 | Ship passing, failing and malformed synthetic reference fixtures with expected outcomes | fixture tests and `examples.link_csv_demo` |
 
 The ingestion manifest records content identity, byte/sample counts, time range, declared
-dB unit and exact-decimal minimum as text. It does not yet retain every failing sample or
-authenticate the input producer. User-supplied paths are trusted local files; live radios,
-streaming data, signatures, fault injection and final reports remain outside this slice.
+dB unit and exact-decimal minimum as text. The separate report retains every failing sample
+and reopens without telemetry access. It does not copy the complete source file or
+authenticate its producer. User-supplied paths are trusted local files; live radios,
+streaming data, signatures, fault injection, HTML and general reports remain outside this
+slice.
 
 ## Per-task journal and bounded recovery
 

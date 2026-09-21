@@ -1,12 +1,14 @@
 import tempfile
 import unittest
+import json
 from decimal import Decimal
 from datetime import datetime, timezone
 from pathlib import Path
 
-from chimera import (EvidenceStore, InputIdentity, JournalPlan, JournalTask, LinkSample,
-                     LinkTelemetry, RequirementBindings, TelemetryError,
-                     assess_requirements, export_journal_evidence,
+from chimera import (EvidenceStore, InputIdentity, JournalPlan, JournalTask,
+                     LinkMarginReport, LinkSample, LinkTelemetry,
+                     RequirementBindings, TelemetryError, assess_requirements,
+                     evaluate_link_margin, export_journal_evidence,
                      identify_link_csv, link_margin_passes, load_link_csv,
                      run_journaled)
 
@@ -50,6 +52,67 @@ class TelemetryTests(unittest.TestCase):
             right = load_link_csv(crlf)
             self.assertNotEqual(left.input_sha256, right.input_sha256)
             self.assertEqual(left.samples, right.samples)
+
+    def test_report_preserves_every_failure_and_round_trips_canonically(self):
+        with tempfile.TemporaryDirectory() as directory:
+            telemetry = load_link_csv(self.write(
+                directory, HEADER +
+                "2026-09-21T00:00:00Z,2.999999999999999999999999999999\n"
+                "2026-09-21T00:00:01Z,3.0\n"
+                "2026-09-21T00:00:02Z,-1.25\n"
+            ))
+            report = evaluate_link_margin(telemetry, Decimal("3.0"))
+            self.assertFalse(report.passed)
+            document = report.to_dict()
+            self.assertEqual(2, document["failure_count"])
+            self.assertEqual([1, 3], [
+                item["sample_index"] for item in document["failing_samples"]
+            ])
+            self.assertEqual(
+                ["2.999999999999999999999999999999", "-1.25"],
+                [item["link_margin_db"] for item in document["failing_samples"]],
+            )
+            reopened = LinkMarginReport.from_json(report.to_json())
+            self.assertEqual(report, reopened)
+            detached = report.to_dict()
+            detached["failing_samples"].clear()
+            self.assertEqual(2, report.to_dict()["failure_count"])
+
+    def test_passing_report_has_no_findings_and_boundary_passes(self):
+        fixture = Path(__file__).parents[1] / "examples/fixtures/link_margin_passed.csv"
+        report = evaluate_link_margin(load_link_csv(fixture), 3)
+        self.assertTrue(report.passed)
+        self.assertEqual(0, report.to_dict()["failure_count"])
+        self.assertEqual([], report.to_dict()["failing_samples"])
+        self.assertEqual("3", report.to_dict()["threshold_db"])
+
+    def test_report_rejects_tampering_and_duplicate_fields(self):
+        with tempfile.TemporaryDirectory() as directory:
+            report = evaluate_link_margin(load_link_csv(self.write(
+                directory, HEADER + "2026-09-21T00:00:00Z,2\n"
+            )), 3)
+            document = report.to_dict()
+            mutations = []
+            for field, value in (
+                ("passed", True), ("failure_count", 0),
+                ("minimum_link_margin_db", "2.5"), ("threshold_db", "2"),
+            ):
+                changed = report.to_dict()
+                changed[field] = value
+                mutations.append(changed)
+            changed = report.to_dict()
+            changed["failing_samples"][0]["link_margin_db"] = "3"
+            mutations.append(changed)
+            changed = report.to_dict()
+            changed["unexpected"] = True
+            mutations.append(changed)
+            for changed in mutations:
+                with self.subTest(changed), self.assertRaises(TelemetryError):
+                    LinkMarginReport.from_json(json.dumps(changed))
+            duplicate = report.to_json()[:-1] + ',"passed":false}'
+            with self.assertRaisesRegex(TelemetryError, "Duplicate"):
+                LinkMarginReport.from_json(duplicate)
+            self.assertEqual(1, document["failure_count"])
 
     def test_rejects_missing_wrong_and_empty_schema(self):
         invalid = ("", "timestamp_utc,margin_db\n2026-09-21T00:00:00Z,3\n",
@@ -163,7 +226,7 @@ class TelemetryTests(unittest.TestCase):
                               "2026-09-21T00:00:00Z,4\n"
                               "2026-09-21T00:00:01Z,2.999999999999999999999999999999\n")
             identity = identify_link_csv(path)
-            counts = {"ingest": 0, "check": 0}
+            counts = {"ingest": 0, "check": 0, "report": 0}
 
             def ingest():
                 counts["ingest"] += 1
@@ -174,6 +237,12 @@ class TelemetryTests(unittest.TestCase):
                 return link_margin_passes(
                     load_link_csv(path, expected_sha256=identity.sha256), 3.0)
 
+            def report():
+                counts["report"] += 1
+                return evaluate_link_margin(
+                    load_link_csv(path, expected_sha256=identity.sha256), 3.0
+                ).to_dict()
+
             tasks = (JournalTask("ingest", ingest, "csv:" + identity.sha256),
                      JournalTask("config", lambda: {
                          "rule": "minimum_link_margin_gte",
@@ -181,7 +250,9 @@ class TelemetryTests(unittest.TestCase):
                          "unit": "dB",
                      }, "margin-config:3.0"),
                      JournalTask("check", check, "margin:3:" + identity.sha256,
-                                 ("config", "ingest")))
+                                 ("config", "ingest")),
+                     JournalTask("report", report, "report:3:" + identity.sha256,
+                                 ("check",)))
             plan = JournalPlan.from_tasks(tasks)
             journal_path = Path(directory, "journal.sqlite")
             run = run_journaled(journal_path, tasks)
@@ -191,7 +262,7 @@ class TelemetryTests(unittest.TestCase):
                 store.save(evidence, bindings)
                 reopened = store.load(run.run_id, bindings.sha256)
             self.assertEqual("fail", assess_requirements(*reopened).outcomes[0].verdict)
-            self.assertEqual({"ingest": 1, "check": 1}, counts)
+            self.assertEqual({"ingest": 1, "check": 1, "report": 1}, counts)
             evidence_tasks = {
                 item["task_id"]: item for item in evidence.to_dict()["tasks"]
             }
@@ -200,6 +271,17 @@ class TelemetryTests(unittest.TestCase):
             self.assertEqual("2.999999999999999999999999999999",
                              ingest_value["minimum_link_margin_db"])
             self.assertEqual("3.0", evidence_tasks["config"]["value"]["threshold_db"])
+            report_value = evidence_tasks["report"]["value"]
+            self.assertEqual("succeeded", evidence_tasks["report"]["status"])
+            self.assertFalse(report_value["passed"])
+            self.assertEqual(1, report_value["failure_count"])
+            self.assertEqual(
+                "2.999999999999999999999999999999",
+                report_value["failing_samples"][0]["link_margin_db"],
+            )
+            self.assertEqual(report_value, LinkMarginReport.from_json(
+                json.dumps(report_value)
+            ).to_dict())
 
     def test_file_change_between_ingest_and_check_is_error_never_pass(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -228,15 +310,56 @@ class TelemetryTests(unittest.TestCase):
                 evidence, RequirementBindings.from_mapping({"COM-LINK-001": "check"}))
             self.assertEqual("error", assessment.outcomes[0].verdict)
 
+    def test_file_change_after_failed_check_prevents_mismatched_report(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = self.write(directory, HEADER + "2026-09-21T00:00:00Z,2\n")
+            identity = identify_link_csv(path)
+
+            def check():
+                result = link_margin_passes(
+                    load_link_csv(path, expected_sha256=identity.sha256), 3
+                )
+                path.write_text(
+                    HEADER + "2026-09-21T00:00:00Z,4\n", encoding="utf-8"
+                )
+                return result
+
+            tasks = (
+                JournalTask("ingest", lambda: load_link_csv(
+                    path, expected_sha256=identity.sha256
+                ).manifest(), "csv:" + identity.sha256),
+                JournalTask("check", check, "margin:3:" + identity.sha256, ("ingest",)),
+                JournalTask("report", lambda: evaluate_link_margin(
+                    load_link_csv(path, expected_sha256=identity.sha256), 3
+                ).to_dict(), "report:3:" + identity.sha256, ("check",)),
+            )
+            plan = JournalPlan.from_tasks(tasks)
+            journal_path = Path(directory, "journal.sqlite")
+            run = run_journaled(journal_path, tasks)
+            evidence = export_journal_evidence(journal_path, run.run_id, plan)
+            document = evidence.to_dict()
+            self.assertEqual("succeeded", document["tasks"][1]["status"])
+            self.assertIs(document["tasks"][1]["value"], False)
+            self.assertEqual("failed", document["tasks"][2]["status"])
+            self.assertIn("identity changed", document["tasks"][2]["error"])
+            assessment = assess_requirements(
+                evidence, RequirementBindings.from_mapping({"COM-LINK-001": "check"})
+            )
+            self.assertEqual("fail", assessment.outcomes[0].verdict)
+
     def test_malformed_input_is_error_and_check_is_not_evaluated(self):
         with tempfile.TemporaryDirectory() as directory:
-            path = self.write(directory, HEADER + "bad-time,2\n")
+            fixture = Path(__file__).parents[1] / "examples/fixtures/link_margin_malformed.csv"
+            path = Path(directory, "telemetry.csv")
+            path.write_bytes(fixture.read_bytes())
             identity = identify_link_csv(path)
             tasks = (JournalTask(
                 "ingest", lambda: load_link_csv(path, expected_sha256=identity.sha256).manifest(),
                 "csv:" + identity.sha256),
                 JournalTask("check", lambda: True, "margin:3:" + identity.sha256,
-                            ("ingest",)))
+                            ("ingest",)),
+                JournalTask("report", lambda: {"should": "not run"},
+                            "report:3:" + identity.sha256, ("check",)))
             plan = JournalPlan.from_tasks(tasks)
             journal_path = Path(directory, "journal.sqlite")
             run = run_journaled(journal_path, tasks)
@@ -246,6 +369,7 @@ class TelemetryTests(unittest.TestCase):
             document = evidence.to_dict()
             self.assertEqual("failed", document["tasks"][0]["status"])
             self.assertEqual("blocked", document["tasks"][1]["status"])
+            self.assertEqual("blocked", document["tasks"][2]["status"])
             self.assertEqual("not_evaluated", assessment.outcomes[0].verdict)
 
 

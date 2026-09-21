@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 from decimal import Decimal, InvalidOperation
 from hashlib import sha256
 import io
+import json
 from pathlib import Path
 import re
 
@@ -91,6 +92,161 @@ class LinkTelemetry:
             "link_margin_unit": "dB",
             "minimum_link_margin_db": str(self.minimum_link_margin_db),
         }
+
+
+def _unique_object(pairs: list[tuple[str, object]]) -> dict:
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise TelemetryError(f"Duplicate report field: {key}")
+        result[key] = value
+    return result
+
+
+def _decimal(value: object, field: str) -> Decimal:
+    if type(value) is not str or not value or _NUMBER.fullmatch(value) is None:
+        raise TelemetryError(f"{field} must be a finite ASCII-decimal string")
+    try:
+        result = Decimal(value)
+    except InvalidOperation as exc:
+        raise TelemetryError(f"{field} must be a finite ASCII-decimal string") from exc
+    if not result.is_finite():
+        raise TelemetryError(f"{field} must be a finite ASCII-decimal string")
+    return result
+
+
+def _threshold(value: object) -> Decimal:
+    if type(value) not in (int, float, Decimal):
+        raise TelemetryError("threshold_db must be a finite number")
+    try:
+        result = (Decimal(value) if type(value) is int
+                  else value if type(value) is Decimal
+                  else Decimal(str(value)))
+    except (InvalidOperation, ValueError, OverflowError) as exc:
+        raise TelemetryError("threshold_db must be a finite number") from exc
+    if not result.is_finite():
+        raise TelemetryError("threshold_db must be a finite number")
+    return result
+
+
+@dataclass(frozen=True)
+class LinkMarginReport:
+    """Versioned canonical report for one validated minimum-margin evaluation."""
+
+    _json: str
+
+    def __post_init__(self) -> None:
+        if type(self._json) is not str:
+            raise TelemetryError("Link-margin report input must be JSON text")
+        try:
+            document = json.loads(self._json, object_pairs_hook=_unique_object)
+        except (ValueError, TypeError, RecursionError) as exc:
+            raise TelemetryError(f"Invalid link-margin report JSON: {exc}") from exc
+        fields = {
+            "schema_version", "requirement_id", "rule", "unit", "input_sha256",
+            "input_bytes", "threshold_db", "sample_count", "minimum_link_margin_db",
+            "passed", "failure_count", "failing_samples",
+        }
+        if type(document) is not dict or set(document) != fields:
+            raise TelemetryError("Invalid link-margin report fields")
+        if type(document["schema_version"]) is not int or document["schema_version"] != 1:
+            raise TelemetryError("Unsupported link-margin report schema_version")
+        if document["requirement_id"] != "COM-LINK-001":
+            raise TelemetryError("Invalid link-margin report requirement_id")
+        if document["rule"] != "minimum_link_margin_gte" or document["unit"] != "dB":
+            raise TelemetryError("Invalid link-margin report rule or unit")
+        InputIdentity(document["input_sha256"], document["input_bytes"])
+        if (type(document["sample_count"]) is not int
+                or not 1 <= document["sample_count"] <= MAX_SAMPLES):
+            raise TelemetryError("Invalid link-margin report sample_count")
+        threshold = _decimal(document["threshold_db"], "threshold_db")
+        minimum = _decimal(
+            document["minimum_link_margin_db"], "minimum_link_margin_db"
+        )
+        if type(document["passed"]) is not bool:
+            raise TelemetryError("Invalid link-margin report passed value")
+        if (type(document["failure_count"]) is not int
+                or document["failure_count"] < 0
+                or document["failure_count"] > document["sample_count"]):
+            raise TelemetryError("Invalid link-margin report failure_count")
+        findings = document["failing_samples"]
+        if type(findings) is not list or len(findings) != document["failure_count"]:
+            raise TelemetryError("Invalid link-margin report failing_samples")
+        prior_index = 0
+        prior_time: datetime | None = None
+        finding_margins: list[Decimal] = []
+        for finding in findings:
+            if (type(finding) is not dict
+                    or set(finding) != {"sample_index", "timestamp_utc", "link_margin_db"}):
+                raise TelemetryError("Invalid failing-sample fields")
+            index = finding["sample_index"]
+            if (type(index) is not int or index <= prior_index
+                    or index > document["sample_count"]):
+                raise TelemetryError("Invalid failing-sample index")
+            parsed_time = _utc_timestamp(finding["timestamp_utc"], index + 1)
+            if prior_time is not None and parsed_time <= prior_time:
+                raise TelemetryError("Failing-sample timestamps must be increasing")
+            margin = _decimal(finding["link_margin_db"], "link_margin_db")
+            if margin >= threshold:
+                raise TelemetryError("Failing sample does not violate the threshold")
+            prior_index, prior_time = index, parsed_time
+            finding_margins.append(margin)
+        if document["passed"] != (document["failure_count"] == 0):
+            raise TelemetryError("Report verdict conflicts with failing samples")
+        if document["passed"] != (minimum >= threshold):
+            raise TelemetryError("Report verdict conflicts with minimum margin")
+        if finding_margins and min(finding_margins) != minimum:
+            raise TelemetryError("Report minimum is absent from failing samples")
+        object.__setattr__(
+            self, "_json",
+            json.dumps(document, sort_keys=True, separators=(",", ":"), allow_nan=False),
+        )
+
+    @classmethod
+    def from_json(cls, text: str) -> "LinkMarginReport":
+        """Reopen a report without reading telemetry or executing checks."""
+        return cls(text)
+
+    @classmethod
+    def from_telemetry(cls, telemetry: LinkTelemetry,
+                       threshold_db: int | float | Decimal) -> "LinkMarginReport":
+        if not isinstance(telemetry, LinkTelemetry):
+            raise TypeError("telemetry must be validated LinkTelemetry")
+        threshold = _threshold(threshold_db)
+        failing = [
+            {
+                "sample_index": index,
+                "timestamp_utc": sample.timestamp_utc,
+                "link_margin_db": str(sample.link_margin_db),
+            }
+            for index, sample in enumerate(telemetry.samples, start=1)
+            if sample.link_margin_db < threshold
+        ]
+        document = {
+            "schema_version": 1,
+            "requirement_id": "COM-LINK-001",
+            "rule": "minimum_link_margin_gte",
+            "unit": "dB",
+            "input_sha256": telemetry.input_sha256,
+            "input_bytes": telemetry.input_bytes,
+            "threshold_db": str(threshold),
+            "sample_count": len(telemetry.samples),
+            "minimum_link_margin_db": str(telemetry.minimum_link_margin_db),
+            "passed": not failing,
+            "failure_count": len(failing),
+            "failing_samples": failing,
+        }
+        return cls(json.dumps(document, allow_nan=False))
+
+    @property
+    def passed(self) -> bool:
+        return json.loads(self._json)["passed"]
+
+    def to_json(self) -> str:
+        return self._json
+
+    def to_dict(self) -> dict:
+        return json.loads(self._json)
 
 
 def _valid_digest(value: object) -> bool:
@@ -190,16 +346,10 @@ def load_link_csv(path: str | Path, *, expected_sha256: str | None = None) -> Li
 def link_margin_passes(telemetry: LinkTelemetry,
                        threshold_db: int | float | Decimal) -> bool:
     """Return an exact boolean verdict; invalid thresholds are never failures."""
-    if not isinstance(telemetry, LinkTelemetry):
-        raise TypeError("telemetry must be validated LinkTelemetry")
-    if type(threshold_db) not in (int, float, Decimal):
-        raise TelemetryError("threshold_db must be a finite number")
-    try:
-        threshold = (Decimal(threshold_db) if type(threshold_db) is int
-                     else threshold_db if type(threshold_db) is Decimal
-                     else Decimal(str(threshold_db)))
-    except (InvalidOperation, ValueError, OverflowError) as exc:
-        raise TelemetryError("threshold_db must be a finite number") from exc
-    if not threshold.is_finite():
-        raise TelemetryError("threshold_db must be a finite number")
-    return telemetry.minimum_link_margin_db >= threshold
+    return LinkMarginReport.from_telemetry(telemetry, threshold_db).passed
+
+
+def evaluate_link_margin(telemetry: LinkTelemetry,
+                         threshold_db: int | float | Decimal) -> LinkMarginReport:
+    """Evaluate all samples and return the canonical investigation report."""
+    return LinkMarginReport.from_telemetry(telemetry, threshold_db)
