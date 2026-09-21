@@ -1,5 +1,25 @@
 # Foundation requirement traceability
 
+## Communications-link CSV adapter v1
+
+September 21 bounded adapter evidence is in `tests/test_telemetry.py`. This begins P3 and
+integrates one synthetic CSV-to-durable-verdict path; it does not close P2/P3 or record PM
+acceptance.
+
+| ID | Requirement | Current acceptance evidence |
+|---|---|---|
+| ADAPT-001 | Accept only exact UTF-8 CSV columns `timestamp_utc,link_margin_db`; require at least one row | valid/schema/encoding tests |
+| ADAPT-002 | Require exact UTC, strictly increasing timestamps and finite, unpadded ASCII-decimal dB values | timestamp/margin negative tests |
+| ADAPT-003 | Bound input to 1 MiB and 10,000 samples before use | byte and row limit tests |
+| ADAPT-004 | Identify exact input bytes with lowercase SHA-256 and reject changes before each load | identity/change and LF/CRLF tests |
+| ADAPT-005 | Compare minimum margin with exact decimal arithmetic; invalid data/thresholds never become requirement FAIL | boundary, excessive-precision, malformed and threshold tests |
+| ADAPT-006 | Journal ingestion/config/check, preserve threshold and input summary, export completed evidence, reopen immutable storage and reproduce verdict without callback replay | durable integration test and installed-wheel check |
+
+The ingestion manifest records content identity, byte/sample counts, time range, declared
+dB unit and exact-decimal minimum as text. It does not yet retain every failing sample or
+authenticate the input producer. User-supplied paths are trusted local files; live radios,
+streaming data, signatures, fault injection and final reports remain outside this slice.
+
 ## Per-task journal and bounded recovery
 
 September 19 journal evidence is in `tests/test_journal.py`; September 20 bounded-resume

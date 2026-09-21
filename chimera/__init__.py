@@ -11,6 +11,8 @@ from .journal import (JournalCommitUncertain, JournalConflict, JournalError,
                       PlannedTask, RunInspection, TaskInspection,
                       export_journal_evidence, inspect_interrupted,
                       resume_journaled, run_journaled)
+from .telemetry import (InputIdentity, LinkSample, LinkTelemetry, TelemetryError,
+                        identify_link_csv, link_margin_passes, load_link_csv)
 
 __all__ = [
     "Result", "Task", "run", "BindingError", "RequirementBindings",
@@ -24,4 +26,6 @@ __all__ = [
     "PlannedTask", "RunInspection", "TaskInspection",
     "export_journal_evidence", "inspect_interrupted",
     "resume_journaled", "run_journaled",
+    "InputIdentity", "LinkSample", "LinkTelemetry", "TelemetryError",
+    "identify_link_csv", "link_margin_passes", "load_link_csv",
 ]

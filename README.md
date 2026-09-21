@@ -24,7 +24,7 @@ entry point; the implementation has not been merged into `main`.
 | Ongoing changes, test evidence and next steps | [Daily engineering logs](https://github.com/lvlunario/project-chimera/tree/magnum-opus/development/docs/daily) |
 | Requirements and quality approach | [Requirements](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/REQUIREMENTS.md) · [Quality plan](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/QUALITY.md) |
 
-## Progress snapshot — September 20, 2026
+## Progress snapshot — September 21, 2026
 
 The development branch includes:
 
@@ -34,6 +34,8 @@ The development branch includes:
 - Atomic SQLite storage for completed runs and their selected bindings.
 - A Linux-owned per-task journal with pending-only restart and exact task-commit reconciliation.
 - Callback-free completed-journal export into the existing evidence/storage/verdict workflow.
+- Strict timestamp/link-margin CSV ingestion with exact input SHA-256 identity and a
+  durable failed-requirement demonstration.
 - An installable Python package and CI on Python 3.11 and 3.12.
 
 The [September 19 evidence log](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-09-19.md)
@@ -41,8 +43,8 @@ records candidate-specific local, independent and hosted results. Do not infer a
 candidate's status from an earlier successful run.
 
 **Phase status:** P0 scope acceptance and P1 acceptance remain pending Leo's response.
-P1's engineering review packet is ready. P2 storage work is in progress;
-communications CSV integration and integrated gate evidence remain pending.
+P1's engineering review packet is ready. P2 storage work and the first P3 CSV adapter
+slice are in progress; failing-sample reporting and integrated gate evidence remain pending.
 The browser dashboard and measured-data workflow remain planned.
 Current demonstrations use synthetic data; this is not a production or certification release.
 
@@ -79,6 +81,7 @@ python -m examples.journal_demo
 python -m examples.resume_demo
 python -m examples.commit_recovery_demo
 python -m examples.journal_export_demo
+python -m examples.link_csv_demo
 ```
 
 Some demonstrations deliberately show failures to verify correct failure handling.

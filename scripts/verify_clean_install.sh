@@ -153,6 +153,22 @@ if not issubclass(JournalCommitUncertain, RuntimeError):
 if not issubclass(JournalStorageUnavailable, RuntimeError):
     raise SystemExit("Installed storage-unavailable exception is unavailable")
 print("installed-reconciliation: public fail-closed exceptions available")
+from chimera import identify_link_csv, link_margin_passes, load_link_csv
+with tempfile.TemporaryDirectory() as directory:
+    path = Path(directory, "link.csv")
+    path.write_text(
+        "timestamp_utc,link_margin_db\n"
+        "2026-09-21T00:00:00Z,4.0\n"
+        "2026-09-21T00:00:01Z,2.0\n",
+        encoding="utf-8",
+    )
+    identity = identify_link_csv(path)
+    telemetry = load_link_csv(path, expected_sha256=identity.sha256)
+    if link_margin_passes(telemetry, 3.0) is not False:
+        raise SystemExit("Installed telemetry threshold verdict changed")
+    if telemetry.manifest()["input_sha256"] != identity.sha256:
+        raise SystemExit("Installed telemetry manifest lost input identity")
+print("installed-telemetry: strict CSV identity and failed threshold passed")
 PY
 
 DEMO_OUTPUT=$("$WORK/venv/bin/chimera-demo")

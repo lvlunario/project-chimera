@@ -5,8 +5,37 @@ It specifies atomic artifact associations, separate task journaling,
 lifetime runner ownership and conservative uncertain-outcome recovery. The
 completed-artifact, ownership, journal, pending-only resume and task-commit reconciliation
 slices plus completed-journal export are implemented; vertical integration remains, with
-PM acceptance pending. It does not
-supersede the P1 decisions below.
+PM acceptance pending. The first strict communications CSV adapter slice is also
+implemented; report integration remains. These decisions do not supersede the P1
+decisions below.
+
+## Decision 0013: hash exact CSV bytes and reload against that identity
+
+September 21, 2026. Implemented as a bounded P3 adapter/P2 integration slice;
+gate/PM acceptance pending. The communications adapter accepts one exact UTF-8 CSV schema:
+`timestamp_utc,link_margin_db`. It requires an exact UTC timestamp grammar, strictly
+increasing times, finite ASCII-decimal dB values, at least one sample, no more than 10,000
+samples and no more than 1 MiB.
+
+Hash the exact bounded source bytes before execution. The integrated workflow includes
+that SHA-256 identity in journal operation IDs and the ingestion manifest, plus preserves
+the threshold/unit/rule as a separate configuration task. Each ingestion/check callback reloads
+and verifies the same digest. This makes process restart possible without depending on an
+in-memory dataset and converts a changed file into an execution error rather than a false
+engineering verdict. Line-ending changes intentionally create a different identity even
+when parsed samples match.
+
+Use exact `Decimal` comparison for the minimum sample margin. This prevents an arbitrarily
+precise value just below 3 dB from rounding to binary `3.0` and falsely passing. Valid
+measurements below threshold are requirement FAIL; malformed, changed or missing input is
+an execution error and can never pass or become a threshold FAIL.
+
+Tradeoffs: callbacks reread a small bounded file, and local paths/producers are trusted.
+The evidence retains a summary, exact input identity and threshold configuration, but not
+every failing sample;
+signatures, atomic file/database bundling, streaming/live-radio input, fault injection and
+report provenance remain later work. SHA-256 proves sameness of bytes, not truth or
+authorization of the measurement.
 
 ## Decision 0012: export completed journals through the existing evidence schema
 

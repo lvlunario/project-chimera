@@ -421,8 +421,8 @@ conservative recovery and negative tests ([issue #12](https://github.com/lvlunar
 Completed artifact storage, the separate per-task journal and bounded pending-only resume
 are implemented. Existing P1 CLI/API behavior is unchanged. Task-transition and final-run
 commit reconciliation are implemented. Completed journals can now be exported into
-existing schema-v1 evidence; communications
-CSV integration and the full P2 approval packet remain planned.
+existing schema-v1 evidence. The first strict communications CSV slice is implemented;
+failing-sample/report integration and the full P2 approval packet remain planned.
 
 After an interruption, a running task has an uncertain outcome; missing evidence is
 not proof the action never happened. Recovery defaults to attention rather than automatic
@@ -516,6 +516,46 @@ handoff. Chimera copies only a fully completed, internally consistent run. The c
 handoff does not atomically join the two databases, and schema v1 does not preserve the
 operation IDs or plan digest after conversion—those provenance fields require a future
 versioned evidence contract rather than a silent format change.
+
+### Communications link CSV ingestion
+
+Run the first bounded communications-data vertical:
+
+```bash
+python -m examples.link_csv_demo
+```
+
+The included synthetic fixture has exactly two columns:
+
+```text
+timestamp_utc,link_margin_db
+2026-09-21T00:00:00+00:00,4.5
+2026-09-21T00:00:01+00:00,2.0
+2026-09-21T00:00:02+00:00,3.8
+```
+
+Expected output identifies the exact bytes by SHA-256, completes and reopens the durable
+journal/evidence handoff, reports `COM-LINK-001: fail`, and shows ingestion/check callback
+counts of one. The 2.0 dB minimum is valid data below the 3.0 dB threshold; it is a
+requirement failure, not a software error. A separate evidence task preserves the exact
+threshold, unit and minimum-margin rule used by the check.
+
+CSV contract: UTF-8 without BOM; exact header `timestamp_utc,link_margin_db`; 1–10,000
+samples; at most 1 MiB; UTC timestamps in `YYYY-MM-DDTHH:MM:SS[.ffffff](Z|+00:00)` form
+that strictly increase; margin values are finite, unpadded ASCII-decimal/scientific values
+in dB. `identify_link_csv` hashes the exact source bytes.
+`load_link_csv(..., expected_sha256=digest)` refuses a changed file before using its
+values. `link_margin_passes` uses exact decimal comparison and returns an exact boolean
+only from validated telemetry.
+
+Malformed timestamps/columns/numbers fail ingestion and block the requirement check, so
+the verdict is `not_evaluated`, never PASS or threshold FAIL. The manifest records input
+identity, counts, time range, unit and exact-decimal minimum as text. It does not yet
+retain each failing sample, authenticate the data producer or support live/streaming radios.
+
+Teaching note for Leo: a hash answers “are these exactly the same input bytes?” It does
+not answer “did a trusted instrument produce them?” Chimera uses identity now to prevent
+quiet file substitution; signed acquisition provenance is a later boundary.
 
 ## Phase approval instructions
 
