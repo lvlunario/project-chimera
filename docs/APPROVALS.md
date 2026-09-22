@@ -81,6 +81,9 @@ Decision: **Pending**. Actual observations/conditions: **Not yet recorded**.
 
 ## P2 — Durable storage / M2, October 17 (planned)
 
+Candidate packet: [September 22 P2 verification/validation walkthrough](reviews/2026-09-22-p2.md).
+Run `python -m examples.p2_approval_demo` for the four combined controls.
+
 - [ ] Verification: review restart, incomplete-write and duplicate-execution test evidence.
 - [ ] Follow the supplied interruption exercise; record the run ID and completed steps,
       stop at the specified safe test point, restart and reopen the record.

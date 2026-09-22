@@ -562,6 +562,24 @@ not answer “did a trusted instrument produce them?” Keeping the Boolean verd
 from the report also means an investigation view cannot quietly redefine pass/fail.
 Signed acquisition provenance and general human-readable reports are later boundaries.
 
+### P2 approval candidate
+
+Run the combined durable-execution verification controls:
+
+```bash
+python -m examples.p2_approval_demo
+```
+
+Expected: four `PASS P2-*` lines covering the communications evidence handoff,
+callback-free journal export, pending-only restart and refusal to retry an outcome-unknown
+task. The final line states that PM verification/validation remains pending. The command
+uses temporary local databases and fixtures and leaves no product data behind.
+
+Follow the [P2 approval packet](reviews/2026-09-22-p2.md) for the 20–30 minute walkthrough,
+expected observations, evidence links, known limits and decision record. Passing this
+command establishes reproducible engineering controls; it cannot record Leo's validation
+judgment or approve the phase automatically.
+
 ## Phase approval instructions
 
 Use the [phase approval guide](APPROVALS.md) for P0–P7 verification and validation checklists,

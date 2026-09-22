@@ -44,7 +44,8 @@ run_journaled(sys.argv[1], [
             JournalTask("second", lambda: calls.append("second") or True,
                         "demo:second:v1", ("first",)),
         ])
-        assert calls == ["second"] and result.state == "completed"
+        if calls != ["second"] or result.state != "completed":
+            raise RuntimeError("Pending-only resume repeated work or did not complete")
         print("first task: preserved succeeded (not repeated)")
         print("second task: resumed from pending and succeeded")
         print("run: completed after process restart")

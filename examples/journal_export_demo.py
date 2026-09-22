@@ -27,8 +27,10 @@ def main() -> None:
             assessment = assess_requirements(
                 *store.load(completed.run_id, bindings.sha256)
             )
-        assert calls == ["link-margin-check"]
-        assert assessment.outcomes[0].verdict == "fail"
+        if calls != ["link-margin-check"]:
+            raise RuntimeError("Journal export or reopen repeated the check callback")
+        if assessment.outcomes[0].verdict != "fail":
+            raise RuntimeError("Journal export or reopen changed the requirement verdict")
         print(f"journal run: {completed.run_id} completed")
         print("export: schema-v1 evidence reopened without callbacks")
         print("requirement REQ-LINK-MARGIN: fail")

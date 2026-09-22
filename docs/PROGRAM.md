@@ -16,7 +16,7 @@ The 100-developer framing expresses ambition, not actual staffing or throughput.
 |---|---|---|---|
 | P0 | Charter and architecture | Scope, requirements, risks, development policy recorded and reviewed with Leo | Draft documented; PM review pending |
 | P1 | Local execution core | Graph validation, failure propagation, evidence schema, CLI, package install and CI verified | In progress |
-| P2 | Durable execution | SQLite run storage; restart recovery and idempotency tested | In progress; bounded recovery, export and communications evidence handoff implemented; combined gate pending |
+| P2 | Durable execution | SQLite run storage; restart recovery and idempotency tested | Engineering candidate implemented; combined approval packet prepared; PM review pending |
 | P3 | Engineering adapters | Synthetic telemetry ingestion and deterministic fault injection with reference fixtures | In progress; strict link CSV ingestion and pass/fail/malformed fixtures implemented |
 | P4 | Verification evidence | Requirement mapping, reproducible JSON/HTML reports, missing-evidence detection | In progress; canonical link-margin JSON report slice implemented; HTML/general reports pending |
 | P5 | Operator product | API and accessible dashboard; end-to-end acceptance tests | Planned |
@@ -69,8 +69,10 @@ AI assistance cannot decide that missing evidence is a passing verification.
    September 20. Completed-journal schema-v1 export is also implemented. September 21
    adds strict communications CSV identity/ingestion and a durable failed-verdict path,
    followed by versioned failing-sample JSON reports and passing/malformed reference
-   controls. The combined P2 packet, fault injection, general/HTML reports and PM review
-   remain. These slices do not close P2, P3 or P4.
+   controls. The combined P2 executable walkthrough and approval packet are prepared
+   September 22; exact-candidate verification and Leo's response remain before gate
+   closure. Fault injection and general/HTML reports remain P3/P4 work. These slices do
+   not close P2, P3 or P4.
 7. September 16: Linux local-file lifetime ownership primitive implemented as a
    bounded prerequisite for RECOVER-005. September 19 runner integration holds this
    guard from plan creation through callbacks and terminal commits; September 20 resume,

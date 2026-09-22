@@ -21,6 +21,7 @@ entry point; the implementation has not been merged into `main`.
 | Your verification, validation and approval instructions | [Phase approval guide: P0–P7](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/APPROVALS.md) |
 | First concept review and scope decisions | [P0 review](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/reviews/2026-09-14.md) |
 | Core-engine evidence and practical approval exercise | [P1 approval packet](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/reviews/2026-09-15-p1.md) |
+| Durable execution verification and validation exercise | [P2 approval packet](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/reviews/2026-09-22-p2.md) |
 | Ongoing changes, test evidence and next steps | [Daily engineering logs](https://github.com/lvlunario/project-chimera/tree/magnum-opus/development/docs/daily) |
 | Requirements and quality approach | [Requirements](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/REQUIREMENTS.md) · [Quality plan](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/QUALITY.md) |
 
@@ -82,6 +83,7 @@ python -m examples.resume_demo
 python -m examples.commit_recovery_demo
 python -m examples.journal_export_demo
 python -m examples.link_csv_demo
+python -m examples.p2_approval_demo
 ```
 
 Some demonstrations deliberately show failures to verify correct failure handling.

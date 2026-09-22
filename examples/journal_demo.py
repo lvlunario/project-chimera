@@ -33,9 +33,12 @@ run_journaled(sys.argv[1], [JournalTask('effect', effect, 'demo:effect:v1')], ru
                 AssertionError("recovery executed callback")), "demo:effect:v1")]
         )
         inspection = inspect_interrupted(path, run_id, plan)
-        assert inspection.state == "needs_attention"
-        assert inspection.tasks[0].state == "running"
-        assert marker.read_text(encoding="utf-8") == "performed once"
+        if inspection.state != "needs_attention":
+            raise RuntimeError("Interrupted run did not require operator attention")
+        if inspection.tasks[0].state != "running":
+            raise RuntimeError("Interrupted task was not preserved as outcome-unknown")
+        if marker.read_text(encoding="utf-8") != "performed once":
+            raise RuntimeError("Synthetic effect marker changed during recovery")
         print("effect marker: performed once")
         print("recovered run: needs_attention")
         print("effect task: running (outcome unknown; not retried)")

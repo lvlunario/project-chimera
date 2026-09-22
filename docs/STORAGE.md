@@ -3,7 +3,8 @@
 September 15 design; completed-artifact storage landed September 16 and the separate
 per-task journal/inspect-only recovery slice landed September 19 with AI assistance.
 Pending-only bounded resume, commit reconciliation and completed-journal export landed
-September 20; vertical integration remains and nothing is PM-accepted.
+September 20; communications vertical/report integration landed September 21. The combined
+P2 walkthrough and approval packet are prepared September 22; nothing is PM-accepted.
 P1 remains open. Target: M2 October 17, 2026.
 
 ## Implemented ownership prerequisite (not runner integration)
@@ -190,7 +191,9 @@ No gate closure from this design or a future happy-path round trip alone.
    September 19; gate remains open.
 3. Explicit bounded synthetic resume. Implemented September 20; gate remains open.
 4. Creation/task/finish/inspection/claim ambiguous-commit reconciliation and completed
-   export implemented September 20; CSV integration and P2 packet remain.
+   export implemented September 20; CSV/report integration landed September 21.
+5. Combined executable P2 walkthrough and approval packet prepared September 22; exact-
+   candidate evidence and Leo's actual verification/validation disposition remain.
 
 Each slice stays in draft PR #1 while open. P0/P1 decisions remain pending; this
 reversible design does not authorize merge or change scope. M2 remains October 17;
@@ -202,5 +205,6 @@ ran.” Conservative recovery trades convenience for avoiding duplicated effects
 Practical review exercise: run `python -m examples.journal_demo`. A synthetic task
 performs an effect then its process dies before result commit. Expected: needs_attention,
 running/unknown task, zero callback invocations during recovery and no automatic retry.
-Recommendation: retain conservative recovery; no additional PM decision required
-until a runnable P2 candidate is presented under the phase approval guide.
+Recommendation: retain conservative recovery. The runnable candidate is now presented in
+[`reviews/2026-09-22-p2.md`](reviews/2026-09-22-p2.md); Leo's actual disposition remains
+required before P2 gate closure.
