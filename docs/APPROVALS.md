@@ -4,6 +4,10 @@ Requested by Leo on September 14, 2026. All approval records start pending.
 This guide adds review instructions; it does not approve the existing concept,
 close any phase, or change the [delivery dates](ROADMAP.md).
 
+## Current disposition — September 22, 2026
+
+Leo explicitly delegated time-critical phase decisions. The [delegated decision record](reviews/2026-09-22-delegated-decisions.md) is authoritative over historical pending statements below: **P0/D-001–003 approved; P1 and P2 approved with conditions for continued development**. Personal walkthroughs remain unperformed. Routine decisions this week do not require another PM response; future gates still require evidence. Final product acceptance remains separate.
+
 ## Your responsibility
 
 **Verification:** review evidence that the implementation meets its documented requirements.
