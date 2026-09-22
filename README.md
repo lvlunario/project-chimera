@@ -43,9 +43,11 @@ The [September 19 evidence log](https://github.com/lvlunario/project-chimera/blo
 records candidate-specific local, independent and hosted results. Do not infer a new
 candidate's status from an earlier successful run.
 
-**Phase status:** P0 scope acceptance and P1 acceptance remain pending Leo's response.
-P1's engineering review packet is ready. P2 storage work and P3/P4 communications
-vertical slices are in progress; combined gate evidence and PM acceptance remain pending.
+**Phase status — September 22:** P0 scope (D-001–003) is approved by delegation.
+P1 and P2 are conditionally accepted for continued development under the
+[delegated decision record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/reviews/2026-09-22-delegated-decisions.md). Leo's personal walkthroughs remain unperformed;
+final product validation remains open. P3/P4 implementation continues without waiting
+for another response to these decisions.
 The browser dashboard and measured-data workflow remain planned.
 Current demonstrations use synthetic data; this is not a production or certification release.
 
