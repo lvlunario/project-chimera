@@ -13,7 +13,8 @@ from .journal import (JournalCommitUncertain, JournalConflict, JournalError,
                       resume_journaled, run_journaled)
 from .telemetry import (InputIdentity, LinkMarginReport, LinkSample, LinkTelemetry,
                         TelemetryError, evaluate_link_margin, identify_link_csv,
-                        link_margin_passes, load_link_csv)
+                        link_margin_passes, load_link_csv, parse_link_csv)
+from .faults import FaultError, FaultPlan, fault_manifest, inject_link_csv
 
 __all__ = [
     "Result", "Task", "run", "BindingError", "RequirementBindings",
@@ -29,5 +30,6 @@ __all__ = [
     "resume_journaled", "run_journaled",
     "InputIdentity", "LinkMarginReport", "LinkSample", "LinkTelemetry",
     "TelemetryError", "evaluate_link_margin", "identify_link_csv",
-    "link_margin_passes", "load_link_csv",
+    "link_margin_passes", "load_link_csv", "parse_link_csv",
+    "FaultError", "FaultPlan", "fault_manifest", "inject_link_csv",
 ]

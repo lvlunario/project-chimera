@@ -14,10 +14,10 @@ The 100-developer framing expresses ambition, not actual staffing or throughput.
 ## Delivery phases
 | Phase | Deliverable | Exit criteria | State |
 |---|---|---|---|
-| P0 | Charter and architecture | Scope, requirements, risks, development policy recorded and reviewed with Leo | Draft documented; PM review pending |
-| P1 | Local execution core | Graph validation, failure propagation, evidence schema, CLI, package install and CI verified | In progress |
-| P2 | Durable execution | SQLite run storage; restart recovery and idempotency tested | Engineering candidate implemented; combined approval packet prepared; PM review pending |
-| P3 | Engineering adapters | Synthetic telemetry ingestion and deterministic fault injection with reference fixtures | In progress; strict link CSV ingestion and pass/fail/malformed fixtures implemented |
+| P0 | Charter and architecture | Scope, requirements, risks, development policy recorded and reviewed with Leo | Approved by delegation September 22 |
+| P1 | Local execution core | Graph validation, failure propagation, evidence schema, CLI, package install and CI verified | Conditionally accepted for continued development September 22 |
+| P2 | Durable execution | SQLite run storage; restart recovery and idempotency tested | Conditionally accepted for continued development September 22; bounded recovery limitations retained |
+| P3 | Engineering adapters | Synthetic telemetry ingestion and deterministic fault injection with reference fixtures | In progress; strict CSV ingestion, reference controls and deterministic sample-replacement fault plan implemented |
 | P4 | Verification evidence | Requirement mapping, reproducible JSON/HTML reports, missing-evidence detection | In progress; canonical link-margin JSON report slice implemented; HTML/general reports pending |
 | P5 | Operator product | API and accessible dashboard; end-to-end acceptance tests | Planned |
 | P6 | AI assistance | Provider adapter, bounded permissions, evaluation dataset and measured baseline comparison | Planned |
@@ -45,6 +45,12 @@ AI assistance cannot decide that missing evidence is a passing verification.
 - Avoid paid infrastructure and live hardware operations until separately authorized.
 
 ## Next tasks
+Current direction, September 22: implement broader report presentation, then the integrated
+October 17 workflow. [Delegated decisions](reviews/2026-09-22-delegated-decisions.md)
+supersede historical pending-P0/P1/P2 statements below. Personal walkthroughs are unperformed;
+final acceptance remains separate. No repeated PM decision is required this week.
+
+Historical implementation sequence:
 1. Completed-run evidence, boolean-check verdict classification and versioned requirement
    bindings are implemented; procedure/input provenance and durable multi-artifact storage
    remain planned for integration.

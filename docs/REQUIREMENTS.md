@@ -1,5 +1,28 @@
 # Foundation requirement traceability
 
+Current acceptance: P0 approved by delegation; P1/P2 conditionally accepted for progression
+September 22 under [the decision record](reviews/2026-09-22-delegated-decisions.md).
+Historical pending statements below describe their original slices, not today's decisions.
+Personal walkthroughs and final acceptance remain unperformed/open.
+
+## Deterministic synthetic faults v1
+
+Tracked in [issue #13](https://github.com/lvlunario/project-chimera/issues/13), target M2
+October 17. Bounded P3 implementation, not P3 gate closure or physical-system validation.
+
+| ID | Requirement | Evidence |
+|---|---|---|
+| FAULT-001 | Strict versioned plan; unique one-based sample indices; finite ASCII-decimal replacement strings; bounded bytes/count/value lengths | `tests/test_faults.py` plan/shape/bound tests |
+| FAULT-002 | Same source and canonical plan produce identical CSV bytes without source mutation, random state or decimal rounding | exact vector, order and low-precision-context tests |
+| FAULT-003 | Invalid/changed source, missing target index or oversized output fails closed, never returns a valid fault result | invalid-source/identity/index tests; independent output-bound test in `tests/test_faults_qa.py` |
+| FAULT-004 | Preserve synthetic label, procedure version, full fault plan/digest and source/derived identities in detached JSON | manifest/detachment tests |
+| FAULT-005 | Persist fault provenance, Boolean check and failing-sample report through journal/export/store/reopen without replay; report input identity agrees with derived identity | `examples.fault_demo`, normal/optimized demo tests and installed-wheel control |
+
+Literal replacements exercise software failure detection, not attenuation/channel physics.
+`parse_link_csv` shares the existing file-loader validation contract; no new permissive parser.
+Fault manifest generation recomputes the result; it is not an independently authenticated
+artifact or source-byte bundle. Full source bytes and code-build provenance remain later work.
+
 ## Communications-link CSV adapter v1
 
 September 21 bounded adapter/report evidence is in `tests/test_telemetry.py`. This begins

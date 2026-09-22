@@ -1,5 +1,25 @@
 # Architecture decision 0001: deterministic core first
 
+## Decision 0015: literal synthetic replacement with explicit provenance
+
+September 22, 2026. Bounded P3 implementation; no phase closure. A strict canonical
+version-1 plan selects unique one-based sample positions and literal finite decimal dB
+values. Sort replacements by index; reject duplicates rather than impose last-write-wins.
+No random generator or wall clock affects the derived bytes. Decimal serialization pins
+exponent letter case without rounding, independent of the ambient decimal context. Reuse
+the exact bounded CSV parser before and after transformation; never overwrite the input.
+
+Record synthetic=true, procedure version, the full plan and its canonical SHA-256, and
+both source and derived manifests in durable task evidence. Bind the requirement to the
+separate Boolean check; the report references the derived data identity. Empty plans are
+controls, but canonical CSV formatting can still change source-byte identity. Decimal
+spelling remains part of plan identity even when two values compare numerically equal.
+
+Tradeoff: this precisely tests detection of a known low sample, not a physical channel or
+stochastic impairment. Missing samples, noise distributions and live faults are not
+silently added. Hashes identify content, not trusted authorship; standalone report v1
+still needs its companion run's fault manifest to trace back to original input.
+
 Next contract: [P2 storage/recovery contract](STORAGE.md), September 15–16.
 It specifies atomic artifact associations, separate task journaling,
 lifetime runner ownership and conservative uncertain-outcome recovery. The

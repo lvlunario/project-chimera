@@ -177,6 +177,23 @@ with tempfile.TemporaryDirectory() as directory:
         raise SystemExit("Installed link-margin report lost failing sample")
 print("installed-telemetry: strict CSV identity and failed threshold passed")
 print("installed-link-report: canonical failing-sample round trip passed")
+from chimera import FaultPlan, fault_manifest, inject_link_csv, parse_link_csv
+source = b"timestamp_utc,link_margin_db\n2026-09-22T00:00:00Z,4.0\n"
+fault = FaultPlan.from_json(
+    '{"schema_version":1,"model":"sample-replacement-v1",'
+    '"replacements":[{"sample_index":1,"link_margin_db":"2.0"}]}'
+)
+derived = inject_link_csv(source, fault)
+manifest = fault_manifest(source, fault)
+if derived != inject_link_csv(source, FaultPlan.from_json(fault.to_json())):
+    raise SystemExit("Installed fault repeatability failed")
+if evaluate_link_margin(parse_link_csv(derived), 3).passed:
+    raise SystemExit("Installed injected fault did not fail the requirement")
+if manifest["derived"]["input_sha256"] != parse_link_csv(derived).input_sha256:
+    raise SystemExit("Installed fault provenance lost derived identity")
+if manifest["fault_plan_sha256"] != fault.sha256 or manifest["synthetic"] is not True:
+    raise SystemExit("Installed fault provenance lost plan or synthetic label")
+print("installed-faults: deterministic replacement and provenance passed")
 PY
 
 DEMO_OUTPUT=$("$WORK/venv/bin/chimera-demo")

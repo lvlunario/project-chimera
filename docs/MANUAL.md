@@ -580,6 +580,49 @@ expected observations, evidence links, known limits and decision record. Passing
 command establishes reproducible engineering controls; it cannot record Leo's validation
 judgment or approve the phase automatically.
 
+### Deterministic synthetic fault exercise
+
+```bash
+python -m examples.fault_demo
+```
+
+Expected: the source passes at 3.0 dB; a plan replaces sample 2 with 2.0 dB; the derived
+data fails COM-LINK-001 and retains one failing sample after durable save/reopen. Repeating
+the plan produces identical derived bytes. Fault/check/report callbacks each execute once;
+reopening evidence executes none. Only temporary local databases are created and removed.
+
+The reference plan is `examples/fixtures/link_fault_plan.json`:
+
+```json
+{"schema_version":1,"model":"sample-replacement-v1","replacements":[{"sample_index":2,"link_margin_db":"2.0"}]}
+```
+
+Python API: `FaultPlan.from_json(text)`, `inject_link_csv(source_bytes, plan,
+expected_sha256=digest)` and `fault_manifest(source_bytes, plan, expected_sha256=digest)`.
+`parse_link_csv(bytes)` applies the same strict ingestion rules as `load_link_csv(path)`.
+Injection returns bytes without writing a file. Preserve the manifest alongside derived
+data: it contains synthetic=true, procedure version, full plan/digest and source/derived
+identities. The demo journals it, binds the Boolean check separately, and verifies that
+the report refers to the derived hash. No existing CLI JSON operations were expanded.
+
+Plans are at most 65,536 UTF-8 bytes, contain at most 1,000 unique replacements, and use
+one-based sample indices in 1..10,000 that must exist in the actual source. Values are
+finite ASCII-decimal strings of at most 128 characters. Unknown fields/versions, duplicates,
+invalid/changed source and out-of-range targets fail explicitly. Derived CSV still must
+fit the 1 MiB/10,000-row ingestion bounds. Empty replacement lists are controls; output
+formatting is canonical UTF-8/LF, so even an empty plan may change a source-byte digest.
+
+Teaching note for Leo: a controlled 2.0 dB replacement proves the software detects that
+known defect. It does not prove a radio would behave that way. Keeping the original and
+derived hashes distinct prevents synthetic data from being presented as untouched input.
+The hash is not a signature; full input bundling and build provenance remain later work.
+Next exercise (optional, not an approval request): predict the verdict if the replacement
+is exactly 3.0 dB, then change the plan in a local copy and rerun the check. Equality passes.
+
+September 22 acceptance note: the delegated decision record supersedes the historical
+pending-P0/P1/P2 wording in older demos and sections. Those outputs cannot record Leo's
+personal validation, which remains unperformed. P3/P4 are still in progress.
+
 ## Phase approval instructions
 
 Use the [phase approval guide](APPROVALS.md) for P0–P7 verification and validation checklists,

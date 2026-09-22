@@ -4,7 +4,7 @@ from __future__ import annotations
 import csv
 from dataclasses import dataclass
 from datetime import datetime, timezone
-from decimal import Decimal, InvalidOperation
+from decimal import Decimal, InvalidOperation, localcontext
 from hashlib import sha256
 import io
 import json
@@ -24,6 +24,13 @@ _TIMESTAMP = re.compile(
 
 class TelemetryError(ValueError):
     """Communications telemetry is unavailable or violates the input contract."""
+
+
+def _decimal_text(value: Decimal) -> str:
+    """Render exact decimal digits with stable exponent case, without arithmetic."""
+    with localcontext() as context:
+        context.capitals = 1
+        return str(value)
 
 
 @dataclass(frozen=True)
@@ -90,7 +97,7 @@ class LinkTelemetry:
             "timestamp_start_utc": self.samples[0].timestamp_utc,
             "timestamp_end_utc": self.samples[-1].timestamp_utc,
             "link_margin_unit": "dB",
-            "minimum_link_margin_db": str(self.minimum_link_margin_db),
+            "minimum_link_margin_db": _decimal_text(self.minimum_link_margin_db),
         }
 
 
@@ -217,7 +224,7 @@ class LinkMarginReport:
             {
                 "sample_index": index,
                 "timestamp_utc": sample.timestamp_utc,
-                "link_margin_db": str(sample.link_margin_db),
+                "link_margin_db": _decimal_text(sample.link_margin_db),
             }
             for index, sample in enumerate(telemetry.samples, start=1)
             if sample.link_margin_db < threshold
@@ -229,9 +236,9 @@ class LinkMarginReport:
             "unit": "dB",
             "input_sha256": telemetry.input_sha256,
             "input_bytes": telemetry.input_bytes,
-            "threshold_db": str(threshold),
+            "threshold_db": _decimal_text(threshold),
             "sample_count": len(telemetry.samples),
-            "minimum_link_margin_db": str(telemetry.minimum_link_margin_db),
+            "minimum_link_margin_db": _decimal_text(telemetry.minimum_link_margin_db),
             "passed": not failing,
             "failure_count": len(failing),
             "failing_samples": failing,
@@ -299,9 +306,15 @@ def _margin(value: str, row_number: int) -> Decimal:
 
 def load_link_csv(path: str | Path, *, expected_sha256: str | None = None) -> LinkTelemetry:
     """Load the exact two-column UTF-8 CSV contract and reject ambiguous input."""
+    return parse_link_csv(_read_bounded(path), expected_sha256=expected_sha256)
+
+
+def parse_link_csv(data: bytes, *, expected_sha256: str | None = None) -> LinkTelemetry:
+    """Validate bounded CSV bytes without filesystem effects."""
     if expected_sha256 is not None and not _valid_digest(expected_sha256):
         raise TelemetryError("expected_sha256 must be a lowercase SHA-256 hex digest")
-    data = _read_bounded(path)
+    if type(data) is not bytes or len(data) > MAX_INPUT_BYTES:
+        raise TelemetryError("Telemetry input must be bytes within the input bound")
     digest = sha256(data).hexdigest()
     if expected_sha256 is not None and digest != expected_sha256:
         raise TelemetryError("Telemetry input identity changed")

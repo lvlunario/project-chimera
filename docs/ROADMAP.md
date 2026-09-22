@@ -1,9 +1,12 @@
 # Prototype delivery baseline — September 12 to December 12, 2026
 
 All dates use Asia/Manila. Target dates are a managed baseline, not a guarantee.
-Baseline version 1: September 12. Program-manager concept review is pending.
-The initial charter was documented, not accepted by Leo; earlier P0-complete wording
-referred only to document creation and is superseded here.
+Baseline version 1: September 12. September 22 update: P0 is approved by explicit
+delegation; P1/P2 are conditionally accepted for continued development under the
+[decision record](reviews/2026-09-22-delegated-decisions.md). Personal walkthroughs
+remain unperformed. Original dates below are unchanged; M0's scope decision was recorded
+September 22, three days after its September 19 target. Downstream forecasts
+remain October 3/17, November 7/28 and December 12 with no baseline movement.
 
 ## Operational problem and proposed scope
 An integration engineer needs to verify a communications test run, identify failing
@@ -41,8 +44,9 @@ but dependent integrations use agreed interfaces.
 Each work issue includes requirement IDs, deliverable, role owner, target date,
 dependencies and verification method. Track engineering state separately from
 PM acceptance: planned / in progress / implemented / verified / reviewed / accepted.
-Only evidence moves engineering state; only Leo's actual response moves acceptance.
-Missing PM responses are pending, never implicit acceptance.
+Only evidence moves engineering state; acceptance requires Leo's actual response or an
+evidence-backed decision within his explicit delegation. Silence is never acceptance.
+The September 22 delegation does not waive tests, validation conditions or final acceptance.
 
 Report green when the next gate is achievable with current evidence and known work;
 amber when an unresolved dependency or scope threatens it; red when forecast exceeds
