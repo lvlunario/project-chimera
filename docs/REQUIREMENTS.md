@@ -5,6 +5,27 @@ September 22 under [the decision record](reviews/2026-09-22-delegated-decisions.
 Historical pending statements below describe their original slices, not today's decisions.
 Personal walkthroughs and final acceptance remain unperformed/open.
 
+## Reopened-evidence verification report v1
+
+Tracked in [issue #15](https://github.com/lvlunario/project-chimera/issues/15), target M3
+November 7. Bounded P4 implementation; not P4 gate closure or dashboard delivery.
+
+| ID | Requirement | Evidence |
+|---|---|---|
+| REPORT-001 | Build a canonical versioned communications report only from validated `RunEvidence` and `RequirementBindings`; accept no callbacks | `tests/test_reports.py`, durable `examples.report_demo` |
+| REPORT-002 | Identify the exact evidence, binding and canonical report bytes with SHA-256 content identities | fixed digest/round-trip tests and HTML evidence section |
+| REPORT-003 | Require exact agreement among COM-LINK-001 Boolean assessment, validated link detail and derived-input identity | pass/fail/conflict/provenance tests |
+| REPORT-004 | Represent blocked/missing detail as unavailable and `not_evaluated`/error; never infer pass | missing-evidence durable/report tests |
+| REPORT-005 | Emit deterministic self-contained script-free HTML with escaped evidence strings and the canonical report JSON | deterministic HTML, XSS and external-resource tests |
+| REPORT-006 | Bound report input to 4 MiB and reject malformed, duplicate, invalid-UTF-8-text or internally inconsistent documents | malformed/tamper/size tests and independent QA |
+
+`VerificationReport` is the authoritative versioned JSON contract; `to_html()` is a
+presentation generated from it. Both show content identities, not signatures. The optional
+fault summary retains an explicit synthetic label plus source/plan/derived hashes. The HTML
+does not embed complete telemetry bytes, authenticate a producer, establish build identity,
+or replace the durable journal/evidence databases. Operator file export and dashboard use
+remain later integration work.
+
 ## Deterministic synthetic faults v1
 
 Tracked in [issue #13](https://github.com/lvlunario/project-chimera/issues/13), target M2

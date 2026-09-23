@@ -18,7 +18,7 @@ The 100-developer framing expresses ambition, not actual staffing or throughput.
 | P1 | Local execution core | Graph validation, failure propagation, evidence schema, CLI, package install and CI verified | Conditionally accepted for continued development September 22 |
 | P2 | Durable execution | SQLite run storage; restart recovery and idempotency tested | Conditionally accepted for continued development September 22; bounded recovery limitations retained |
 | P3 | Engineering adapters | Synthetic telemetry ingestion and deterministic fault injection with reference fixtures | In progress; strict CSV ingestion, reference controls and deterministic sample-replacement fault plan implemented |
-| P4 | Verification evidence | Requirement mapping, reproducible JSON/HTML reports, missing-evidence detection | In progress; canonical link-margin JSON report slice implemented; HTML/general reports pending |
+| P4 | Verification evidence | Requirement mapping, reproducible JSON/HTML reports, missing-evidence detection | In progress; canonical reopened-evidence JSON and deterministic HTML slices implemented; operator integration pending |
 | P5 | Operator product | API and accessible dashboard; end-to-end acceptance tests | Planned |
 | P6 | AI assistance | Provider adapter, bounded permissions, evaluation dataset and measured baseline comparison | Planned |
 | P7 | Release | Reproducible deployment, performance results, threat model, demo and operator guide | Planned |
@@ -45,8 +45,8 @@ AI assistance cannot decide that missing evidence is a passing verification.
 - Avoid paid infrastructure and live hardware operations until separately authorized.
 
 ## Next tasks
-Current direction, September 22: implement broader report presentation, then the integrated
-October 17 workflow. [Delegated decisions](reviews/2026-09-22-delegated-decisions.md)
+Current direction, September 23: verify the broader JSON/HTML report slice, then assemble
+the integrated October 17 workflow. [Delegated decisions](reviews/2026-09-22-delegated-decisions.md)
 supersede historical pending-P0/P1/P2 statements below. Personal walkthroughs are unperformed;
 final acceptance remains separate. No repeated PM decision is required this week.
 
@@ -77,7 +77,9 @@ Historical implementation sequence:
    followed by versioned failing-sample JSON reports and passing/malformed reference
    controls. The combined P2 executable walkthrough and approval packet are prepared
    September 22; exact-candidate verification and Leo's response remain before gate
-   closure. Fault injection and general/HTML reports remain P3/P4 work. These slices do
+   closure. September 22 adds deterministic sample-replacement fault plans; September 23
+   adds canonical reopened-evidence JSON plus self-contained HTML presentation. Operator
+   entry-point integration remains P3/P4 work. These slices do
    not close P2, P3 or P4.
 7. September 16: Linux local-file lifetime ownership primitive implemented as a
    bounded prerequisite for RECOVER-005. September 19 runner integration holds this

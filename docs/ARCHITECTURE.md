@@ -1,5 +1,24 @@
 # Architecture decision 0001: deterministic core first
 
+## Decision 0016: HTML is a deterministic view of canonical reopened-evidence JSON
+
+September 23, 2026. Bounded P4 implementation; no phase closure. Build a strict
+`VerificationReport` only from validated reopened `RunEvidence` and `RequirementBindings`.
+Recompute the COM-LINK-001 assessment, reopen the embedded `LinkMarginReport`, and refuse
+any pass/fail disagreement. Missing or blocked detail remains explicitly unavailable and
+cannot become PASS. When requested, summarize a validated synthetic-fault task and require
+its derived hash to match the link report input.
+
+Make canonical schema-v1 JSON authoritative. Identify exact evidence, binding and report
+bytes separately. Render HTML deterministically from that JSON with no scripts or external
+resources, escape every evidence-derived string, include a restrictive content-security
+policy and embed the escaped canonical JSON for audit. Bound input to 4 MiB.
+
+Tradeoffs: HTML is easier for an engineer to read, but is not independently authoritative,
+signed or authenticated. It does not bundle raw telemetry, prove code/build identity or
+provide a browser/API operator workflow. File export and dashboard integration remain P5;
+this slice prevents presentation code from redefining verdicts before that integration.
+
 ## Decision 0015: literal synthetic replacement with explicit provenance
 
 September 22, 2026. Bounded P3 implementation; no phase closure. A strict canonical

@@ -25,7 +25,7 @@ entry point; the implementation has not been merged into `main`.
 | Ongoing changes, test evidence and next steps | [Daily engineering logs](https://github.com/lvlunario/project-chimera/tree/magnum-opus/development/docs/daily) |
 | Requirements and quality approach | [Requirements](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/REQUIREMENTS.md) · [Quality plan](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/QUALITY.md) |
 
-## Progress snapshot — September 21, 2026
+## Progress snapshot — September 23, 2026
 
 The development branch includes:
 
@@ -36,7 +36,8 @@ The development branch includes:
 - A Linux-owned per-task journal with pending-only restart and exact task-commit reconciliation.
 - Callback-free completed-journal export into the existing evidence/storage/verdict workflow.
 - Strict timestamp/link-margin CSV ingestion with exact input SHA-256 identity,
-  failing-sample evidence, passing/malformed controls and a canonical JSON report.
+  deterministic synthetic fault plans, failing-sample evidence and passing/malformed controls.
+- A canonical reopened-evidence JSON report and deterministic self-contained HTML view.
 - An installable Python package and CI on Python 3.11 and 3.12.
 
 The [September 19 evidence log](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-09-19.md)
@@ -86,6 +87,8 @@ python -m examples.commit_recovery_demo
 python -m examples.journal_export_demo
 python -m examples.link_csv_demo
 python -m examples.p2_approval_demo
+python -m examples.fault_demo
+python -m examples.report_demo
 ```
 
 Some demonstrations deliberately show failures to verify correct failure handling.

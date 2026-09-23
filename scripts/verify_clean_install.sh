@@ -194,6 +194,23 @@ if manifest["derived"]["input_sha256"] != parse_link_csv(derived).input_sha256:
 if manifest["fault_plan_sha256"] != fault.sha256 or manifest["synthetic"] is not True:
     raise SystemExit("Installed fault provenance lost plan or synthetic label")
 print("installed-faults: deterministic replacement and provenance passed")
+from chimera import VerificationReport
+report_evidence = run_with_evidence([
+    Task("check", lambda: False),
+    Task("detail", lambda: report.to_dict(), ("check",)),
+])
+report_bindings = RequirementBindings.from_mapping({"COM-LINK-001": "check"})
+verification_report = VerificationReport.from_evidence(
+    report_evidence, report_bindings, detail_task_id="detail"
+)
+reopened_verification_report = VerificationReport.from_json(
+    verification_report.to_json()
+)
+if reopened_verification_report != verification_report:
+    raise SystemExit("Installed verification report round trip failed")
+if "FAIL" not in verification_report.to_html():
+    raise SystemExit("Installed HTML report lost requirement verdict")
+print("installed-report: canonical JSON and deterministic HTML passed")
 PY
 
 DEMO_OUTPUT=$("$WORK/venv/bin/chimera-demo")

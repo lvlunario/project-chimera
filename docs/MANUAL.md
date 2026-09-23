@@ -623,6 +623,53 @@ September 22 acceptance note: the delegated decision record supersedes the histo
 pending-P0/P1/P2 wording in older demos and sections. Those outputs cannot record Leo's
 personal validation, which remains unperformed. P3/P4 are still in progress.
 
+### Deterministic JSON and HTML verification report
+
+```bash
+python -m examples.report_demo
+```
+
+Expected: the durable synthetic run reopens as COM-LINK-001 FAIL with one 2.0 dB sample
+below the 3.0 dB threshold. The command builds and reopens canonical report JSON, renders
+a self-contained HTML view in a temporary directory, reads it back unchanged and confirms
+fault/check/detail callbacks each ran exactly once. Report generation accepts no callbacks.
+
+Python API:
+
+```python
+report = VerificationReport.from_evidence(
+    reopened_evidence,
+    reopened_bindings,
+    detail_task_id="report",
+    provenance_task_id="fault",  # optional
+)
+json_text = report.to_json()
+html_text = report.to_html()
+reopened = VerificationReport.from_json(json_text)
+```
+
+The JSON records the run, UTC interval, COM-LINK-001 assessment, exact evidence/binding
+identities, validated link-margin detail and optional synthetic source/plan/derived hashes.
+Its SHA-256 is exposed as `report.sha256`. The deterministic HTML shows the same verdict,
+threshold, minimum, failing samples and identities; it embeds escaped canonical JSON and
+uses no JavaScript, network assets or mutable time. Evidence strings are HTML-escaped.
+
+If ingestion/check/detail is blocked or missing, the report says `not_evaluated` or error
+and marks detail unavailable. It cannot show PASS/FAIL without a valid link-margin detail
+that agrees with the separate Boolean assessment. Input JSON is bounded to 4 MiB. Content
+hashes prove byte identity, not authorship; HTML is a view, not a signature or replacement
+for the durable databases. Raw telemetry, authenticated acquisition, operator file export,
+build provenance and the browser dashboard remain later boundaries.
+
+Teaching note for Leo: the JSON is the controlled engineering record and HTML is its
+readable projection. The renderer is not allowed to calculate a new verdict. If the stored
+Boolean says FAIL but the detail says PASS, report generation stops instead of choosing
+whichever answer is more convenient.
+
+Optional exercise (not an approval request): run the demo twice and compare the printed
+report SHA-256 within one preserved report input. Different runs have different run IDs and
+timestamps, but reopening the same canonical JSON always produces identical HTML.
+
 ## Phase approval instructions
 
 Use the [phase approval guide](APPROVALS.md) for P0–P7 verification and validation checklists,
