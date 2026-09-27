@@ -5,6 +5,26 @@ September 22 under [the decision record](reviews/2026-09-22-delegated-decisions.
 Historical pending statements below describe their original slices, not today's decisions.
 Personal walkthroughs and final acceptance remain unperformed/open.
 
+## Read-only completed-run operator API v1
+
+Tracked in [issue #18](https://github.com/lvlunario/project-chimera/issues/18), target M3
+November 7. This begins P5 with a local inspection interface; it is not the accessible
+dashboard, authentication, multi-user service or P5 gate closure.
+
+| ID | Requirement | Evidence |
+|---|---|---|
+| API-001 | Reopen only regular, bounded request/evidence/binding/report/HTML artifacts without journals, databases or callback execution | `tests/test_api.py` reopen, size and symbolic-link controls |
+| API-002 | Recompute the canonical report from reopened evidence/bindings and require agreement with request identity, input/fault provenance, threshold and saved JSON/HTML | cross-artifact tamper and synthetic/pass controls |
+| API-003 | Expose versioned GET resources for compact run summary, canonical report JSON and deterministic report HTML | direct WSGI endpoint tests and installed-wheel control |
+| API-004 | Provide no mutation endpoint or CORS permission; return 405 for non-GET methods and security/no-cache headers | method/header negative tests |
+| API-005 | `chimera serve-link` binds only IPv4 loopback on an explicit bounded port and validates all artifacts before serving | CLI/parser/server-boundary tests |
+
+The API reads one completed local directory into an immutable in-memory view at startup.
+SHA-256 values prove byte identity, not authorship; an attacker able to coherently replace
+all unsigned artifacts is outside this prototype boundary. No authentication, TLS, remote
+binding, concurrent run index, live progress, production WSGI deployment or accessibility-
+tested dashboard is claimed.
+
 ## Integrated communications operator workflow v1
 
 Tracked in [issue #17](https://github.com/lvlunario/project-chimera/issues/17), target M2

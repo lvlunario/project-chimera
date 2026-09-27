@@ -65,3 +65,12 @@ major tags. Build tools still come from the Python package index and GitHub-host
 runner images can change. Logs and action pins must be inspected at release review;
 a green badge alone is not complete release evidence. No deployment or publication
 occurs in this workflow.
+
+## Local operator API boundary
+
+The first P5 API slice is verified directly as a WSGI application and through an isolated
+installed wheel. Tests must cover artifact disagreement, invalid methods, security/no-cache
+headers, symbolic links and bounded reads in normal and optimized Python. The server must
+bind only to `127.0.0.1` and start only after one completed run is cross-validated. This is
+local prototype evidence, not a penetration test, accessibility review, authentication/TLS
+assessment or production-deployment approval.

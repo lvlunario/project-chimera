@@ -1,5 +1,27 @@
 # Architecture decision 0001: deterministic core first
 
+## Decision 0018: serve only a cross-validated completed-run projection
+
+September 27, 2026. Bounded P5 implementation candidate; no phase closure.
+
+Open the portable request, evidence, requirement bindings, canonical report and HTML as a
+single completed-run view. Bound each read, reject symbolic links/non-regular files, reopen
+the versioned schemas, reproduce the report from evidence and bindings, and require request,
+input/fault provenance, threshold, report and HTML identities to agree. Do not open the
+journal or evidence database and accept no task callback at this boundary.
+
+Expose only three GET resources: versioned run summary, canonical report JSON and its
+deterministic HTML projection. The CLI binds the standard-library server to `127.0.0.1`
+with no configurable host, mutation endpoint or CORS permission. Add no runtime dependency.
+Load and validate once before the socket starts so a partially updated directory is never
+presented as a coherent live run.
+
+Tradeoffs: this is a trusted-local inspection API, not authentication, TLS, hostile-host
+isolation, live progress, a multi-run index or the accessible dashboard. Content hashes
+detect disagreement but are not signatures; coherent replacement of every unsigned
+artifact is outside the prototype trust boundary. The November 7 operator UI and end-to-end
+acceptance evidence remain P5 work.
+
 ## Decision 0017: integrate at a typed operator command, not the generic workflow language
 
 September 27, 2026. Implemented as a bounded P3/P4 slice; phase gates remain open.

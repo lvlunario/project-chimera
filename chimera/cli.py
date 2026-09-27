@@ -4,6 +4,7 @@ from pathlib import Path
 import sys
 
 from .evidence import EvidenceError, run_with_evidence
+from .api import OperatorAPIError, serve_completed_run
 from .operator import (OperatorError, OperatorInputError, OperatorOutputError,
                        run_link_verification)
 from .workflow import WorkflowError, load_workflow
@@ -23,11 +24,25 @@ def _parser() -> argparse.ArgumentParser:
     link_parser.add_argument("--threshold-db", required=True)
     link_parser.add_argument("--fault-plan", type=Path)
     link_parser.add_argument("--resume-run-id")
+    serve_parser = commands.add_parser(
+        "serve-link", help="serve one completed link run on IPv4 loopback"
+    )
+    serve_parser.add_argument("output", type=Path)
+    serve_parser.add_argument("--port", type=int, default=8765)
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     args = _parser().parse_args(argv)
+    if args.command == "serve-link":
+        try:
+            serve_completed_run(args.output, args.port)
+        except OperatorAPIError as exc:
+            print(f"chimera: completed run unavailable: {exc}", file=sys.stderr)
+            return 3
+        except KeyboardInterrupt:
+            return 0
+        return 0
     if args.command == "verify-link":
         try:
             result = run_link_verification(

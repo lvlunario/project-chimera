@@ -19,7 +19,7 @@ The 100-developer framing expresses ambition, not actual staffing or throughput.
 | P2 | Durable execution | SQLite run storage; restart recovery and idempotency tested | Conditionally accepted for continued development September 22; bounded recovery limitations retained |
 | P3 | Engineering adapters | Synthetic telemetry ingestion and deterministic fault injection with reference fixtures | In progress; strict CSV ingestion, reference controls, deterministic faults and integrated local operator path implemented |
 | P4 | Verification evidence | Requirement mapping, reproducible JSON/HTML reports, missing-evidence detection | In progress; canonical reopened-evidence JSON/HTML and integrated local export path implemented; gate packet/dashboard pending |
-| P5 | Operator product | API and accessible dashboard; end-to-end acceptance tests | Planned |
+| P5 | Operator product | API and accessible dashboard; end-to-end acceptance tests | In progress; read-only loopback API candidate implemented, dashboard and acceptance tests pending |
 | P6 | AI assistance | Provider adapter, bounded permissions, evaluation dataset and measured baseline comparison | Planned |
 | P7 | Release | Reproducible deployment, performance results, threat model, demo and operator guide | Planned |
 
@@ -46,7 +46,7 @@ AI assistance cannot decide that missing evidence is a passing verification.
 
 ## Next tasks
 Current direction, September 27: verify the integrated local communications operator path,
-then prepare the October 17 vertical-slice packet and begin the bounded operator API.
+complete its read-only local API slice, then prepare the October 17 vertical-slice packet.
 [Delegated decisions](reviews/2026-09-22-delegated-decisions.md)
 supersede historical pending-P0/P1/P2 statements below. Personal walkthroughs are unperformed;
 final acceptance remains separate. No repeated PM decision is required this week.
@@ -80,9 +80,10 @@ Historical implementation sequence:
    September 22; exact-candidate verification and Leo's response remain before gate
    closure. September 22 adds deterministic sample-replacement fault plans; September 23
    adds canonical reopened-evidence JSON plus self-contained HTML presentation. September 27
-   adds the integrated `verify-link` local operator entry point with conservative resume.
-   Operator API/dashboard and phase-gate evidence remain P3/P4/P5 work. These slices do
-   not close P2, P3 or P4.
+   adds the integrated `verify-link` local operator entry point with conservative resume
+   and a read-only, loopback-only API that cross-validates completed artifacts before
+   presentation. The accessible dashboard and phase-gate evidence remain P3/P4/P5 work.
+   These slices do not close P2, P3, P4 or P5.
 7. September 16: Linux local-file lifetime ownership primitive implemented as a
    bounded prerequisite for RECOVER-005. September 19 runner integration holds this
    guard from plan creation through callbacks and terminal commits; September 20 resume,

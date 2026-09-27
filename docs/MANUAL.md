@@ -710,6 +710,33 @@ input, threshold and fault configuration to the run. Recovery is allowed only wh
 sheet and the durable journal agree, preventing a restart from quietly becoming a different
 test. This is a local command, not yet the November 7 browser dashboard or a hardware result.
 
+### Read-only completed-run API
+
+After `verify-link` finishes, inspect that one run through a local HTTP interface:
+
+```bash
+chimera serve-link /tmp/chimera-link-pass --port 8765
+```
+
+Open `http://127.0.0.1:8765/report`, or retrieve the versioned summary at
+`http://127.0.0.1:8765/api/v1/run` and canonical report at
+`http://127.0.0.1:8765/api/v1/report`. Press Ctrl+C to stop it.
+
+The command validates the request, portable evidence, bindings, canonical report and HTML
+before opening the socket. It recomputes the report without journal/database access or task
+callbacks and refuses missing, oversized, symbolic-link, malformed or inconsistent
+artifacts. It binds only to IPv4 loopback, supports GET only, enables no CORS permission and
+has no update endpoint. Use it for a trusted local demonstration only; it has no login, TLS,
+remote access, production-server hardening, live-run view or accessibility-tested dashboard.
+
+Teaching note for Leo: the API does not invent a new verdict. Think of it as a display case
+that first checks the report against its evidence and cover sheet; if those records disagree,
+the case stays closed. The readable HTML is still a projection of canonical JSON.
+
+Practical exercise: run the passing command above, compare `verdict` and `report_sha256` in
+`/api/v1/run` with `/api/v1/report`, then change a copy of `report.html` and restart
+`serve-link`. Expected result: startup refuses the inconsistent run rather than displaying it.
+
 ## Phase approval instructions
 
 Use the [phase approval guide](APPROVALS.md) for P0–P7 verification and validation checklists,

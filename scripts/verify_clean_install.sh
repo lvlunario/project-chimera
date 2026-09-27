@@ -255,17 +255,35 @@ if [[ $LINK_STATUS -ne 1 ]]; then
   exit 1
 fi
 grep -q '^COM-LINK-001: fail' <<<"$LINK_OUTPUT"
-"$WORK/venv/bin/python" - "$WORK/outside/link-run/report.json" <<'PY'
+"$WORK/venv/bin/python" - "$WORK/outside/link-run" <<'PY'
 from pathlib import Path
 import sys
 
-from chimera import VerificationReport
+from chimera import CompletedLinkRun, CompletedRunApp, VerificationReport
 
-report = VerificationReport.from_json(Path(sys.argv[1]).read_text(encoding="utf-8"))
+directory = Path(sys.argv[1])
+report = VerificationReport.from_json(
+    (directory / "report.json").read_text(encoding="utf-8")
+)
 if report.to_dict()["requirement"]["verdict"] != "fail":
     raise SystemExit("Installed operator report verdict mismatch")
 if report.to_dict()["provenance"]["synthetic"] is not True:
     raise SystemExit("Installed operator lost synthetic provenance")
 print("installed-operator: durable link workflow and report passed")
+completed = CompletedLinkRun.open(directory)
+if completed.summary()["verdict"] != "fail" or not completed.summary()["synthetic"]:
+    raise SystemExit("Installed completed-run API summary mismatch")
+response = {}
+def start_response(status, headers):
+    response["status"] = status
+    response["headers"] = dict(headers)
+body = b"".join(CompletedRunApp(completed)(
+    {"REQUEST_METHOD": "GET", "PATH_INFO": "/api/v1/run"}, start_response
+))
+if response["status"] != "200 OK" or b'"verdict":"fail"' not in body:
+    raise SystemExit("Installed read-only API response mismatch")
+if "Access-Control-Allow-Origin" in response["headers"]:
+    raise SystemExit("Installed read-only API unexpectedly enabled CORS")
+print("installed-api: completed-run reopen and read-only response passed")
 PY
 printf '%s\n' "clean-install: passed (temporary environment removed on exit)"

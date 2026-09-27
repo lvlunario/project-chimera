@@ -40,6 +40,8 @@ The development branch includes:
 - A canonical reopened-evidence JSON report and deterministic self-contained HTML view.
 - An integrated `chimera verify-link` operator command from strict CSV and optional
   fault plan through journal, immutable reopen, verdict and JSON/HTML report.
+- A read-only loopback API that cross-validates one completed run before serving its
+  versioned summary, canonical JSON and deterministic HTML.
 - An installable Python package and CI on Python 3.11 and 3.12.
 
 The [September 19 evidence log](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-09-19.md)
@@ -93,6 +95,7 @@ python -m examples.fault_demo
 python -m examples.report_demo
 chimera verify-link examples/fixtures/link_margin_passed.csv \
   --threshold-db 3.0 --output /tmp/chimera-link-run
+chimera serve-link /tmp/chimera-link-run --port 8765
 ```
 
 Some demonstrations deliberately show failures to verify correct failure handling.

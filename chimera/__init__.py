@@ -18,6 +18,8 @@ from .faults import FaultError, FaultPlan, fault_manifest, inject_link_csv
 from .reports import ReportError, VerificationReport
 from .operator import (LinkRunResult, OperatorError, OperatorInputError,
                        OperatorOutputError, run_link_verification)
+from .api import (CompletedLinkRun, CompletedRunApp, OperatorAPIError,
+                  serve_completed_run)
 
 __all__ = [
     "Result", "Task", "run", "BindingError", "RequirementBindings",
@@ -38,4 +40,6 @@ __all__ = [
     "ReportError", "VerificationReport",
     "LinkRunResult", "OperatorError", "OperatorInputError",
     "OperatorOutputError", "run_link_verification",
+    "CompletedLinkRun", "CompletedRunApp", "OperatorAPIError",
+    "serve_completed_run",
 ]
