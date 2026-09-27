@@ -25,7 +25,7 @@ entry point; the implementation has not been merged into `main`.
 | Ongoing changes, test evidence and next steps | [Daily engineering logs](https://github.com/lvlunario/project-chimera/tree/magnum-opus/development/docs/daily) |
 | Requirements and quality approach | [Requirements](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/REQUIREMENTS.md) · [Quality plan](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/QUALITY.md) |
 
-## Progress snapshot — September 23, 2026
+## Progress snapshot — September 27, 2026
 
 The development branch includes:
 
@@ -38,6 +38,8 @@ The development branch includes:
 - Strict timestamp/link-margin CSV ingestion with exact input SHA-256 identity,
   deterministic synthetic fault plans, failing-sample evidence and passing/malformed controls.
 - A canonical reopened-evidence JSON report and deterministic self-contained HTML view.
+- An integrated `chimera verify-link` operator command from strict CSV and optional
+  fault plan through journal, immutable reopen, verdict and JSON/HTML report.
 - An installable Python package and CI on Python 3.11 and 3.12.
 
 The [September 19 evidence log](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-09-19.md)
@@ -89,6 +91,8 @@ python -m examples.link_csv_demo
 python -m examples.p2_approval_demo
 python -m examples.fault_demo
 python -m examples.report_demo
+chimera verify-link examples/fixtures/link_margin_passed.csv \
+  --threshold-db 3.0 --output /tmp/chimera-link-run
 ```
 
 Some demonstrations deliberately show failures to verify correct failure handling.

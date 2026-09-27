@@ -240,4 +240,32 @@ if len(evidence.to_dict()["tasks"]) != 4:
     raise SystemExit("Installed CLI evidence task count mismatch")
 print("installed-cli: workflow and evidence passed")
 PY
+
+set +e
+LINK_OUTPUT=$("$WORK/venv/bin/chimera" verify-link \
+  "$ROOT/examples/fixtures/link_margin_passed.csv" \
+  --threshold-db 3.0 \
+  --fault-plan "$ROOT/examples/fixtures/link_fault_plan.json" \
+  --output "$WORK/outside/link-run")
+LINK_STATUS=$?
+set -e
+printf '%s\n' "$LINK_OUTPUT"
+if [[ $LINK_STATUS -ne 1 ]]; then
+  echo "Expected installed link verification to exit 1; found $LINK_STATUS" >&2
+  exit 1
+fi
+grep -q '^COM-LINK-001: fail' <<<"$LINK_OUTPUT"
+"$WORK/venv/bin/python" - "$WORK/outside/link-run/report.json" <<'PY'
+from pathlib import Path
+import sys
+
+from chimera import VerificationReport
+
+report = VerificationReport.from_json(Path(sys.argv[1]).read_text(encoding="utf-8"))
+if report.to_dict()["requirement"]["verdict"] != "fail":
+    raise SystemExit("Installed operator report verdict mismatch")
+if report.to_dict()["provenance"]["synthetic"] is not True:
+    raise SystemExit("Installed operator lost synthetic provenance")
+print("installed-operator: durable link workflow and report passed")
+PY
 printf '%s\n' "clean-install: passed (temporary environment removed on exit)"

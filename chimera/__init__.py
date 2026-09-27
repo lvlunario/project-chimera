@@ -16,6 +16,8 @@ from .telemetry import (InputIdentity, LinkMarginReport, LinkSample, LinkTelemet
                         link_margin_passes, load_link_csv, parse_link_csv)
 from .faults import FaultError, FaultPlan, fault_manifest, inject_link_csv
 from .reports import ReportError, VerificationReport
+from .operator import (LinkRunResult, OperatorError, OperatorInputError,
+                       OperatorOutputError, run_link_verification)
 
 __all__ = [
     "Result", "Task", "run", "BindingError", "RequirementBindings",
@@ -34,4 +36,6 @@ __all__ = [
     "link_margin_passes", "load_link_csv", "parse_link_csv",
     "FaultError", "FaultPlan", "fault_manifest", "inject_link_csv",
     "ReportError", "VerificationReport",
+    "LinkRunResult", "OperatorError", "OperatorInputError",
+    "OperatorOutputError", "run_link_verification",
 ]

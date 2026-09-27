@@ -5,6 +5,27 @@ September 22 under [the decision record](reviews/2026-09-22-delegated-decisions.
 Historical pending statements below describe their original slices, not today's decisions.
 Personal walkthroughs and final acceptance remain unperformed/open.
 
+## Integrated communications operator workflow v1
+
+Tracked in [issue #17](https://github.com/lvlunario/project-chimera/issues/17), target M2
+October 17. This is a bounded local P3/P4 integration slice, not a dashboard or gate closure.
+
+| ID | Requirement | Evidence |
+|---|---|---|
+| OPERATOR-001 | Accept a strict bounded communications CSV, exact decimal threshold and optional strict synthetic fault plan | `tests/test_operator.py` passing/failing/malformed controls |
+| OPERATOR-002 | Bind source, threshold, optional plan and journal plan identities into a saved canonical request before execution | request/resume identity tests |
+| OPERATOR-003 | Execute through the owned durable journal, export only a completed exact-plan run, save/reopen immutable evidence and bindings, then generate reports without callback replay | integrated artifact and completed-resume tests |
+| OPERATOR-004 | Produce portable evidence/binding JSON plus canonical report JSON and deterministic self-contained HTML without overwriting conflicting artifacts | artifact/reopen/output-conflict tests |
+| OPERATOR-005 | Return 0 for PASS, 1 for a valid requirement FAIL, 2 for invalid input/non-verdict and 3 for output/storage/recovery failure | CLI integration tests and installed-wheel control |
+| OPERATOR-006 | Resume only with the same saved request and existing journal; changed input/threshold/plan fails before pending callbacks, while existing matching artifacts are idempotent | changed-input and completed-resume tests; existing journal recovery suite |
+| OPERATOR-007 | Reject symbolic-link output state and existing conflicting output; never mutate source telemetry | no-overwrite/symlink/source-preservation tests |
+
+The local output directory contains `request.json`, `journal.sqlite`, `evidence.sqlite`,
+portable `evidence.json`/`bindings.json`, `report.json` and `report.html`. Content hashes are
+identities, not signatures. Recovery preserves the P2 rule: a durably running/unknown task
+requires investigation and is never retried automatically. Local paths and callbacks remain
+trusted; this is not a multi-user service, hostile-directory sandbox or measured-radio claim.
+
 ## Reopened-evidence verification report v1
 
 Tracked in [issue #15](https://github.com/lvlunario/project-chimera/issues/15), target M3

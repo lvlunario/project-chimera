@@ -670,6 +670,46 @@ Optional exercise (not an approval request): run the demo twice and compare the 
 report SHA-256 within one preserved report input. Different runs have different run IDs and
 timestamps, but reopening the same canonical JSON always produces identical HTML.
 
+### Integrated communications operator command
+
+Run the passing control from an installed development package:
+
+```bash
+chimera verify-link examples/fixtures/link_margin_passed.csv \
+  --threshold-db 3.0 --output /tmp/chimera-link-pass
+```
+
+Expected exit 0 and `COM-LINK-001: pass`. The new output directory contains the saved
+request, durable journal, immutable evidence store, portable evidence/bindings and canonical
+JSON/HTML reports. For the deterministic failing control, add:
+
+```bash
+--fault-plan examples/fixtures/link_fault_plan.json
+```
+
+Expected exit 1 and `COM-LINK-001: fail`; this is a valid engineering finding, not a crashed
+run. The source CSV is never modified. Malformed telemetry exits 2 before creating an output
+directory. A pre-existing output directory exits 3 rather than being reused or overwritten.
+
+To reopen a completed run, read `run_id` from `request.json` and supply the same source,
+threshold, optional plan and output directory:
+
+```bash
+chimera verify-link examples/fixtures/link_margin_passed.csv \
+  --threshold-db 3.0 --output /tmp/chimera-link-pass \
+  --resume-run-id RUN_ID
+```
+
+A completed run reopens idempotently. If source bytes, threshold or plan changed, recovery
+stops before pending callbacks. If an interrupted task is durably `running`, the existing P2
+policy refuses automatic retry because its external outcome could be unknown. Conflicting or
+symbolic-link output artifacts are also refused. Preserve the directory for investigation.
+
+Teaching note for Leo: the saved request is like a test procedure cover sheet—it locks the
+input, threshold and fault configuration to the run. Recovery is allowed only when that cover
+sheet and the durable journal agree, preventing a restart from quietly becoming a different
+test. This is a local command, not yet the November 7 browser dashboard or a hardware result.
+
 ## Phase approval instructions
 
 Use the [phase approval guide](APPROVALS.md) for P0–P7 verification and validation checklists,

@@ -4,6 +4,8 @@ from pathlib import Path
 import sys
 
 from .evidence import EvidenceError, run_with_evidence
+from .operator import (OperatorError, OperatorInputError, OperatorOutputError,
+                       run_link_verification)
 from .workflow import WorkflowError, load_workflow
 
 
@@ -13,11 +15,39 @@ def _parser() -> argparse.ArgumentParser:
     run_parser = commands.add_parser("run", help="run a declarative JSON workflow")
     run_parser.add_argument("workflow", type=Path)
     run_parser.add_argument("--evidence", type=Path, required=True)
+    link_parser = commands.add_parser(
+        "verify-link", help="run or resume durable communications verification"
+    )
+    link_parser.add_argument("source", type=Path)
+    link_parser.add_argument("--output", type=Path, required=True)
+    link_parser.add_argument("--threshold-db", required=True)
+    link_parser.add_argument("--fault-plan", type=Path)
+    link_parser.add_argument("--resume-run-id")
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     args = _parser().parse_args(argv)
+    if args.command == "verify-link":
+        try:
+            result = run_link_verification(
+                args.source, args.output, threshold_db=args.threshold_db,
+                fault_plan_path=args.fault_plan,
+                resume_run_id=args.resume_run_id,
+            )
+        except OperatorInputError as exc:
+            print(f"chimera: invalid link request: {exc}", file=sys.stderr)
+            return 2
+        except (OperatorOutputError, OperatorError) as exc:
+            print(f"chimera: link run unavailable: {exc}", file=sys.stderr)
+            return 3
+        print(f"run_id: {result.run_id}")
+        print(f"COM-LINK-001: {result.verdict}")
+        print(f"evidence: {result.evidence_path}")
+        print(f"report-json: {result.report_json_path}")
+        print(f"report-html: {result.report_html_path}")
+        return 0 if result.verdict == "pass" else (1 if result.verdict == "fail" else 2)
+
     if args.command != "run":  # pragma: no cover - argparse enforces this
         return 2
 

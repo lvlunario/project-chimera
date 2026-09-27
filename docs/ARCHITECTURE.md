@@ -1,5 +1,27 @@
 # Architecture decision 0001: deterministic core first
 
+## Decision 0017: integrate at a typed operator command, not the generic workflow language
+
+September 27, 2026. Implemented as a bounded P3/P4 slice; phase gates remain open.
+
+`chimera verify-link` is a separate typed command for the communications vertical. It accepts
+one bounded CSV, exact decimal threshold and optional versioned fault plan, then uses the
+existing journal, export, immutable store, binding, assessment and report components. The
+saved request binds source/threshold/plan/plan digests to the run. Resume reconstructs that
+exact plan and lets the journal execute only work durably proven pending; changed inputs or
+outcome-unknown work stop before a callback is repeated.
+
+Keep this out of the generic `run` JSON allowlist. Adding filesystem paths or adapter names
+to that schema would blur its side-effect-free security boundary and silently expand P1.
+The typed command makes engineering semantics and exit codes explicit: 0 PASS, 1 valid FAIL,
+2 invalid input/non-verdict and 3 storage/output/recovery failure. Matching artifacts may be
+reopened idempotently; conflicting files and symbolic-link state are rejected, not replaced.
+
+Alternative: orchestrate the pieces only in a demonstration script. Rejected because it
+would not exercise the installed operator boundary or provide a stable recovery contract.
+This remains a trusted local prototype: content identities are not signatures, path-race
+hardening is not a multi-user sandbox, and no dashboard/API/hardware validation is implied.
+
 ## Decision 0016: HTML is a deterministic view of canonical reopened-evidence JSON
 
 September 23, 2026. Bounded P4 implementation; no phase closure. Build a strict
