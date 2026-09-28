@@ -5,6 +5,26 @@ September 22 under [the decision record](reviews/2026-09-22-delegated-decisions.
 Historical pending statements below describe their original slices, not today's decisions.
 Personal walkthroughs and final acceptance remain unperformed/open.
 
+## Local completed-run dashboard v1
+
+Tracked in [issue #19](https://github.com/lvlunario/project-chimera/issues/19), target M3
+November 7. This is the first bounded P5 dashboard slice; end-to-end acceptance and Leo's
+interface decisions remain open.
+
+| ID | Requirement | Evidence |
+|---|---|---|
+| DASH-001 | Inspect at most 1,000 immediate entries in one explicit regular local workspace; follow no symbolic-link workspace or entry | discovery bound and symlink tests |
+| DASH-002 | Cross-validate every candidate with `CompletedLinkRun`; expose no route for invalid or duplicate run IDs while keeping each rejected entry visible with a reason | tamper, invalid-entry and duplicate-ID tests |
+| DASH-003 | Expose a deterministic versioned run index plus list → detail → canonical JSON/readable report navigation | WSGI API/navigation and installed-wheel controls |
+| DASH-004 | Use semantic, script-free, keyboard-navigable HTML with visible text status, table headings/caption and restrictive response headers | accessible-markup/header tests |
+| DASH-005 | Bind only IPv4 loopback, support GET only, enable no CORS or mutation endpoint, and snapshot the workspace before listener startup | method, CLI and server-boundary tests |
+
+The dashboard is a read-only presentation of validated portable artifacts. It does not scan
+recursively, watch for live changes, choose among duplicate identities or repair invalid
+runs. It includes accessibility fundamentals but has not yet completed browser/device or
+operator acceptance testing. No authentication, TLS, remote hosting, multi-user isolation,
+live control or production WSGI claim is made.
+
 ## Read-only completed-run operator API v1
 
 Tracked in [issue #18](https://github.com/lvlunario/project-chimera/issues/18), target M3

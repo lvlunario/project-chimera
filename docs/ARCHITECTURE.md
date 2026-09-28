@@ -1,5 +1,26 @@
 # Architecture decision 0001: deterministic core first
 
+## Decision 0019: discover completed runs before rendering the dashboard
+
+September 28, 2026. Bounded P5 implementation candidate; no phase closure.
+
+Treat one explicitly selected local directory as a set of immediate completed-run
+candidates. Before opening a listener, bound the entry count, reject symbolic links,
+cross-validate every candidate through `CompletedLinkRun`, and build an immutable in-memory
+snapshot. Keep malformed entries visible with a reason, but expose detail/report routes only
+for validated unique run IDs. If two directories claim the same run ID, route neither; the
+operator must investigate the ambiguity.
+
+Serve a versioned JSON index and semantic script-free HTML for list → detail → canonical
+JSON/readable report navigation. Verdict color is supplementary to explicit PASS/FAIL text;
+links use native keyboard behavior; tables include headings and a caption. Retain the
+loopback-only, GET-only, no-CORS, no-dependency boundary.
+
+Tradeoffs: startup snapshots are deterministic and avoid presenting a directory that changes
+mid-request, but new runs require a restart. This is not recursive discovery, live progress,
+repair, authentication, hostile-host isolation or a completed accessibility assessment.
+Browser/device and operator acceptance evidence remain required for the November 7 gate.
+
 ## Decision 0018: serve only a cross-validated completed-run projection
 
 September 27, 2026. Bounded P5 implementation candidate; no phase closure.

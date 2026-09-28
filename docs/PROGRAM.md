@@ -19,7 +19,7 @@ The 100-developer framing expresses ambition, not actual staffing or throughput.
 | P2 | Durable execution | SQLite run storage; restart recovery and idempotency tested | Conditionally accepted for continued development September 22; bounded recovery limitations retained |
 | P3 | Engineering adapters | Synthetic telemetry ingestion and deterministic fault injection with reference fixtures | In progress; strict CSV ingestion, reference controls, deterministic faults and integrated local operator path implemented |
 | P4 | Verification evidence | Requirement mapping, reproducible JSON/HTML reports, missing-evidence detection | In progress; canonical reopened-evidence JSON/HTML and integrated local export path implemented; gate packet/dashboard pending |
-| P5 | Operator product | API and accessible dashboard; end-to-end acceptance tests | In progress; read-only loopback API candidate implemented, dashboard and acceptance tests pending |
+| P5 | Operator product | API and accessible dashboard; end-to-end acceptance tests | In progress; read-only loopback API and bounded multi-run dashboard candidates implemented; browser/operator acceptance pending |
 | P6 | AI assistance | Provider adapter, bounded permissions, evaluation dataset and measured baseline comparison | Planned |
 | P7 | Release | Reproducible deployment, performance results, threat model, demo and operator guide | Planned |
 
@@ -46,7 +46,7 @@ AI assistance cannot decide that missing evidence is a passing verification.
 
 ## Next tasks
 Current direction, September 28: prepare the October 17 integrated vertical-slice packet
-and build the bounded accessible multi-run dashboard tracked in
+and complete browser/operator acceptance for the bounded multi-run dashboard tracked in
 [issue #19](https://github.com/lvlunario/project-chimera/issues/19) for November 7.
 [Delegated decisions](reviews/2026-09-22-delegated-decisions.md)
 supersede historical pending-P0/P1/P2 statements below. Personal walkthroughs are unperformed;

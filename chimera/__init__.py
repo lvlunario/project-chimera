@@ -20,6 +20,8 @@ from .operator import (LinkRunResult, OperatorError, OperatorInputError,
                        OperatorOutputError, run_link_verification)
 from .api import (CompletedLinkRun, CompletedRunApp, OperatorAPIError,
                   serve_completed_run)
+from .dashboard import (CompletedRunWorkspace, DashboardApp, DashboardError,
+                        InvalidRunEntry, serve_dashboard)
 
 __all__ = [
     "Result", "Task", "run", "BindingError", "RequirementBindings",
@@ -42,4 +44,6 @@ __all__ = [
     "OperatorOutputError", "run_link_verification",
     "CompletedLinkRun", "CompletedRunApp", "OperatorAPIError",
     "serve_completed_run",
+    "CompletedRunWorkspace", "DashboardApp", "DashboardError",
+    "InvalidRunEntry", "serve_dashboard",
 ]

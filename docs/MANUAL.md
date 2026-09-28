@@ -737,6 +737,41 @@ Practical exercise: run the passing command above, compare `verdict` and `report
 `/api/v1/run` with `/api/v1/report`, then change a copy of `report.html` and restart
 `serve-link`. Expected result: startup refuses the inconsistent run rather than displaying it.
 
+### Local completed-run dashboard
+
+Put completed `verify-link` output directories directly inside one workspace, then start the
+installed read-only dashboard:
+
+```bash
+mkdir -p /tmp/chimera-runs
+chimera verify-link examples/fixtures/link_margin_passed.csv \
+  --threshold-db 3.0 --output /tmp/chimera-runs/passing
+chimera verify-link examples/fixtures/link_margin_passed.csv \
+  --threshold-db 3.0 --fault-plan examples/fixtures/link_fault_plan.json \
+  --output /tmp/chimera-runs/synthetic-failure || test $? -eq 1
+chimera serve-dashboard /tmp/chimera-runs --port 8765
+```
+
+Open `http://127.0.0.1:8765/`. The list shows explicit PASS/FAIL and synthetic status,
+then links to a run detail and its readable or canonical JSON report. The versioned index is
+`/api/v1/runs`. Use Tab/Shift+Tab and Enter to traverse native links; the interface does not
+require a mouse or JavaScript.
+
+At startup Chimera inspects only the workspace's immediate entries, with a 1,000-entry
+limit. Every candidate must pass the same request/evidence/binding/report/HTML agreement
+checks as `serve-link`. Invalid entries remain listed for investigation but receive no run
+route. Duplicate run IDs make every conflicting entry invalid rather than letting directory
+order choose the displayed record. Restart the command to discover newly added runs.
+
+Teaching note for Leo: the dashboard is an index of sealed evidence packages, not a repair
+tool. Showing a broken package as “invalid” is safer than silently hiding it, while refusing
+its detail route prevents a polished page from lending it false credibility.
+
+Current boundary: local IPv4 loopback, read-only GET requests, no CORS, accounts, TLS,
+remote hosting, live progress or control. Semantic HTML and keyboard fundamentals are
+implemented; browser/device testing and your operator walkthrough remain pending before P5
+acceptance.
+
 ## Phase approval instructions
 
 Use the [phase approval guide](APPROVALS.md) for P0–P7 verification and validation checklists,

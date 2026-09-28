@@ -259,7 +259,8 @@ grep -q '^COM-LINK-001: fail' <<<"$LINK_OUTPUT"
 from pathlib import Path
 import sys
 
-from chimera import CompletedLinkRun, CompletedRunApp, VerificationReport
+from chimera import (CompletedLinkRun, CompletedRunApp, CompletedRunWorkspace,
+                     DashboardApp, VerificationReport)
 
 directory = Path(sys.argv[1])
 report = VerificationReport.from_json(
@@ -285,5 +286,21 @@ if response["status"] != "200 OK" or b'"verdict":"fail"' not in body:
 if "Access-Control-Allow-Origin" in response["headers"]:
     raise SystemExit("Installed read-only API unexpectedly enabled CORS")
 print("installed-api: completed-run reopen and read-only response passed")
+workspace = CompletedRunWorkspace.open(directory.parent)
+dashboard = DashboardApp(workspace)
+response.clear()
+body = b"".join(dashboard(
+    {"REQUEST_METHOD": "GET", "PATH_INFO": "/api/v1/runs"}, start_response
+))
+if (response["status"] != "200 OK"
+        or str(completed.request["run_id"]).encode() not in body):
+    raise SystemExit("Installed dashboard index response mismatch")
+response.clear()
+body = b"".join(dashboard(
+    {"REQUEST_METHOD": "GET", "PATH_INFO": "/"}, start_response
+))
+if response["status"] != "200 OK" or b"Chimera completed runs" not in body:
+    raise SystemExit("Installed dashboard HTML response mismatch")
+print("installed-dashboard: multi-run discovery and accessible index passed")
 PY
 printf '%s\n' "clean-install: passed (temporary environment removed on exit)"

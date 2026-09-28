@@ -5,6 +5,7 @@ import sys
 
 from .evidence import EvidenceError, run_with_evidence
 from .api import OperatorAPIError, serve_completed_run
+from .dashboard import DashboardError, serve_dashboard
 from .operator import (OperatorError, OperatorInputError, OperatorOutputError,
                        run_link_verification)
 from .workflow import WorkflowError, load_workflow
@@ -29,11 +30,25 @@ def _parser() -> argparse.ArgumentParser:
     )
     serve_parser.add_argument("output", type=Path)
     serve_parser.add_argument("--port", type=int, default=8765)
+    dashboard_parser = commands.add_parser(
+        "serve-dashboard", help="serve validated completed runs on IPv4 loopback"
+    )
+    dashboard_parser.add_argument("workspace", type=Path)
+    dashboard_parser.add_argument("--port", type=int, default=8765)
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     args = _parser().parse_args(argv)
+    if args.command == "serve-dashboard":
+        try:
+            serve_dashboard(args.workspace, args.port)
+        except DashboardError as exc:
+            print(f"chimera: dashboard unavailable: {exc}", file=sys.stderr)
+            return 3
+        except KeyboardInterrupt:
+            return 0
+        return 0
     if args.command == "serve-link":
         try:
             serve_completed_run(args.output, args.port)

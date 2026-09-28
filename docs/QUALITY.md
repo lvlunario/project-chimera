@@ -74,3 +74,13 @@ headers, symbolic links and bounded reads in normal and optimized Python. The se
 bind only to `127.0.0.1` and start only after one completed run is cross-validated. This is
 local prototype evidence, not a penetration test, accessibility review, authentication/TLS
 assessment or production-deployment approval.
+
+## Local dashboard boundary
+
+The bounded dashboard suite covers passing, failing, synthetic, invalid, empty, duplicate-ID,
+symbolic-link and oversized-workspace controls. Direct WSGI tests verify the versioned index,
+list/detail/report journey, semantic markup, explicit text status, deterministic responses,
+GET-only behavior, security headers and lack of CORS. The isolated wheel must import and
+exercise the dashboard against a completed operator run. These automated checks establish
+accessibility fundamentals; they do not replace keyboard/browser/device testing or Leo's
+operator validation before P5 acceptance.
