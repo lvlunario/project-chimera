@@ -45,11 +45,13 @@ AI assistance cannot decide that missing evidence is a passing verification.
 - Avoid paid infrastructure and live hardware operations until separately authorized.
 
 ## Next tasks
-Current direction, September 27: verify the integrated local communications operator path,
-complete its read-only local API slice, then prepare the October 17 vertical-slice packet.
+Current direction, September 28: prepare the October 17 integrated vertical-slice packet
+and build the bounded accessible multi-run dashboard tracked in
+[issue #19](https://github.com/lvlunario/project-chimera/issues/19) for November 7.
 [Delegated decisions](reviews/2026-09-22-delegated-decisions.md)
 supersede historical pending-P0/P1/P2 statements below. Personal walkthroughs are unperformed;
-final acceptance remains separate. No repeated PM decision is required this week.
+final acceptance remains separate. Do not reopen P0/P1/P2; new P5 interface recommendations
+are in the [September 28 weekly review](reviews/2026-09-28.md).
 
 Historical implementation sequence:
 1. Completed-run evidence, boolean-check verdict classification and versioned requirement
