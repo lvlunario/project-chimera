@@ -9,10 +9,13 @@ candidates. Before opening a listener, bound the entry count, reject symbolic li
 cross-validate every candidate through `CompletedLinkRun`, and build an immutable in-memory
 snapshot. Keep malformed entries visible with a reason, but expose detail/report routes only
 for validated unique run IDs. If two directories claim the same run ID, route neither; the
-operator must investigate the ambiguity.
+operator must investigate the ambiguity. Require the canonical lowercase hyphenated UUID
+spelling before admission so textual aliases cannot bypass duplicate identity detection.
 
 Serve a versioned JSON index and semantic script-free HTML for list → detail → canonical
-JSON/readable report navigation. Verdict color is supplementary to explicit PASS/FAIL text;
+report/readable report/portable evidence/requirement-binding navigation. These audit routes
+serialize only the already validated immutable in-memory objects; they do not reread the
+workspace or open databases. Verdict color is supplementary to explicit PASS/FAIL text;
 links use native keyboard behavior; tables include headings and a caption. Retain the
 loopback-only, GET-only, no-CORS, no-dependency boundary.
 

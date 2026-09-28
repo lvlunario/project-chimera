@@ -1,12 +1,16 @@
 import json
 import os
 from pathlib import Path
+import shutil
 import tempfile
 import unittest
 from unittest.mock import patch
 
 from chimera.dashboard import CompletedRunWorkspace, DashboardApp, MAX_WORKSPACE_ENTRIES
+from chimera.bindings import RequirementBindings
+from chimera.evidence import RunEvidence
 from chimera.operator import run_link_verification
+from chimera.reports import VerificationReport
 
 
 FIXTURES = Path(__file__).parents[1] / "examples" / "fixtures"
@@ -99,6 +103,48 @@ class DashboardIndependentQATests(unittest.TestCase):
             second = response(app, "/api/v1/runs")["body"]
             self.assertEqual(first, second)
             self.assertEqual(1, json.loads(first)["schema_version"])
+
+    def test_alternate_uuid_spelling_cannot_bypass_duplicate_detection(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            original = root / "original"
+            run_link_verification(
+                FIXTURES / "link_margin_passed.csv", original, threshold_db="3.0"
+            )
+            alternate = root / "uppercase-id"
+            shutil.copytree(original, alternate)
+
+            request = json.loads((alternate / "request.json").read_text())
+            request["run_id"] = request["run_id"].upper()
+            (alternate / "request.json").write_text(
+                json.dumps(request, sort_keys=True, separators=(",", ":")) + "\n",
+                encoding="utf-8",
+            )
+            evidence_document = json.loads((alternate / "evidence.json").read_text())
+            evidence_document["run_id"] = evidence_document["run_id"].upper()
+            evidence = RunEvidence.from_json(json.dumps(evidence_document))
+            bindings = RequirementBindings.from_json(
+                (alternate / "bindings.json").read_text(encoding="utf-8")
+            )
+            report = VerificationReport.from_evidence(
+                evidence, bindings, detail_task_id="detail"
+            )
+            (alternate / "evidence.json").write_text(
+                evidence.to_json() + "\n", encoding="utf-8"
+            )
+            (alternate / "report.json").write_text(
+                report.to_json() + "\n", encoding="utf-8"
+            )
+            (alternate / "report.html").write_text(
+                report.to_html(), encoding="utf-8"
+            )
+
+            document = CompletedRunWorkspace.open(root).document()
+            self.assertEqual(1, document["run_count"])
+            self.assertEqual(1, document["invalid_count"])
+            self.assertIn(
+                "canonical lowercase UUID", document["invalid_entries"][0]["reason"]
+            )
 
 
 if __name__ == "__main__":

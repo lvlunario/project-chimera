@@ -119,6 +119,8 @@ class CompletedRunWorkspace:
                 "detail_html": f"/runs/{run_id}",
                 "report_json": f"/api/v1/runs/{run_id}/report",
                 "report_html": f"/runs/{run_id}/report",
+                "evidence_json": f"/api/v1/runs/{run_id}/evidence",
+                "bindings_json": f"/api/v1/runs/{run_id}/bindings",
             }
             runs.append(summary)
         return {
@@ -249,7 +251,10 @@ class DashboardApp:
             "<th scope=\"col\">Link margin (dB)</th></tr></thead><tbody>"
             f"{findings_body}</tbody></table>"
             f"<p><a href=\"/runs/{run_id}/report\">Open readable report</a> · "
-            f"<a href=\"/api/v1/runs/{run_id}/report\">Open canonical JSON</a></p>"
+            f"<a href=\"/api/v1/runs/{run_id}/report\">Open canonical report JSON</a> · "
+            f"<a href=\"/api/v1/runs/{run_id}/evidence\">Open portable evidence JSON</a> · "
+            f"<a href=\"/api/v1/runs/{run_id}/bindings\">Open requirement bindings JSON</a>"
+            "</p>"
         )
         return self._page(f"Chimera run {run_id}", content)
 
@@ -299,6 +304,16 @@ class DashboardApp:
                           "default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'"),),
                     )
                 body = (completed.report.to_json() + "\n").encode("utf-8")
+                return self._response(
+                    start_response, "200 OK", "application/json; charset=utf-8", body
+                )
+            if completed is not None and parts[1] == "api" and suffix == ["evidence"]:
+                body = (completed.evidence.to_json() + "\n").encode("utf-8")
+                return self._response(
+                    start_response, "200 OK", "application/json; charset=utf-8", body
+                )
+            if completed is not None and parts[1] == "api" and suffix == ["bindings"]:
+                body = (completed.bindings.to_json() + "\n").encode("utf-8")
                 return self._response(
                     start_response, "200 OK", "application/json; charset=utf-8", body
                 )

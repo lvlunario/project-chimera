@@ -89,6 +89,27 @@ class CompletedRunAPITests(unittest.TestCase):
             with self.assertRaisesRegex(OperatorAPIError, "threshold conflicts"):
                 CompletedLinkRun.open(output)
 
+    def test_rejects_noncanonical_uuid_spellings(self):
+        with tempfile.TemporaryDirectory() as directory:
+            source = self._run(directory)
+            canonical = json.loads((source / "request.json").read_text())["run_id"]
+            for index, changed in enumerate((
+                    canonical.upper(), "{" + canonical + "}", canonical.replace("-", ""))):
+                with self.subTest(changed=changed):
+                    target = Path(directory, f"changed-{index}")
+                    target.mkdir()
+                    for artifact in source.iterdir():
+                        if artifact.is_file():
+                            (target / artifact.name).write_bytes(artifact.read_bytes())
+                    request = json.loads((target / "request.json").read_text())
+                    request["run_id"] = changed
+                    (target / "request.json").write_text(
+                        json.dumps(request), encoding="utf-8"
+                    )
+                    with self.assertRaisesRegex(
+                            OperatorAPIError, "canonical lowercase UUID"):
+                        CompletedLinkRun.open(target)
+
     def test_rejects_evidence_request_and_html_tampering(self):
         for filename in ("evidence.json", "request.json", "report.html"):
             with self.subTest(filename=filename), tempfile.TemporaryDirectory() as directory:

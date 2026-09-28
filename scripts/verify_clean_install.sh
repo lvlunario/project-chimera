@@ -301,6 +301,17 @@ body = b"".join(dashboard(
 ))
 if response["status"] != "200 OK" or b"Chimera completed runs" not in body:
     raise SystemExit("Installed dashboard HTML response mismatch")
-print("installed-dashboard: multi-run discovery and accessible index passed")
+for resource, expected in (
+        ("evidence", str(completed.request["run_id"]).encode()),
+        ("bindings", b'"requirement_id":"COM-LINK-001"')):
+    response.clear()
+    body = b"".join(dashboard(
+        {"REQUEST_METHOD": "GET", "PATH_INFO":
+         f"/api/v1/runs/{completed.request['run_id']}/{resource}"},
+        start_response,
+    ))
+    if response["status"] != "200 OK" or expected not in body:
+        raise SystemExit(f"Installed dashboard {resource} response mismatch")
+print("installed-dashboard: discovery, accessible index and audit resources passed")
 PY
 printf '%s\n' "clean-install: passed (temporary environment removed on exit)"

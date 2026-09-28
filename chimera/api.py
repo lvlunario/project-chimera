@@ -99,9 +99,11 @@ def _request(text: str) -> dict:
     except TelemetryError as exc:
         raise OperatorAPIError(str(exc)) from exc
     try:
-        UUID(document["run_id"])
+        parsed_run_id = UUID(document["run_id"])
     except (ValueError, TypeError, AttributeError) as exc:
         raise OperatorAPIError("run_id must be a UUID string") from exc
+    if str(parsed_run_id) != document["run_id"]:
+        raise OperatorAPIError("run_id must use canonical lowercase UUID text")
     return document
 
 

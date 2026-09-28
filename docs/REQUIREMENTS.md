@@ -14,10 +14,11 @@ interface decisions remain open.
 | ID | Requirement | Evidence |
 |---|---|---|
 | DASH-001 | Inspect at most 1,000 immediate entries in one explicit regular local workspace; follow no symbolic-link workspace or entry | discovery bound and symlink tests |
-| DASH-002 | Cross-validate every candidate with `CompletedLinkRun`; expose no route for invalid or duplicate run IDs while keeping each rejected entry visible with a reason | tamper, invalid-entry and duplicate-ID tests |
-| DASH-003 | Expose a deterministic versioned run index plus list → detail → canonical JSON/readable report navigation | WSGI API/navigation and installed-wheel controls |
+| DASH-002 | Cross-validate every candidate with `CompletedLinkRun`; require canonical lowercase UUID identity; expose no route for invalid or duplicate run IDs while keeping each rejected entry visible with a reason | tamper, alternate-UUID, invalid-entry and duplicate-ID tests |
+| DASH-003 | Expose a deterministic versioned run index plus list → detail → canonical report/readable report/portable evidence/requirement-binding navigation | WSGI API/navigation and installed-wheel controls |
 | DASH-004 | Use semantic, script-free, keyboard-navigable HTML with visible text status, table headings/caption and restrictive response headers | accessible-markup/header tests |
 | DASH-005 | Bind only IPv4 loopback, support GET only, enable no CORS or mutation endpoint, and snapshot the workspace before listener startup | method, CLI and server-boundary tests |
+| DASH-006 | Exercise the complete list/detail/report/evidence/bindings journey over a real ephemeral loopback HTTP server and audit the declared semantic HTML contract without network/runtime dependencies | `tests/test_dashboard_http.py` |
 
 The dashboard is a read-only presentation of validated portable artifacts. It does not scan
 recursively, watch for live changes, choose among duplicate identities or repair invalid

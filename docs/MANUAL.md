@@ -753,9 +753,10 @@ chimera serve-dashboard /tmp/chimera-runs --port 8765
 ```
 
 Open `http://127.0.0.1:8765/`. The list shows explicit PASS/FAIL and synthetic status,
-then links to a run detail and its readable or canonical JSON report. The versioned index is
-`/api/v1/runs`. Use Tab/Shift+Tab and Enter to traverse native links; the interface does not
-require a mouse or JavaScript.
+then links to a run detail and its readable or canonical JSON report, portable evidence and
+requirement bindings. The versioned index is `/api/v1/runs`; per-run audit resources are
+`/api/v1/runs/RUN_ID/report`, `/evidence` and `/bindings`. Use Tab/Shift+Tab and Enter to
+traverse native links; the interface does not require a mouse or JavaScript.
 
 At startup Chimera inspects only the workspace's immediate entries, with a 1,000-entry
 limit. Every candidate must pass the same request/evidence/binding/report/HTML agreement

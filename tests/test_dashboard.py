@@ -83,6 +83,13 @@ class DashboardTests(unittest.TestCase):
             self.assertEqual(
                 "pass", json.loads(canonical["body"])["requirement"]["verdict"]
             )
+            evidence = request(app, f"/api/v1/runs/{result.run_id}/evidence")
+            self.assertEqual(result.run_id, json.loads(evidence["body"])["run_id"])
+            bindings = request(app, f"/api/v1/runs/{result.run_id}/bindings")
+            self.assertEqual(
+                [{"requirement_id": "COM-LINK-001", "task_id": "check"}],
+                json.loads(bindings["body"])["bindings"],
+            )
             denied = request(app, method="POST")
             self.assertEqual("405 Method Not Allowed", denied["status"])
             self.assertEqual("GET", denied["headers"]["Allow"])
