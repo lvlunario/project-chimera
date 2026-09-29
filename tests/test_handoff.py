@@ -6,7 +6,9 @@ from unittest.mock import patch
 from zipfile import ZIP_STORED, ZipFile
 
 from chimera.handoff import (ARTIFACT_NAMES, HandoffError,
-                             create_handoff_bundle, inspect_handoff_bundle)
+                             create_handoff_bundle, handoff_bundle_bytes,
+                             inspect_handoff_bundle)
+from chimera.api import CompletedLinkRun
 from chimera.operator import run_link_verification
 
 
@@ -31,6 +33,9 @@ class HandoffTests(unittest.TestCase):
             create_handoff_bundle(run, second)
             self.assertEqual(first.read_bytes(), second.read_bytes())
             self.assertEqual(expected, inspect_handoff_bundle(first))
+            self.assertEqual(first.read_bytes(), handoff_bundle_bytes(
+                CompletedLinkRun.open(run)
+            ))
             self.assertEqual("pass", expected["verdict"])
             with ZipFile(first) as archive:
                 self.assertEqual(
@@ -142,6 +147,10 @@ class HandoffTests(unittest.TestCase):
             self.assertEqual([], list(root.glob(".handoff.zip.*.tmp")))
             create_handoff_bundle(run, output)
             self.assertEqual("pass", inspect_handoff_bundle(output)["verdict"])
+
+    def test_byte_renderer_requires_validated_completed_view(self):
+        with self.assertRaisesRegex(TypeError, "CompletedLinkRun"):
+            handoff_bundle_bytes(object())
 
     def test_cli_export_and_inspect(self):
         from chimera.cli import main

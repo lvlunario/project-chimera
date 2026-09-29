@@ -736,6 +736,12 @@ engineer detect whether any enclosed page changed, while the inspector confirms 
 still describe one coherent run. It proves content agreement—not who created the envelope,
 when it was created, or whether the original radio measurement was authentic.
 
+The multi-run dashboard exposes the identical bundle at
+`/api/v1/runs/RUN_ID/handoff`. A browser downloads it as
+`chimera-RUN_ID-handoff.zip`; the server builds it only from the validated startup snapshot
+and does not write a server-side archive. Save the download, then use `chimera inspect-link`
+against it before handoff.
+
 ### Read-only completed-run API
 
 After `verify-link` finishes, inspect that one run through a local HTTP interface:
@@ -779,9 +785,10 @@ chimera serve-dashboard /tmp/chimera-runs --port 8765
 ```
 
 Open `http://127.0.0.1:8765/`. The list shows explicit PASS/FAIL and synthetic status,
-then links to a run detail and its readable or canonical JSON report, portable evidence and
-requirement bindings. The versioned index is `/api/v1/runs`; per-run audit resources are
-`/api/v1/runs/RUN_ID/report`, `/evidence` and `/bindings`. Use Tab/Shift+Tab and Enter to
+then links to a run detail and its readable or canonical JSON report, portable evidence,
+requirement bindings and deterministic audit bundle. The versioned index is `/api/v1/runs`;
+per-run audit resources are `/api/v1/runs/RUN_ID/report`, `/evidence`, `/bindings` and
+`/handoff`. Use Tab/Shift+Tab and Enter to
 traverse native links; the interface does not require a mouse or JavaScript.
 
 At startup Chimera inspects only the workspace's immediate entries, with a 1,000-entry

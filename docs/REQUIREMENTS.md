@@ -17,6 +17,7 @@ portable audit handoff. It does not authenticate the producer or close P4.
 | HANDOFF-003 | Record exact artifact path, byte count and SHA-256 plus run/workflow/requirement/verdict identity in manifest schema v1 | manifest identity tests |
 | HANDOFF-004 | Inspect with bounded regular-file reads; reject unexpected, duplicate, encrypted, compressed, malformed, changed or cross-inconsistent content | archive mutation and negative inspector tests |
 | HANDOFF-005 | Refuse an existing or symbolic-link output and expose installed `export-link`/`inspect-link` commands without callbacks or journal access | CLI/output safety and isolated-wheel controls |
+| HANDOFF-006 | Expose the byte-identical deterministic bundle for each validated dashboard run as a no-cache attachment; invalid/duplicate runs receive no route | direct WSGI and real-loopback HTTP download/reopen tests |
 
 The exporter reconstructs bytes from the immutable validated view instead of copying the
 workspace after validation. The inspector writes only its exact allowlisted entries into a
@@ -34,7 +35,7 @@ interface decisions remain open.
 |---|---|---|
 | DASH-001 | Inspect at most 1,000 immediate entries in one explicit regular local workspace; follow no symbolic-link workspace or entry | discovery bound and symlink tests |
 | DASH-002 | Cross-validate every candidate with `CompletedLinkRun`; require canonical lowercase UUID identity; expose no route for invalid or duplicate run IDs while keeping each rejected entry visible with a reason | tamper, alternate-UUID, invalid-entry and duplicate-ID tests |
-| DASH-003 | Expose a deterministic versioned run index plus list → detail → canonical report/readable report/portable evidence/requirement-binding navigation | WSGI API/navigation and installed-wheel controls |
+| DASH-003 | Expose a deterministic versioned run index plus list → detail → canonical report/readable report/portable evidence/requirement-binding/handoff download navigation | WSGI API/navigation and installed-wheel controls |
 | DASH-004 | Use semantic, script-free, keyboard-navigable HTML with visible text status, table headings/caption and restrictive response headers | accessible-markup/header tests |
 | DASH-005 | Bind only IPv4 loopback, support GET only, enable no CORS or mutation endpoint, and snapshot the workspace before listener startup | method, CLI and server-boundary tests |
 | DASH-006 | Exercise the complete list/detail/report/evidence/bindings journey over a real ephemeral loopback HTTP server and audit the declared semantic HTML contract without network/runtime dependencies | `tests/test_dashboard_http.py` |

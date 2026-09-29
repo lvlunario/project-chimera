@@ -9,6 +9,7 @@ from urllib.request import urlopen
 from wsgiref.simple_server import WSGIRequestHandler, make_server
 
 from chimera.dashboard import CompletedRunWorkspace, DashboardApp
+from chimera.handoff import inspect_handoff_bundle
 from chimera.operator import run_link_verification
 
 
@@ -110,6 +111,9 @@ class DashboardHTTPEndToEndTests(unittest.TestCase):
                 _, _, bindings = self._get(
                     base, f"/api/v1/runs/{result.run_id}/bindings"
                 )
+                _, handoff_headers, handoff = self._get(
+                    base, f"/api/v1/runs/{result.run_id}/handoff"
+                )
                 run_directory = root / "synthetic-failure"
                 self.assertEqual((run_directory / "report.json").read_bytes(), report)
                 self.assertEqual((run_directory / "evidence.json").read_bytes(), evidence)
@@ -120,6 +124,12 @@ class DashboardHTTPEndToEndTests(unittest.TestCase):
                     [{"requirement_id": "COM-LINK-001", "task_id": "check"}],
                     json.loads(bindings)["bindings"],
                 )
+                self.assertEqual("application/zip", handoff_headers["Content-Type"])
+                self.assertIn("attachment;", handoff_headers["Content-Disposition"])
+                bundle_path = root / "downloaded.zip"
+                bundle_path.write_bytes(handoff)
+                self.assertEqual(result.run_id,
+                                 inspect_handoff_bundle(bundle_path)["run_id"])
                 with self.assertRaises(HTTPError) as missing:
                     self._get(base, "/api/v1/runs/not-a-run/evidence")
                 self.assertEqual(404, missing.exception.code)

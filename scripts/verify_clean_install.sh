@@ -312,7 +312,17 @@ for resource, expected in (
     ))
     if response["status"] != "200 OK" or expected not in body:
         raise SystemExit(f"Installed dashboard {resource} response mismatch")
-print("installed-dashboard: discovery, accessible index and audit resources passed")
+response.clear()
+body = b"".join(dashboard(
+    {"REQUEST_METHOD": "GET", "PATH_INFO":
+     f"/api/v1/runs/{completed.request['run_id']}/handoff"},
+    start_response,
+))
+if (response["status"] != "200 OK"
+        or response["headers"].get("Content-Type") != "application/zip"
+        or not body.startswith(b"PK")):
+    raise SystemExit("Installed dashboard handoff response mismatch")
+print("installed-dashboard: discovery, navigation and handoff download passed")
 PY
 "$WORK/venv/bin/chimera" export-link "$WORK/outside/link-run" \
   --output "$WORK/outside/link-handoff.zip"

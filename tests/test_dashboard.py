@@ -90,6 +90,13 @@ class DashboardTests(unittest.TestCase):
                 [{"requirement_id": "COM-LINK-001", "task_id": "check"}],
                 json.loads(bindings["body"])["bindings"],
             )
+            handoff = request(app, f"/api/v1/runs/{result.run_id}/handoff")
+            self.assertEqual("application/zip", handoff["headers"]["Content-Type"])
+            self.assertEqual(
+                f'attachment; filename="chimera-{result.run_id}-handoff.zip"',
+                handoff["headers"]["Content-Disposition"],
+            )
+            self.assertTrue(handoff["body"].startswith(b"PK"))
             denied = request(app, method="POST")
             self.assertEqual("405 Method Not Allowed", denied["status"])
             self.assertEqual("GET", denied["headers"]["Allow"])

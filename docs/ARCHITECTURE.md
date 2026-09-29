@@ -17,6 +17,11 @@ unencrypted entries, strict canonical manifest content and matching byte identit
 reopens the enclosed artifacts through the same completed-run boundary without callbacks,
 journal or database access. Existing or symbolic-link output is never replaced.
 
+The dashboard renders the same bundle bytes directly from its already validated immutable
+startup snapshot at `/api/v1/runs/RUN_ID/handoff`. The response is a no-cache ZIP attachment
+whose filename contains only the previously enforced canonical UUID. It does not reread the
+workspace or create a server-side file; invalid and duplicate runs have no download route.
+
 Tradeoffs: this is a portable integrity envelope, not a digital signature, trusted timestamp,
 producer identity, source-data bundle or physical-measurement attestation. ZIP is used for
 ubiquitous local tooling; compression is prohibited to simplify bounds and reproducibility.
@@ -35,7 +40,7 @@ operator must investigate the ambiguity. Require the canonical lowercase hyphena
 spelling before admission so textual aliases cannot bypass duplicate identity detection.
 
 Serve a versioned JSON index and semantic script-free HTML for list → detail → canonical
-report/readable report/portable evidence/requirement-binding navigation. These audit routes
+report/readable report/portable evidence/requirement-binding/handoff navigation. These audit routes
 serialize only the already validated immutable in-memory objects; they do not reread the
 workspace or open databases. Verdict color is supplementary to explicit PASS/FAIL text;
 links use native keyboard behavior; tables include headings and a caption. Retain the

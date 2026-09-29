@@ -11,6 +11,7 @@ from urllib.parse import unquote
 from wsgiref.simple_server import make_server
 
 from .api import CompletedLinkRun, OperatorAPIError
+from .handoff import handoff_bundle_bytes
 
 
 MAX_WORKSPACE_ENTRIES = 1_000
@@ -121,6 +122,7 @@ class CompletedRunWorkspace:
                 "report_html": f"/runs/{run_id}/report",
                 "evidence_json": f"/api/v1/runs/{run_id}/evidence",
                 "bindings_json": f"/api/v1/runs/{run_id}/bindings",
+                "handoff_zip": f"/api/v1/runs/{run_id}/handoff",
             }
             runs.append(summary)
         return {
@@ -253,7 +255,8 @@ class DashboardApp:
             f"<p><a href=\"/runs/{run_id}/report\">Open readable report</a> · "
             f"<a href=\"/api/v1/runs/{run_id}/report\">Open canonical report JSON</a> · "
             f"<a href=\"/api/v1/runs/{run_id}/evidence\">Open portable evidence JSON</a> · "
-            f"<a href=\"/api/v1/runs/{run_id}/bindings\">Open requirement bindings JSON</a>"
+            f"<a href=\"/api/v1/runs/{run_id}/bindings\">Open requirement bindings JSON</a> · "
+            f"<a href=\"/api/v1/runs/{run_id}/handoff\">Download audit handoff ZIP</a>"
             "</p>"
         )
         return self._page(f"Chimera run {run_id}", content)
@@ -316,6 +319,13 @@ class DashboardApp:
                 body = (completed.bindings.to_json() + "\n").encode("utf-8")
                 return self._response(
                     start_response, "200 OK", "application/json; charset=utf-8", body
+                )
+            if completed is not None and parts[1] == "api" and suffix == ["handoff"]:
+                body = handoff_bundle_bytes(completed)
+                return self._response(
+                    start_response, "200 OK", "application/zip", body,
+                    (("Content-Disposition",
+                      f'attachment; filename="chimera-{run_id}-handoff.zip"'),),
                 )
         return self._response(
             start_response, "404 Not Found", "application/json; charset=utf-8",

@@ -79,13 +79,10 @@ def _zip_entry(name: str) -> ZipInfo:
     return info
 
 
-def create_handoff_bundle(run_directory: str | Path,
-                          destination: str | Path) -> dict:
-    """Validate one completed run and publish a deterministic ZIP bundle once."""
-    try:
-        run = CompletedLinkRun.open(run_directory)
-    except OperatorAPIError as exc:
-        raise HandoffError(f"Completed run is invalid: {exc}") from exc
+def handoff_bundle_bytes(run: CompletedLinkRun) -> bytes:
+    """Render a deterministic bundle from one immutable validated completed run."""
+    if not isinstance(run, CompletedLinkRun):
+        raise TypeError("run must be a CompletedLinkRun")
     artifacts = _artifacts(run)
     manifest = _manifest(run, artifacts)
     payload = BytesIO()
@@ -96,6 +93,19 @@ def create_handoff_bundle(run_directory: str | Path,
     content = payload.getvalue()
     if len(content) > MAX_BUNDLE_BYTES:  # Defensive; source artifact limits are smaller.
         raise HandoffError("Handoff bundle exceeds the supported size")
+    return content
+
+
+def create_handoff_bundle(run_directory: str | Path,
+                          destination: str | Path) -> dict:
+    """Validate one completed run and publish a deterministic ZIP bundle once."""
+    try:
+        run = CompletedLinkRun.open(run_directory)
+    except OperatorAPIError as exc:
+        raise HandoffError(f"Completed run is invalid: {exc}") from exc
+    artifacts = _artifacts(run)
+    manifest = _manifest(run, artifacts)
+    content = handoff_bundle_bytes(run)
 
     target = Path(destination)
     if target.is_symlink() or target.exists():

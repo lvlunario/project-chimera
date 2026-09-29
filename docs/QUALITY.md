@@ -100,3 +100,9 @@ and fail-closed behavior for changed or extra content. Normal and optimized test
 isolated-wheel CLI export/inspect round trip are required. The bundle's content hashes prove
 agreement and transport integrity only; tests must not describe them as signatures,
 authorship, trusted time or measurement authenticity.
+
+The dashboard download control must compare its body byte-for-byte with the deterministic
+exporter, reopen the response through the bundle inspector over an actual loopback HTTP
+server, verify attachment/content/no-cache headers and prove invalid or duplicate identities
+remain non-routable. The route packages only the immutable startup snapshot and adds no
+filesystem write, mutation method, CORS permission or remote binding.

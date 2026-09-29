@@ -22,7 +22,7 @@ from .api import (CompletedLinkRun, CompletedRunApp, OperatorAPIError,
                   serve_completed_run)
 from .dashboard import (CompletedRunWorkspace, DashboardApp, DashboardError,
                         InvalidRunEntry, serve_dashboard)
-from .handoff import (HandoffError, create_handoff_bundle,
+from .handoff import (HandoffError, create_handoff_bundle, handoff_bundle_bytes,
                       inspect_handoff_bundle)
 
 __all__ = [
@@ -48,5 +48,6 @@ __all__ = [
     "serve_completed_run",
     "CompletedRunWorkspace", "DashboardApp", "DashboardError",
     "InvalidRunEntry", "serve_dashboard",
-    "HandoffError", "create_handoff_bundle", "inspect_handoff_bundle",
+    "HandoffError", "create_handoff_bundle", "handoff_bundle_bytes",
+    "inspect_handoff_bundle",
 ]
