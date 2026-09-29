@@ -18,7 +18,7 @@ The 100-developer framing expresses ambition, not actual staffing or throughput.
 | P1 | Local execution core | Graph validation, failure propagation, evidence schema, CLI, package install and CI verified | Conditionally accepted for continued development September 22 |
 | P2 | Durable execution | SQLite run storage; restart recovery and idempotency tested | Conditionally accepted for continued development September 22; bounded recovery limitations retained |
 | P3 | Engineering adapters | Synthetic telemetry ingestion and deterministic fault injection with reference fixtures | In progress; strict CSV ingestion, reference controls, deterministic faults and integrated local operator path implemented |
-| P4 | Verification evidence | Requirement mapping, reproducible JSON/HTML reports, missing-evidence detection | In progress; canonical reopened-evidence JSON/HTML, deterministic self-verifying handoff bundle and integrated local export path implemented; gate packet pending |
+| P4 | Verification evidence | Requirement mapping, reproducible JSON/HTML reports, missing-evidence detection | In progress; canonical reopened-evidence JSON/HTML, deterministic self-verifying handoff bundle, integrated local export and executable candidate controls implemented; exact-candidate gate evidence pending |
 | P5 | Operator product | API and accessible dashboard; end-to-end acceptance tests | In progress; API/dashboard, portable handoff download, loopback HTTP and structural-accessibility controls implemented; browser/device and operator acceptance pending |
 | P6 | AI assistance | Provider adapter, bounded permissions, evaluation dataset and measured baseline comparison | Planned |
 | P7 | Release | Reproducible deployment, performance results, threat model, demo and operator guide | Planned |
@@ -45,8 +45,9 @@ AI assistance cannot decide that missing evidence is a passing verification.
 - Avoid paid infrastructure and live hardware operations until separately authorized.
 
 ## Next tasks
-Current direction, September 29: prepare the October 17 integrated vertical-slice packet
-and complete browser/operator acceptance for the bounded multi-run dashboard tracked in
+Current direction, September 29: retain the executable P3/P4 candidate packet for the
+October 17 exact-candidate gate and complete browser/operator acceptance for the bounded
+multi-run dashboard tracked in
 [issue #19](https://github.com/lvlunario/project-chimera/issues/19) for November 7.
 The deterministic P4 handoff work is tracked in
 [issue #20](https://github.com/lvlunario/project-chimera/issues/20).

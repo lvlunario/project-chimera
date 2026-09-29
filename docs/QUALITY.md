@@ -106,3 +106,14 @@ exporter, reopen the response through the bundle inspector over an actual loopba
 server, verify attachment/content/no-cache headers and prove invalid or duplicate identities
 remain non-routable. The route packages only the immutable startup snapshot and adds no
 filesystem write, mutation method, CORS permission or remote binding.
+
+## Integrated P3/P4 candidate control
+
+The executable candidate control must use the public operator, handoff and dashboard
+boundaries and fail with a nonzero process result if any expected condition is absent. Its
+checks must survive optimized Python rather than depend on removable `assert` statements.
+Both PASS and valid synthetic FAIL are required outcomes; malformed input must create no run
+state; completed resume must preserve portable artifacts; and CLI-style export and dashboard
+download must be byte-identical and independently inspectable. This is reproducible
+engineering verification, not Leo's walkthrough, physical-system validation or phase
+acceptance.

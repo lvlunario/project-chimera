@@ -806,6 +806,29 @@ remote hosting, live progress or control. Semantic HTML and keyboard fundamental
 implemented; browser/device testing and your operator walkthrough remain pending before P5
 acceptance.
 
+### P3/P4 integrated candidate control
+
+Run the exact engineering control used by the P3/P4 candidate packet:
+
+```bash
+python -m examples.p34_candidate_demo
+```
+
+It creates a temporary workspace and reports six explicit checks: valid telemetry produces
+durable PASS evidence; a deterministic synthetic fault produces traceable FAIL evidence;
+malformed telemetry creates no output state; completed-run resume preserves the portable
+artifacts; the handoff independently reopens; and the dashboard download is byte-identical
+to the file export. The temporary workspace is removed afterward.
+
+Teaching note for Leo: this is a chain-of-custody rehearsal. A PASS/FAIL result is useful
+only if Chimera can show which input, requirement, durable record and report belong together,
+then hand the same sealed package to another operator. The control proves that software
+agreement with synthetic fixtures; it does not authenticate a human, trusted clock or radio
+measurement and it is not phase acceptance.
+
+See the [September 29 P3/P4 candidate packet](reviews/2026-09-29-p34.md) for the guided
+exercise, expected output, coverage matrix and remaining gate work.
+
 ## Phase approval instructions
 
 Use the [phase approval guide](APPROVALS.md) for P0–P7 verification and validation checklists,

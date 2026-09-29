@@ -80,6 +80,7 @@ October 17. This is a bounded local P3/P4 integration slice, not a dashboard or 
 | OPERATOR-005 | Return 0 for PASS, 1 for a valid requirement FAIL, 2 for invalid input/non-verdict and 3 for output/storage/recovery failure | CLI integration tests and installed-wheel control |
 | OPERATOR-006 | Resume only with the same saved request and existing journal; changed input/threshold/plan fails before pending callbacks, while existing matching artifacts are idempotent | changed-input and completed-resume tests; existing journal recovery suite |
 | OPERATOR-007 | Reject symbolic-link output state and existing conflicting output; never mutate source telemetry | no-overwrite/symlink/source-preservation tests |
+| OPERATOR-008 | Provide one executable candidate control that proves PASS, traceable synthetic FAIL, malformed-input refusal, idempotent completed resume, handoff reopen and dashboard/export byte agreement in normal and optimized Python | `examples.p34_candidate_demo`; `tests/test_p34_candidate_demo.py` |
 
 The local output directory contains `request.json`, `journal.sqlite`, `evidence.sqlite`,
 portable `evidence.json`/`bindings.json`, `report.json` and `report.html`. Content hashes are
