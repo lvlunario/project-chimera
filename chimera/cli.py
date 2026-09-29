@@ -6,6 +6,7 @@ import sys
 from .evidence import EvidenceError, run_with_evidence
 from .api import OperatorAPIError, serve_completed_run
 from .dashboard import DashboardError, serve_dashboard
+from .handoff import HandoffError, create_handoff_bundle, inspect_handoff_bundle
 from .operator import (OperatorError, OperatorInputError, OperatorOutputError,
                        run_link_verification)
 from .workflow import WorkflowError, load_workflow
@@ -35,11 +36,40 @@ def _parser() -> argparse.ArgumentParser:
     )
     dashboard_parser.add_argument("workspace", type=Path)
     dashboard_parser.add_argument("--port", type=int, default=8765)
+    export_parser = commands.add_parser(
+        "export-link", help="export one validated completed run as a handoff bundle"
+    )
+    export_parser.add_argument("run", type=Path)
+    export_parser.add_argument("--output", type=Path, required=True)
+    inspect_parser = commands.add_parser(
+        "inspect-link", help="validate and summarize a completed-run handoff bundle"
+    )
+    inspect_parser.add_argument("bundle", type=Path)
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     args = _parser().parse_args(argv)
+    if args.command == "inspect-link":
+        try:
+            manifest = inspect_handoff_bundle(args.bundle)
+        except HandoffError as exc:
+            print(f"chimera: invalid handoff bundle: {exc}", file=sys.stderr)
+            return 3
+        print(f"run_id: {manifest['run_id']}")
+        print(f"{manifest['requirement_id']}: {manifest['verdict']}")
+        print(f"bundle: {args.bundle}")
+        return 0
+    if args.command == "export-link":
+        try:
+            manifest = create_handoff_bundle(args.run, args.output)
+        except HandoffError as exc:
+            print(f"chimera: handoff unavailable: {exc}", file=sys.stderr)
+            return 3
+        print(f"run_id: {manifest['run_id']}")
+        print(f"{manifest['requirement_id']}: {manifest['verdict']}")
+        print(f"bundle: {args.output}")
+        return 0
     if args.command == "serve-dashboard":
         try:
             serve_dashboard(args.workspace, args.port)

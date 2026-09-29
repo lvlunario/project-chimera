@@ -314,4 +314,20 @@ for resource, expected in (
         raise SystemExit(f"Installed dashboard {resource} response mismatch")
 print("installed-dashboard: discovery, accessible index and audit resources passed")
 PY
+"$WORK/venv/bin/chimera" export-link "$WORK/outside/link-run" \
+  --output "$WORK/outside/link-handoff.zip"
+"$WORK/venv/bin/chimera" inspect-link "$WORK/outside/link-handoff.zip"
+"$WORK/venv/bin/python" - "$WORK/outside/link-handoff.zip" <<'PY'
+from pathlib import Path
+import sys
+
+from chimera import inspect_handoff_bundle
+
+manifest = inspect_handoff_bundle(Path(sys.argv[1]))
+if (manifest["requirement_id"] != "COM-LINK-001"
+        or manifest["verdict"] != "fail"
+        or len(manifest["artifacts"]) != 5):
+    raise SystemExit("Installed handoff bundle mismatch")
+print("installed-handoff: deterministic bundle revalidation passed")
+PY
 printf '%s\n' "clean-install: passed (temporary environment removed on exit)"

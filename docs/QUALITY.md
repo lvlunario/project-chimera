@@ -91,3 +91,12 @@ requirement bindings over HTTP. A dependency-free HTML parser audits language, l
 heading, caption, scoped-column-header, visible-focus and non-empty-link contracts. This is
 transport and structural evidence, not a claim of conformance with WCAG or completion of
 screen-reader, browser/device and human usability testing.
+
+## Portable handoff boundary
+
+The handoff suite must prove byte-identical repeat export, strict archive entry order and
+metadata, exact manifest sizes/digests, completed-run revalidation, existing-output refusal
+and fail-closed behavior for changed or extra content. Normal and optimized tests plus an
+isolated-wheel CLI export/inspect round trip are required. The bundle's content hashes prove
+agreement and transport integrity only; tests must not describe them as signatures,
+authorship, trusted time or measurement authenticity.

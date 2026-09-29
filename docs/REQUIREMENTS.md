@@ -5,6 +5,25 @@ September 22 under [the decision record](reviews/2026-09-22-delegated-decisions.
 Historical pending statements below describe their original slices, not today's decisions.
 Personal walkthroughs and final acceptance remain unperformed/open.
 
+## Completed-run handoff bundle v1
+
+Tracked in [issue #20](https://github.com/lvlunario/project-chimera/issues/20). This bounded P4 integration slice packages one already validated communications run for
+portable audit handoff. It does not authenticate the producer or close P4.
+
+| ID | Requirement | Evidence |
+|---|---|---|
+| HANDOFF-001 | Admit only a `CompletedLinkRun` whose request, evidence, bindings, canonical report and HTML agree | invalid/tampered source tests and existing completed-run adversarial suite |
+| HANDOFF-002 | Emit a deterministic stored ZIP containing only a canonical manifest and the five canonical portable artifacts, with fixed order/metadata | byte-identical repeat export and archive-layout tests |
+| HANDOFF-003 | Record exact artifact path, byte count and SHA-256 plus run/workflow/requirement/verdict identity in manifest schema v1 | manifest identity tests |
+| HANDOFF-004 | Inspect with bounded regular-file reads; reject unexpected, duplicate, encrypted, compressed, malformed, changed or cross-inconsistent content | archive mutation and negative inspector tests |
+| HANDOFF-005 | Refuse an existing or symbolic-link output and expose installed `export-link`/`inspect-link` commands without callbacks or journal access | CLI/output safety and isolated-wheel controls |
+
+The exporter reconstructs bytes from the immutable validated view instead of copying the
+workspace after validation. The inspector writes only its exact allowlisted entries into a
+temporary private directory and reuses the completed-run agreement boundary. SHA-256 detects
+content disagreement; it is not a signature, trusted timestamp, source attestation or proof
+of physical measurement authenticity.
+
 ## Local completed-run dashboard v1
 
 Tracked in [issue #19](https://github.com/lvlunario/project-chimera/issues/19), target M3

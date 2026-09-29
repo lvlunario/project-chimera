@@ -1,5 +1,27 @@
 # Architecture decision 0001: deterministic core first
 
+## Decision 0020: reconstruct a deterministic handoff from the validated view
+
+September 29, 2026. Bounded P4 integration candidate; no phase closure.
+
+Export a completed communications run only after `CompletedLinkRun` cross-validates its
+request, evidence, bindings, report JSON and report HTML. Reconstruct the five portable
+artifact byte streams from that immutable view; do not validate a mutable directory and then
+copy its files. Store them without compression in a fixed-order ZIP alongside canonical
+manifest schema v1 containing run/workflow/requirement/verdict identity and every artifact's
+exact byte count and SHA-256. Fixed timestamps, permissions and order make repeated export
+of the same run byte-identical.
+
+Inspection accepts only the exact six-entry allowlist, bounded regular input, stored and
+unencrypted entries, strict canonical manifest content and matching byte identities. It then
+reopens the enclosed artifacts through the same completed-run boundary without callbacks,
+journal or database access. Existing or symbolic-link output is never replaced.
+
+Tradeoffs: this is a portable integrity envelope, not a digital signature, trusted timestamp,
+producer identity, source-data bundle or physical-measurement attestation. ZIP is used for
+ubiquitous local tooling; compression is prohibited to simplify bounds and reproducibility.
+P4 still requires its gate packet and Leo's actual validation.
+
 ## Decision 0019: discover completed runs before rendering the dashboard
 
 September 28, 2026. Bounded P5 implementation candidate; no phase closure.

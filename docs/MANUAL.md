@@ -710,6 +710,32 @@ input, threshold and fault configuration to the run. Recovery is allowed only wh
 sheet and the durable journal agree, preventing a restart from quietly becoming a different
 test. This is a local command, not yet the November 7 browser dashboard or a hardware result.
 
+### Deterministic completed-run handoff bundle
+
+After a `verify-link` run completes, create and independently inspect one portable archive:
+
+```bash
+chimera export-link /tmp/chimera-link-pass --output /tmp/chimera-link-pass.zip
+chimera inspect-link /tmp/chimera-link-pass.zip
+```
+
+Both commands print the run ID and COM-LINK-001 verdict. The ZIP contains canonical
+`manifest.json`, `request.json`, `evidence.json`, `bindings.json`, `report.json` and
+`report.html` in a fixed order with fixed metadata and no compression. The manifest records
+the exact byte count and SHA-256 of each artifact. Exporting the same completed run to two
+new paths produces byte-identical bundles.
+
+Export first validates the complete saved run, then reconstructs the portable bytes from the
+immutable validated view; it does not copy a workspace that could change after validation.
+Inspection accepts only the six expected stored/unencrypted entries, checks every manifest
+identity and reopens the artifacts through the same callback-free agreement boundary.
+Existing or symbolic-link output is refused rather than overwritten.
+
+Teaching note for Leo: the bundle is a sealed delivery envelope. The manifest lets another
+engineer detect whether any enclosed page changed, while the inspector confirms all pages
+still describe one coherent run. It proves content agreement—not who created the envelope,
+when it was created, or whether the original radio measurement was authentic.
+
 ### Read-only completed-run API
 
 After `verify-link` finishes, inspect that one run through a local HTTP interface:

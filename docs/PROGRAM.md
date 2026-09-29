@@ -18,7 +18,7 @@ The 100-developer framing expresses ambition, not actual staffing or throughput.
 | P1 | Local execution core | Graph validation, failure propagation, evidence schema, CLI, package install and CI verified | Conditionally accepted for continued development September 22 |
 | P2 | Durable execution | SQLite run storage; restart recovery and idempotency tested | Conditionally accepted for continued development September 22; bounded recovery limitations retained |
 | P3 | Engineering adapters | Synthetic telemetry ingestion and deterministic fault injection with reference fixtures | In progress; strict CSV ingestion, reference controls, deterministic faults and integrated local operator path implemented |
-| P4 | Verification evidence | Requirement mapping, reproducible JSON/HTML reports, missing-evidence detection | In progress; canonical reopened-evidence JSON/HTML and integrated local export path implemented; gate packet/dashboard pending |
+| P4 | Verification evidence | Requirement mapping, reproducible JSON/HTML reports, missing-evidence detection | In progress; canonical reopened-evidence JSON/HTML, deterministic self-verifying handoff bundle and integrated local export path implemented; gate packet pending |
 | P5 | Operator product | API and accessible dashboard; end-to-end acceptance tests | In progress; API/dashboard plus loopback HTTP and structural-accessibility controls implemented; browser/device and operator acceptance pending |
 | P6 | AI assistance | Provider adapter, bounded permissions, evaluation dataset and measured baseline comparison | Planned |
 | P7 | Release | Reproducible deployment, performance results, threat model, demo and operator guide | Planned |
@@ -45,9 +45,11 @@ AI assistance cannot decide that missing evidence is a passing verification.
 - Avoid paid infrastructure and live hardware operations until separately authorized.
 
 ## Next tasks
-Current direction, September 28: prepare the October 17 integrated vertical-slice packet
+Current direction, September 29: prepare the October 17 integrated vertical-slice packet
 and complete browser/operator acceptance for the bounded multi-run dashboard tracked in
 [issue #19](https://github.com/lvlunario/project-chimera/issues/19) for November 7.
+The deterministic P4 handoff work is tracked in
+[issue #20](https://github.com/lvlunario/project-chimera/issues/20).
 [Delegated decisions](reviews/2026-09-22-delegated-decisions.md)
 supersede historical pending-P0/P1/P2 statements below. Personal walkthroughs are unperformed;
 final acceptance remains separate. Do not reopen P0/P1/P2; new P5 interface recommendations
@@ -84,7 +86,10 @@ Historical implementation sequence:
    adds canonical reopened-evidence JSON plus self-contained HTML presentation. September 27
    adds the integrated `verify-link` local operator entry point with conservative resume
    and a read-only, loopback-only API that cross-validates completed artifacts before
-   presentation. The accessible dashboard and phase-gate evidence remain P3/P4/P5 work.
+   presentation. September 28 adds the bounded multi-run dashboard and loopback HTTP
+   acceptance controls; September 29 adds a deterministic ZIP handoff whose manifest and
+   enclosed artifacts are independently revalidated. Browser/operator and phase-gate
+   evidence remain P3/P4/P5 work.
    These slices do not close P2, P3, P4 or P5.
 7. September 16: Linux local-file lifetime ownership primitive implemented as a
    bounded prerequisite for RECOVER-005. September 19 runner integration holds this
