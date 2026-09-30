@@ -301,6 +301,15 @@ body = b"".join(dashboard(
 ))
 if response["status"] != "200 OK" or b"Chimera completed runs" not in body:
     raise SystemExit("Installed dashboard HTML response mismatch")
+response.clear()
+body = b"".join(dashboard(
+    {"REQUEST_METHOD": "GET", "PATH_INFO": "/", "QUERY_STRING": "view=fail"},
+    start_response,
+))
+if (response["status"] != "200 OK"
+        or str(completed.request["run_id"]).encode() not in body
+        or b'aria-current="page">FAIL (1)</a>' not in body):
+    raise SystemExit("Installed dashboard filtered-view response mismatch")
 for resource, expected in (
         ("evidence", str(completed.request["run_id"]).encode()),
         ("bindings", b'"requirement_id":"COM-LINK-001"')):

@@ -15,6 +15,8 @@ from .handoff import handoff_bundle_bytes
 
 
 MAX_WORKSPACE_ENTRIES = 1_000
+MAX_QUERY_LENGTH = 64
+_INDEX_VIEWS = ("all", "pass", "fail", "synthetic", "invalid")
 _WORKSPACE_TOKEN = object()
 
 
@@ -175,10 +177,31 @@ class DashboardApp:
                 "font-weight:700}code{overflow-wrap:anywhere}</style></head><body>"
                 f"<main>{content}</main></body></html>").encode("utf-8")
 
-    def _index_html(self) -> bytes:
+    @staticmethod
+    def _index_view(query: object) -> str | None:
+        """Accept only one explicit bounded presentation filter."""
+        if type(query) is not str or len(query) > MAX_QUERY_LENGTH:
+            return None
+        if query == "":
+            return "all"
+        if not query.startswith("view=") or "&" in query or ";" in query:
+            return None
+        view = query[5:]
+        return view if view in _INDEX_VIEWS else None
+
+    def _index_html(self, view: str = "all") -> bytes:
         document = self._workspace.document()
+        all_runs = document["runs"]
+        if view in ("pass", "fail"):
+            runs = [run for run in all_runs if run["verdict"] == view]
+        elif view == "synthetic":
+            runs = [run for run in all_runs if run["synthetic"]]
+        elif view == "invalid":
+            runs = []
+        else:
+            runs = all_runs
         rows = []
-        for run in document["runs"]:
+        for run in runs:
             run_id = escape(run["run_id"])
             verdict = escape(run["verdict"])
             rows.append(
@@ -190,23 +213,47 @@ class DashboardApp:
                 "</tr>"
             )
         if not rows:
-            rows.append("<tr><td colspan=\"4\">No valid completed runs found.</td></tr>")
+            rows.append("<tr><td colspan=\"4\">No runs match this view.</td></tr>")
         invalid_rows = []
         for item in document["invalid_entries"]:
             invalid_rows.append(
                 f"<li><strong>{escape(item['name'])}</strong>: "
                 f"<span class=\"invalid\">invalid</span> — {escape(item['reason'])}</li>"
             )
-        invalid_section = (
-            "<h2>Entries needing attention</h2><ul>" + "".join(invalid_rows) + "</ul>"
-            if invalid_rows else
-            "<h2>Entries needing attention</h2><p>None.</p>"
-        )
+        if view in ("all", "invalid"):
+            invalid_section = (
+                "<h2>Entries needing attention</h2><ul>" + "".join(invalid_rows) + "</ul>"
+                if invalid_rows else
+                "<h2>Entries needing attention</h2><p>None.</p>"
+            )
+        else:
+            invalid_section = ""
+        counts = {
+            "all": len(all_runs),
+            "pass": sum(run["verdict"] == "pass" for run in all_runs),
+            "fail": sum(run["verdict"] == "fail" for run in all_runs),
+            "synthetic": sum(bool(run["synthetic"]) for run in all_runs),
+            "invalid": document["invalid_count"],
+        }
+        labels = {
+            "all": "All validated", "pass": "PASS", "fail": "FAIL",
+            "synthetic": "Synthetic", "invalid": "Needs attention",
+        }
+        links = []
+        for name in _INDEX_VIEWS:
+            href = "/" if name == "all" else f"/?view={name}"
+            current = ' aria-current="page"' if name == view else ""
+            links.append(
+                f'<a href="{href}"{current}>{labels[name]} ({counts[name]})</a>'
+            )
+        view_label = labels[view]
         content = (
             "<h1>Chimera completed runs</h1>"
             "<p>This read-only view displays only cross-validated completed evidence. "
             "Invalid entries remain visible for investigation.</p>"
-            "<table><caption>Validated communications-link runs</caption>"
+            "<nav aria-label=\"Run views\">" + " · ".join(links) + "</nav>"
+            f"<p>Current view: <strong>{view_label}</strong></p>"
+            f"<table><caption>Validated communications-link runs — {view_label}</caption>"
             "<thead><tr><th scope=\"col\">Run</th><th scope=\"col\">Verdict</th>"
             "<th scope=\"col\">Synthetic</th><th scope=\"col\">Started (UTC)</th>"
             "</tr></thead><tbody>" + "".join(rows) + "</tbody></table>" +
@@ -270,9 +317,15 @@ class DashboardApp:
             )
         path = environ.get("PATH_INFO", "")
         if path == "/":
+            view = self._index_view(environ.get("QUERY_STRING", ""))
+            if view is None:
+                return self._response(
+                    start_response, "400 Bad Request", "application/json; charset=utf-8",
+                    b'{"error":"invalid dashboard view"}\n',
+                )
             return self._response(
                 start_response, "200 OK", "text/html; charset=utf-8",
-                self._index_html(), (("Content-Security-Policy",
+                self._index_html(view), (("Content-Security-Policy",
                     "default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'"),),
             )
         if path == "/api/v1/runs":

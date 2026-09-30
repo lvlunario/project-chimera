@@ -13,7 +13,7 @@ from chimera.operator import run_link_verification
 FIXTURES = Path(__file__).parents[1] / "examples" / "fixtures"
 
 
-def request(app, path="/", method="GET"):
+def request(app, path="/", method="GET", query=""):
     response = {}
 
     def start_response(status, headers):
@@ -21,7 +21,7 @@ def request(app, path="/", method="GET"):
         response["headers"] = dict(headers)
 
     response["body"] = b"".join(app({
-        "REQUEST_METHOD": method, "PATH_INFO": path,
+        "REQUEST_METHOD": method, "PATH_INFO": path, "QUERY_STRING": query,
     }, start_response))
     return response
 
@@ -58,11 +58,58 @@ class DashboardTests(unittest.TestCase):
             page = request(app)
             self.assertEqual("200 OK", page["status"])
             self.assertIn(b'<html lang="en">', page["body"])
-            self.assertIn(b"No valid completed runs found", page["body"])
+            self.assertIn(b"No runs match this view", page["body"])
             self.assertIn(b"<caption>", page["body"])
             self.assertIn("default-src 'none'", page["headers"]["Content-Security-Policy"])
             api = request(app, "/api/v1/runs")
             self.assertEqual(0, json.loads(api["body"])["run_count"])
+
+    def test_index_views_filter_without_changing_validated_snapshot(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            passed = self._run(root, "passed")
+            failed = self._run(root, "failed", fault=True)
+            (root / "broken").mkdir()
+            app = DashboardApp(CompletedRunWorkspace.open(root))
+
+            all_view = request(app)
+            self.assertIn(b'aria-label="Run views"', all_view["body"])
+            self.assertIn(b'aria-current="page">All validated (2)', all_view["body"])
+            self.assertIn(passed.run_id.encode(), all_view["body"])
+            self.assertIn(failed.run_id.encode(), all_view["body"])
+            self.assertIn(b"broken", all_view["body"])
+
+            pass_view = request(app, query="view=pass")
+            self.assertIn(passed.run_id.encode(), pass_view["body"])
+            self.assertNotIn(failed.run_id.encode(), pass_view["body"])
+            self.assertNotIn(b"broken", pass_view["body"])
+            fail_view = request(app, query="view=fail")
+            self.assertNotIn(passed.run_id.encode(), fail_view["body"])
+            self.assertIn(failed.run_id.encode(), fail_view["body"])
+            synthetic_view = request(app, query="view=synthetic")
+            self.assertNotIn(passed.run_id.encode(), synthetic_view["body"])
+            self.assertIn(failed.run_id.encode(), synthetic_view["body"])
+            invalid_view = request(app, query="view=invalid")
+            self.assertNotIn(passed.run_id.encode(), invalid_view["body"])
+            self.assertNotIn(failed.run_id.encode(), invalid_view["body"])
+            self.assertIn(b"broken", invalid_view["body"])
+
+            api = request(app, "/api/v1/runs")
+            self.assertEqual(2, json.loads(api["body"])["run_count"])
+
+    def test_index_rejects_ambiguous_or_unbounded_view_query(self):
+        with tempfile.TemporaryDirectory() as directory:
+            app = DashboardApp(CompletedRunWorkspace.open(directory))
+            for query in (
+                "view=", "view=unknown", "view=pass&view=fail", "extra=pass",
+                "view=pass;extra=fail", "view=" + "p" * 65,
+            ):
+                with self.subTest(query=query):
+                    response = request(app, query=query)
+                    self.assertEqual("400 Bad Request", response["status"])
+                    self.assertEqual(
+                        b'{"error":"invalid dashboard view"}\n', response["body"]
+                    )
 
     def test_list_detail_report_navigation_and_read_only_policy(self):
         with tempfile.TemporaryDirectory() as directory:

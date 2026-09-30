@@ -98,6 +98,13 @@ class DashboardHTTPEndToEndTests(unittest.TestCase):
                 self.assertEqual("no-store", headers["Cache-Control"])
                 self.assertIn(result.run_id.encode(), index)
 
+                _, _, failed_view = self._get(base, "/?view=fail")
+                self.assertIn(result.run_id.encode(), failed_view)
+                self.assertIn(b'aria-current="page">FAIL (1)</a>', failed_view)
+                with self.assertRaises(HTTPError) as ambiguous_view:
+                    self._get(base, "/?view=fail&view=pass")
+                self.assertEqual(400, ambiguous_view.exception.code)
+
                 _, _, detail = self._get(base, f"/runs/{result.run_id}")
                 self.assertIn(b"COM-LINK-001 evidence", detail)
                 self.assertIn(b">2.0<", detail)
@@ -146,14 +153,16 @@ class DashboardHTTPEndToEndTests(unittest.TestCase):
                 threshold_db="3.0",
             )
             application = DashboardApp(CompletedRunWorkspace.open(root))
-            for path in ("/", f"/runs/{result.run_id}"):
+            for path in ("/", "/?view=pass", f"/runs/{result.run_id}"):
                 response = {}
 
                 def start(status, headers):
                     response["status"] = status
 
+                route, _, query = path.partition("?")
                 body = b"".join(application({
-                    "REQUEST_METHOD": "GET", "PATH_INFO": path,
+                    "REQUEST_METHOD": "GET", "PATH_INFO": route,
+                    "QUERY_STRING": query,
                 }, start)).decode("utf-8")
                 audit = SemanticAudit()
                 audit.feed(body)
