@@ -19,7 +19,7 @@ The 100-developer framing expresses ambition, not actual staffing or throughput.
 | P2 | Durable execution | SQLite run storage; restart recovery and idempotency tested | Conditionally accepted for continued development September 22; bounded recovery limitations retained |
 | P3 | Engineering adapters | Synthetic telemetry ingestion and deterministic fault injection with reference fixtures | In progress; strict CSV ingestion, reference controls, deterministic faults and integrated local operator path implemented |
 | P4 | Verification evidence | Requirement mapping, reproducible JSON/HTML reports, missing-evidence detection | In progress; canonical reopened-evidence JSON/HTML, deterministic self-verifying handoff bundle, integrated local export and executable candidate controls implemented; exact-candidate gate evidence pending |
-| P5 | Operator product | API and accessible dashboard; end-to-end acceptance tests | In progress; API/dashboard, portable handoff download, loopback HTTP and structural-accessibility controls implemented; browser/device and operator acceptance pending |
+| P5 | Operator product | API and accessible dashboard; end-to-end acceptance tests | In progress; API/dashboard, bounded investigation views, portable handoff download, loopback HTTP and structural-accessibility controls implemented; browser/device and operator acceptance pending |
 | P6 | AI assistance | Provider adapter, bounded permissions, evaluation dataset and measured baseline comparison | Planned |
 | P7 | Release | Reproducible deployment, performance results, threat model, demo and operator guide | Planned |
 
@@ -45,7 +45,7 @@ AI assistance cannot decide that missing evidence is a passing verification.
 - Avoid paid infrastructure and live hardware operations until separately authorized.
 
 ## Next tasks
-Current direction, September 29: retain the executable P3/P4 candidate packet for the
+Current direction, September 30: retain the executable P3/P4 candidate packet for the
 October 17 exact-candidate gate and complete browser/operator acceptance for the bounded
 multi-run dashboard tracked in
 [issue #19](https://github.com/lvlunario/project-chimera/issues/19) for November 7.
@@ -90,7 +90,8 @@ Historical implementation sequence:
    presentation. September 28 adds the bounded multi-run dashboard and loopback HTTP
    acceptance controls; September 29 adds a deterministic ZIP handoff whose manifest and
    enclosed artifacts are independently revalidated. Browser/operator and phase-gate
-   evidence remain P3/P4/P5 work.
+   evidence remain P3/P4/P5 work. September 30 adds counted keyboard investigation views
+   as presentation-only projections without changing the canonical API snapshot.
    These slices do not close P2, P3, P4 or P5.
 7. September 16: Linux local-file lifetime ownership primitive implemented as a
    bounded prerequisite for RECOVER-005. September 19 runner integration holds this

@@ -784,8 +784,11 @@ chimera verify-link examples/fixtures/link_margin_passed.csv \
 chimera serve-dashboard /tmp/chimera-runs --port 8765
 ```
 
-Open `http://127.0.0.1:8765/`. The list shows explicit PASS/FAIL and synthetic status,
-then links to a run detail and its readable or canonical JSON report, portable evidence,
+Open `http://127.0.0.1:8765/`. The list shows explicit PASS/FAIL and synthetic status.
+Use the counted All validated, PASS, FAIL, Synthetic and Needs attention links to narrow the
+HTML presentation; the links are bounded fixed views, not a search language. A selected view
+does not alter the sealed workspace snapshot or the complete versioned JSON index. The table
+links to a run detail and its readable or canonical JSON report, portable evidence,
 requirement bindings and deterministic audit bundle. The versioned index is `/api/v1/runs`;
 per-run audit resources are `/api/v1/runs/RUN_ID/report`, `/evidence`, `/bindings` and
 `/handoff`. Use Tab/Shift+Tab and Enter to
@@ -814,11 +817,13 @@ Run the exact engineering control used by the P3/P4 candidate packet:
 python -m examples.p34_candidate_demo
 ```
 
-It creates a temporary workspace and reports six explicit checks: valid telemetry produces
-durable PASS evidence; a deterministic synthetic fault produces traceable FAIL evidence;
-malformed telemetry creates no output state; completed-run resume preserves the portable
-artifacts; the handoff independently reopens; and the dashboard download is byte-identical
-to the file export. The temporary workspace is removed afterward.
+It creates a temporary workspace and reports eight explicit controls: valid telemetry
+produces durable PASS evidence; a natural below-threshold sample and a deterministic
+synthetic fault both produce traceable FAIL evidence; repeated fault injection agrees;
+multiple malformed telemetry shapes create no output state; missing evidence stays explicitly
+unavailable; completed-run resume preserves the portable artifacts; the handoff independently
+reopens; and the dashboard download is byte-identical to the file export. The temporary
+workspace is removed afterward.
 
 Teaching note for Leo: this is a chain-of-custody rehearsal. A PASS/FAIL result is useful
 only if Chimera can show which input, requirement, durable record and report belong together,

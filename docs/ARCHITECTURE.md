@@ -46,9 +46,17 @@ workspace or open databases. Verdict color is supplementary to explicit PASS/FAI
 links use native keyboard behavior; tables include headings and a caption. Retain the
 loopback-only, GET-only, no-CORS, no-dependency boundary.
 
+Apply the operator's All/PASS/FAIL/Synthetic/Needs-attention choice only as a presentation
+projection over that sealed snapshot. Accept exactly one bounded allowlisted query value;
+reject aliases, duplicate parameters, extra parameters and oversized input. Keep the
+versioned JSON index unfiltered so a view choice cannot silently redefine the canonical
+workspace inventory or its verdicts.
+
 Tradeoffs: startup snapshots are deterministic and avoid presenting a directory that changes
-mid-request, but new runs require a restart. This is not recursive discovery, live progress,
-repair, authentication, hostile-host isolation or a completed accessibility assessment.
+mid-request, but new runs require a restart. The small fixed views improve investigation
+without introducing a search language, pagination or mutable server state. This is not
+recursive discovery, live progress, repair, authentication, hostile-host isolation or a
+completed accessibility assessment.
 Browser/device and operator acceptance evidence remain required for the November 7 gate.
 
 ## Decision 0018: serve only a cross-validated completed-run projection
