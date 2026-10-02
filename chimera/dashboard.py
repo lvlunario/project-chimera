@@ -189,24 +189,29 @@ class DashboardApp:
         view = query[5:]
         return view if view in _INDEX_VIEWS else None
 
+    @staticmethod
+    def _run_in_view(run: dict, view: str) -> bool:
+        """Return whether a validated summary truthfully belongs to a view."""
+        if view == "all":
+            return True
+        if view in ("pass", "fail"):
+            return run["verdict"] == view
+        if view == "synthetic":
+            return bool(run["synthetic"])
+        return False
+
     def _index_html(self, view: str = "all") -> bytes:
         document = self._workspace.document()
         all_runs = document["runs"]
-        if view in ("pass", "fail"):
-            runs = [run for run in all_runs if run["verdict"] == view]
-        elif view == "synthetic":
-            runs = [run for run in all_runs if run["synthetic"]]
-        elif view == "invalid":
-            runs = []
-        else:
-            runs = all_runs
+        runs = [run for run in all_runs if self._run_in_view(run, view)]
         rows = []
         for run in runs:
             run_id = escape(run["run_id"])
             verdict = escape(run["verdict"])
+            detail_query = "" if view == "all" else f"?view={view}"
             rows.append(
                 "<tr>"
-                f"<td><a href=\"/runs/{run_id}\"><code>{run_id}</code></a></td>"
+                f"<td><a href=\"/runs/{run_id}{detail_query}\"><code>{run_id}</code></a></td>"
                 f"<td><span class=\"{verdict}\">{verdict.upper()}</span></td>"
                 f"<td>{'yes' if run['synthetic'] else 'no'}</td>"
                 f"<td>{escape(run['started_at'])}</td>"
@@ -261,7 +266,7 @@ class DashboardApp:
         )
         return self._page("Chimera completed runs", content)
 
-    def _detail_html(self, completed: CompletedLinkRun) -> bytes:
+    def _detail_html(self, completed: CompletedLinkRun, view: str = "all") -> bytes:
         summary = completed.summary()
         report = completed.report.to_dict()
         link = report["detail"]["link_margin"]
@@ -280,8 +285,14 @@ class DashboardApp:
             "".join(findings) if findings
             else "<tr><td colspan=\"3\">No below-threshold samples.</td></tr>"
         )
+        labels = {
+            "all": "All completed runs", "pass": "PASS runs", "fail": "FAIL runs",
+            "synthetic": "Synthetic runs", "invalid": "Entries needing attention",
+        }
+        return_href = "/" if view == "all" else f"/?view={view}"
         content = (
-            "<nav aria-label=\"Breadcrumb\"><a href=\"/\">Completed runs</a></nav>"
+            f"<nav aria-label=\"Breadcrumb\"><a href=\"{return_href}\">"
+            f"{labels[view]}</a></nav>"
             f"<h1>Run <code>{run_id}</code></h1>"
             f"<p>Status: <strong class=\"{verdict}\">{verdict.upper()}</strong></p>"
             "<dl>"
@@ -346,9 +357,22 @@ class DashboardApp:
             completed = self._workspace.get(run_id)
             if completed is not None and not suffix:
                 if parts[1] == "runs":
+                    view = self._index_view(environ.get("QUERY_STRING", ""))
+                    if view is None:
+                        return self._response(
+                            start_response, "400 Bad Request",
+                            "application/json; charset=utf-8",
+                            b'{"error":"invalid dashboard view"}\n',
+                        )
+                    if not self._run_in_view(completed.summary(), view):
+                        return self._response(
+                            start_response, "400 Bad Request",
+                            "application/json; charset=utf-8",
+                            b'{"error":"run not in dashboard view"}\n',
+                        )
                     return self._response(
                         start_response, "200 OK", "text/html; charset=utf-8",
-                        self._detail_html(completed), (("Content-Security-Policy",
+                        self._detail_html(completed, view), (("Content-Security-Policy",
                             "default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'"),),
                     )
             if completed is not None and suffix == ["report"]:

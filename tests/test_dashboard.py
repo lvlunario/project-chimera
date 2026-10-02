@@ -86,6 +86,9 @@ class DashboardTests(unittest.TestCase):
             fail_view = request(app, query="view=fail")
             self.assertNotIn(passed.run_id.encode(), fail_view["body"])
             self.assertIn(failed.run_id.encode(), fail_view["body"])
+            self.assertIn(
+                f'/runs/{failed.run_id}?view=fail'.encode(), fail_view["body"]
+            )
             synthetic_view = request(app, query="view=synthetic")
             self.assertNotIn(passed.run_id.encode(), synthetic_view["body"])
             self.assertIn(failed.run_id.encode(), synthetic_view["body"])
@@ -124,6 +127,24 @@ class DashboardTests(unittest.TestCase):
             self.assertIn(b"Open readable report", detail["body"])
             self.assertIn(b"COM-LINK-001 evidence", detail["body"])
             self.assertIn(b"Threshold", detail["body"])
+            filtered_detail = request(
+                app, f"/runs/{result.run_id}", query="view=pass"
+            )
+            self.assertIn(b'href="/?view=pass">PASS runs</a>', filtered_detail["body"])
+            invalid_detail_query = request(
+                app, f"/runs/{result.run_id}", query="view=pass&view=fail"
+            )
+            self.assertEqual("400 Bad Request", invalid_detail_query["status"])
+            for mismatched_view in ("fail", "synthetic", "invalid"):
+                with self.subTest(view=mismatched_view):
+                    mismatch = request(
+                        app, f"/runs/{result.run_id}",
+                        query=f"view={mismatched_view}",
+                    )
+                    self.assertEqual("400 Bad Request", mismatch["status"])
+                    self.assertEqual(
+                        b'{"error":"run not in dashboard view"}\n', mismatch["body"]
+                    )
             report = request(app, f"/runs/{result.run_id}/report")
             self.assertIn(b"Chimera verification report", report["body"])
             canonical = request(app, f"/api/v1/runs/{result.run_id}/report")

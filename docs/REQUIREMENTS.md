@@ -40,6 +40,7 @@ interface decisions remain open.
 | DASH-005 | Bind only IPv4 loopback, support GET only, enable no CORS or mutation endpoint, and snapshot the workspace before listener startup | method, CLI and server-boundary tests |
 | DASH-006 | Exercise the complete list/detail/report/evidence/bindings journey over a real ephemeral loopback HTTP server and audit the declared semantic HTML contract without network/runtime dependencies | `tests/test_dashboard_http.py` |
 | DASH-007 | Provide bounded, keyboard-navigable views for all validated, PASS, FAIL, synthetic and invalid entries without changing the immutable validated workspace or versioned API | index-view filter and invalid-query tests |
+| DASH-008 | Preserve a truthful allowlisted originating view through run detail navigation so the operator can return to the same investigation set without redirects, cookies or mutable server state; reject a run/view mismatch | direct WSGI, real-loopback and installed-wheel return-navigation tests |
 
 The dashboard is a read-only presentation of validated portable artifacts. It does not scan
 recursively, watch for live changes, choose among duplicate identities or repair invalid

@@ -101,13 +101,20 @@ class DashboardHTTPEndToEndTests(unittest.TestCase):
                 _, _, failed_view = self._get(base, "/?view=fail")
                 self.assertIn(result.run_id.encode(), failed_view)
                 self.assertIn(b'aria-current="page">FAIL (1)</a>', failed_view)
+                self.assertIn(
+                    f'/runs/{result.run_id}?view=fail'.encode(), failed_view
+                )
                 with self.assertRaises(HTTPError) as ambiguous_view:
                     self._get(base, "/?view=fail&view=pass")
                 self.assertEqual(400, ambiguous_view.exception.code)
 
-                _, _, detail = self._get(base, f"/runs/{result.run_id}")
+                _, _, detail = self._get(base, f"/runs/{result.run_id}?view=fail")
                 self.assertIn(b"COM-LINK-001 evidence", detail)
                 self.assertIn(b">2.0<", detail)
+                self.assertIn(b'href="/?view=fail">FAIL runs</a>', detail)
+                with self.assertRaises(HTTPError) as false_origin:
+                    self._get(base, f"/runs/{result.run_id}?view=pass")
+                self.assertEqual(400, false_origin.exception.code)
 
                 _, _, report = self._get(
                     base, f"/api/v1/runs/{result.run_id}/report"
@@ -153,7 +160,9 @@ class DashboardHTTPEndToEndTests(unittest.TestCase):
                 threshold_db="3.0",
             )
             application = DashboardApp(CompletedRunWorkspace.open(root))
-            for path in ("/", "/?view=pass", f"/runs/{result.run_id}"):
+            for path in (
+                "/", "/?view=pass", f"/runs/{result.run_id}?view=pass"
+            ):
                 response = {}
 
                 def start(status, headers):
