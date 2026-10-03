@@ -50,7 +50,11 @@ Apply the operator's All/PASS/FAIL/Synthetic/Needs-attention choice only as a pr
 projection over that sealed snapshot. Accept exactly one bounded allowlisted query value;
 reject aliases, duplicate parameters, extra parameters and oversized input. Keep the
 versioned JSON index unfiltered so a view choice cannot silently redefine the canonical
-workspace inventory or its verdicts.
+workspace inventory or its verdicts. Carry that same allowlisted value into a run-detail
+link and back breadcrumb so investigation context survives list → detail → list navigation.
+Require the validated run to belong to that view; a crafted mismatched origin fails rather
+than advertising a false investigation context. Do not use cookies, redirects, referer
+inspection or mutable server state for this context.
 
 Tradeoffs: startup snapshots are deterministic and avoid presenting a directory that changes
 mid-request, but new runs require a restart. The small fixed views improve investigation

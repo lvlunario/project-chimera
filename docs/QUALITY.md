@@ -82,7 +82,10 @@ symbolic-link and oversized-workspace controls. Direct WSGI tests verify the ver
 list/detail/report journey, semantic markup, explicit text status, deterministic responses,
 GET-only behavior, security headers and lack of CORS. Fixed HTML views must be keyboard links,
 filter only the presentation, leave the versioned JSON snapshot complete and reject ambiguous,
-unknown or oversized query input. The isolated wheel must import and
+unknown or oversized query input. List → detail navigation must carry only an allowlisted
+originating view and provide a native breadcrumb back to it, with no redirect, cookie or
+mutable session. It must reject a detail origin whose validated run is not a member of the
+claimed view. The isolated wheel must import and
 exercise the dashboard against a completed operator run. These automated checks establish
 accessibility fundamentals; they do not replace keyboard/browser/device testing or Leo's
 operator validation before P5 acceptance.
@@ -90,7 +93,7 @@ operator validation before P5 acceptance.
 An end-to-end standard-library control starts the actual WSGI application on an ephemeral
 IPv4 loopback port and retrieves the list, a filtered view, detail, canonical report, portable
 evidence and requirement bindings over HTTP. It also proves an ambiguous view query receives
-HTTP 400. A dependency-free HTML parser audits language, landmark,
+HTTP 400 and that a filtered detail returns to the same view. A dependency-free HTML parser audits language, landmark,
 heading, caption, scoped-column-header, visible-focus and non-empty-link contracts. This is
 transport and structural evidence, not a claim of conformance with WCAG or completion of
 screen-reader, browser/device and human usability testing.

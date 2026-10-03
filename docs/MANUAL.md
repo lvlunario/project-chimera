@@ -787,8 +787,10 @@ chimera serve-dashboard /tmp/chimera-runs --port 8765
 Open `http://127.0.0.1:8765/`. The list shows explicit PASS/FAIL and synthetic status.
 Use the counted All validated, PASS, FAIL, Synthetic and Needs attention links to narrow the
 HTML presentation; the links are bounded fixed views, not a search language. A selected view
-does not alter the sealed workspace snapshot or the complete versioned JSON index. The table
-links to a run detail and its readable or canonical JSON report, portable evidence,
+does not alter the sealed workspace snapshot or the complete versioned JSON index. When you
+open a run from PASS, FAIL or Synthetic, the breadcrumb returns to that same view; no account,
+cookie or server-side session is involved. The table links to a run detail and its readable
+or canonical JSON report, portable evidence,
 requirement bindings and deterministic audit bundle. The versioned index is `/api/v1/runs`;
 per-run audit resources are `/api/v1/runs/RUN_ID/report`, `/evidence`, `/bindings` and
 `/handoff`. Use Tab/Shift+Tab and Enter to

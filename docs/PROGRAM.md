@@ -19,7 +19,7 @@ The 100-developer framing expresses ambition, not actual staffing or throughput.
 | P2 | Durable execution | SQLite run storage; restart recovery and idempotency tested | Conditionally accepted for continued development September 22; bounded recovery limitations retained |
 | P3 | Engineering adapters | Synthetic telemetry ingestion and deterministic fault injection with reference fixtures | In progress; strict CSV ingestion, reference controls, deterministic faults and integrated local operator path implemented |
 | P4 | Verification evidence | Requirement mapping, reproducible JSON/HTML reports, missing-evidence detection | In progress; canonical reopened-evidence JSON/HTML, deterministic self-verifying handoff bundle, integrated local export and executable candidate controls implemented; exact-candidate gate evidence pending |
-| P5 | Operator product | API and accessible dashboard; end-to-end acceptance tests | In progress; API/dashboard, bounded investigation views, portable handoff download, loopback HTTP and structural-accessibility controls implemented; browser/device and operator acceptance pending |
+| P5 | Operator product | API and accessible dashboard; end-to-end acceptance tests | In progress; API/dashboard, bounded investigation views with context-preserving return navigation, portable handoff download, loopback HTTP and structural-accessibility controls implemented; browser/device and operator acceptance pending |
 | P6 | AI assistance | Provider adapter, bounded permissions, evaluation dataset and measured baseline comparison | Planned |
 | P7 | Release | Reproducible deployment, performance results, threat model, demo and operator guide | Planned |
 
