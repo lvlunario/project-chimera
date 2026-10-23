@@ -50,8 +50,6 @@ jobs:
     name: Chromium dashboard journey
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    env:
-      PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/ms-playwright
 
     steps:
       - name: Check out repository
