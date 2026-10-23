@@ -45,9 +45,10 @@ interface decisions remain open.
 
 The dashboard is a read-only presentation of validated portable artifacts. It does not scan
 recursively, watch for live changes, choose among duplicate identities or repair invalid
-runs. It includes accessibility fundamentals but has not yet completed browser/device or
-human operator or screen-reader acceptance testing. No authentication, TLS, remote hosting, multi-user isolation,
-live control or production WSGI claim is made.
+runs. It includes structural accessibility fundamentals and test-only automated Chromium
+coverage, but has not completed manual-device, human-operator or screen-reader/WCAG
+acceptance testing. No authentication, TLS, remote hosting, multi-user isolation, live
+control or production WSGI claim is made.
 
 ## Read-only completed-run operator API v1
 
@@ -241,8 +242,9 @@ The mutable-dependency regression is [defect #4](https://github.com/lvlunario/pr
 | EVID-005 | Invalid graphs execute no actions; interrupts never become completed evidence | test_preflight_and_interrupt |
 
 Local verification and independent QA recorded in the daily log. These are task
-execution outcomes, not requirement pass/fail verdicts. Input identity/hashes,
-requirement mapping, code/config provenance and crash-safe storage remain planned.
+execution outcomes, not requirement pass/fail verdicts. Subsequent versioned contracts add
+communications-input identity, requirement bindings and durable storage; authenticated
+producer/build provenance remains outside the current prototype boundary.
 
 ## Packaging
 
@@ -307,9 +309,9 @@ exit codes remain unchanged. `all_passed` covers only explicitly selected requir
 | VERDICT-005 | all_passed requires a nonempty selection with only pass verdicts | test_empty_is_not_pass; test_complete_pass; negative outcome tests |
 
 The clean-install script also exercises the installed verdict API after snapshot reload.
-Versioned requirement bindings are implemented below. Procedure/input provenance, measured
-data and operator verdict exit codes remain later integration work; this is not full P4
-traceability or PM acceptance.
+Versioned requirement bindings are implemented below. Subsequent communications integration
+adds bounded input/procedure identity and operator verdict exit codes; measured-data
+validation and authenticated provenance remain open. This is not PM acceptance.
 
 ## Requirement-binding artifact v1
 

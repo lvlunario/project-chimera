@@ -137,10 +137,10 @@ Use architecture decision records for technical choices, and review minutes for
 product decisions. Supersede records explicitly rather than deleting their history.
 
 ## Prototype operator/developer chapters
-Current runnable instructions are in the README. As milestones ship, add installation,
-CSV schema/examples, CLI reference, persisted-run recovery, dashboard walkthrough,
-report interpretation, troubleshooting and extension instructions here or linked
-chapters. These chapters are planned, not currently implemented.
+Current runnable instructions begin in the README. This manual now includes installation,
+CLI/evidence contracts, persisted-run recovery, communications CSV/fault exercises, report
+and handoff interpretation, and the local dashboard walkthrough. Release troubleshooting
+and extension guidance remain for the November 28 candidate.
 
 ## Completed-run evidence v1
 
@@ -422,7 +422,8 @@ Completed artifact storage, the separate per-task journal and bounded pending-on
 are implemented. Existing P1 CLI/API behavior is unchanged. Task-transition and final-run
 commit reconciliation are implemented. Completed journals can now be exported into
 existing schema-v1 evidence. The first strict communications CSV slice is implemented;
-failing-sample/report integration and the full P2 approval packet remain planned.
+failing-sample/report integration and the P2 approval packet are also implemented. Personal
+walkthroughs and final acceptance remain separate.
 
 After an interruption, a running task has an uncertain outcome; missing evidence is
 not proof the action never happened. Recovery defaults to attention rather than automatic
@@ -658,8 +659,8 @@ If ingestion/check/detail is blocked or missing, the report says `not_evaluated`
 and marks detail unavailable. It cannot show PASS/FAIL without a valid link-margin detail
 that agrees with the separate Boolean assessment. Input JSON is bounded to 4 MiB. Content
 hashes prove byte identity, not authorship; HTML is a view, not a signature or replacement
-for the durable databases. Raw telemetry, authenticated acquisition, operator file export,
-build provenance and the browser dashboard remain later boundaries.
+for the durable databases. Raw telemetry and authenticated acquisition remain outside this
+boundary; later sections document the implemented local export and dashboard integration.
 
 Teaching note for Leo: the JSON is the controlled engineering record and HTML is its
 readable projection. The renderer is not allowed to calculate a new verdict. If the stored
@@ -808,8 +809,9 @@ its detail route prevents a polished page from lending it false credibility.
 
 Current boundary: local IPv4 loopback, read-only GET requests, no CORS, accounts, TLS,
 remote hosting, live progress or control. Semantic HTML and keyboard fundamentals are
-implemented; browser/device testing and your operator walkthrough remain pending before P5
-acceptance.
+implemented. Automated headless-Chromium coverage exercises a native Tab/Enter journey at
+desktop and mobile width; manual-device, screen-reader/WCAG and your operator walkthrough
+remain pending before P5 acceptance.
 
 ### P3/P4 integrated candidate control
 

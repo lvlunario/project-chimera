@@ -25,7 +25,7 @@ entry point; the implementation has not been merged into `main`.
 | Ongoing changes, test evidence and next steps | [Daily engineering logs](https://github.com/lvlunario/project-chimera/tree/magnum-opus/development/docs/daily) |
 | Requirements and quality approach | [Requirements](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/REQUIREMENTS.md) · [Quality plan](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/QUALITY.md) |
 
-## Progress snapshot — September 27, 2026
+## Progress snapshot — October 23, 2026
 
 The development branch includes:
 
@@ -40,21 +40,26 @@ The development branch includes:
 - A canonical reopened-evidence JSON report and deterministic self-contained HTML view.
 - An integrated `chimera verify-link` operator command from strict CSV and optional
   fault plan through journal, immutable reopen, verdict and JSON/HTML report.
-- A read-only loopback API that cross-validates one completed run before serving its
-  versioned summary, canonical JSON and deterministic HTML.
+- A deterministic self-verifying ZIP handoff plus independent inspection command.
+- Read-only loopback API and multi-run dashboard that cross-validate completed artifacts,
+  keep invalid packages visible, provide bounded investigation views, and download the
+  same validated handoff bundle.
+- Test-only headless-Chromium coverage for native keyboard navigation, desktop/mobile-width
+  rendering, security headers, and download/reopen behavior.
 - An installable Python package and CI on Python 3.11 and 3.12.
 
-The [September 19 evidence log](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-09-19.md)
+The [October 23 evidence log](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-10-23.md)
 records candidate-specific local, independent and hosted results. Do not infer a new
 candidate's status from an earlier successful run.
 
 **Phase status — September 22:** P0 scope (D-001–003) is approved by delegation.
 P1 and P2 are conditionally accepted for continued development under the
 [delegated decision record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/reviews/2026-09-22-delegated-decisions.md). Leo's personal walkthroughs remain unperformed;
-final product validation remains open. P3/P4 implementation continues without waiting
-for another response to these decisions.
-The browser dashboard and measured-data workflow remain planned.
-Current demonstrations use synthetic data; this is not a production or certification release.
+final product validation remains open. P3/P4/P5 remain in progress. The October 17 M2
+exact-candidate disposition is late; November 7 is forecast amber while the operator
+acceptance packet and human walkthrough remain open. Synthetic fixtures establish software
+behavior; authorized measured-data validation, production deployment and certification are
+not claimed.
 
 ## When you can try it
 
@@ -62,17 +67,17 @@ All dates below are 2026 delivery targets, subject to the documented scope and r
 
 | Target | What Leo can test or review |
 |---|---|
-| Now | Synthetic workflows, evidence replay, completed-run storage, and interrupted-run inspection |
-| September 19 | Concept, use cases, exclusions and scope decisions |
-| October 3 | Core-engine gate: review evidence and perform the P1 approval exercise |
-| October 17 | Complete communications-data-to-result workflow |
-| November 7 | Feature-complete prototype with a basic operator dashboard |
+| Now | Complete local communications workflow, reports, handoff, and read-only dashboard |
+| September 19 | M0 baseline; delegated scope decision recorded September 22 |
+| October 3 | M1 baseline; P1 retained as conditionally accepted for progression |
+| October 17 | M2 baseline missed; engineering candidate exists, exact disposition overdue |
+| November 7 | M3 operator packet and walkthrough; current forecast amber |
 | November 28 | Release candidate for structured acceptance testing |
 | December 12 | Stabilized prototype, manuals and final acceptance demonstration |
 
-The planned dashboard has a run list, check-by-check results, and an evidence/report view.
-The intended journey is to load communications-link data, run verification, inspect
-failing samples, then reopen or export the supporting evidence.
+The implemented dashboard lists sealed completed runs, exposes PASS/FAIL and synthetic
+status, shows failing samples, and links canonical evidence, reports and handoff bundles.
+It is a local read-only prototype, not a hosted multi-user service.
 
 ## Try the current foundation
 
@@ -93,9 +98,15 @@ python -m examples.link_csv_demo
 python -m examples.p2_approval_demo
 python -m examples.fault_demo
 python -m examples.report_demo
+python -m examples.p34_candidate_demo
 chimera verify-link examples/fixtures/link_margin_passed.csv \
   --threshold-db 3.0 --output /tmp/chimera-link-run
 chimera serve-link /tmp/chimera-link-run --port 8765
+chimera export-link /tmp/chimera-link-run --output /tmp/chimera-link-run.zip
+chimera inspect-link /tmp/chimera-link-run.zip
+mkdir -p /tmp/chimera-runs
+cp -R /tmp/chimera-link-run /tmp/chimera-runs/passing
+chimera serve-dashboard /tmp/chimera-runs --port 8765
 ```
 
 Some demonstrations deliberately show failures to verify correct failure handling.

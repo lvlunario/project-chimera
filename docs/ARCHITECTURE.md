@@ -1,5 +1,21 @@
 # Architecture decision 0001: deterministic core first
 
+## Decision 0021: keep real-browser validation outside the product runtime
+
+October 23, 2026. Bounded P5 verification increment; no phase closure.
+
+Exercise the sealed local dashboard in a dedicated Ubuntu 24.04 CI job with a version-pinned
+Playwright package and its matching headless Chromium build. Drive the full investigation path with
+native Tab/Enter input: select FAIL, open a run, return to the same view, reopen it and
+download the handoff. Also inspect security headers, engineering detail, console/page errors,
+390-pixel responsive overflow and independent bundle reopen.
+
+Keep Playwright and Chromium test-only. The product wheel retains zero runtime dependencies
+and the dashboard remains standard-library, loopback-only and read-only. Hosted browser
+automation establishes rendered-browser regression evidence; it is not manual-device,
+screen-reader/WCAG, human-usability or Leo operator acceptance. Downloaded browser/system
+packages remain CI supply-chain inputs despite the direct Playwright version pin.
+
 ## Decision 0020: reconstruct a deterministic handoff from the validated view
 
 September 29, 2026. Bounded P4 integration candidate; no phase closure.

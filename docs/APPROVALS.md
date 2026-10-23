@@ -49,7 +49,8 @@ Read [the concept review](reviews/2026-09-14.md) and [roadmap](ROADMAP.md).
 
 Expected: an agreed problem, scope and demonstrable success criteria.
 Approve the concept only; this does not accept working software.
-Decision: **Pending**. Actual observations/conditions: **Not yet recorded**.
+Decision: **Approved by delegation September 22**. Leo's personal walkthrough remains
+unperformed; see the authoritative current disposition above.
 
 ## P1 — Core execution / M1, October 3
 
@@ -81,7 +82,8 @@ identical using the same serialized bindings and confirm the assessment's bindin
 matches that artifact. This API-only
 exercise does not change the CLI's execution exit codes or establish full provenance.
 The synthetic demo alone is insufficient for full P1 acceptance.
-Decision: **Pending**. Actual observations/conditions: **Not yet recorded**.
+Decision: **Approved with conditions for continued development September 22**. Leo's
+personal walkthrough and final product acceptance remain unperformed.
 
 ## P2 — Durable storage / M2, October 17 (planned)
 
@@ -97,7 +99,8 @@ Run `python -m examples.p2_approval_demo` for the four combined controls.
       completed record from one needing attention.
 
 Approval covers persistence/recovery, not hardware side-effect guarantees.
-Decision: **Pending**. Actual observations/conditions: **Not yet recorded**.
+Decision: **Approved with conditions for continued development September 22**. Leo's
+personal walkthrough and final product acceptance remain unperformed.
 
 ## P3 — Engineering data and faults / M2 slice October 17; complete by M3 November 7 (planned)
 

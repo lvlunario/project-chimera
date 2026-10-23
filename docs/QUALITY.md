@@ -98,8 +98,8 @@ heading, caption, scoped-column-header, visible-focus and non-empty-link contrac
 transport and structural evidence, not a claim of conformance with WCAG or completion of
 screen-reader, browser/device and human usability testing.
 
-A separate CI job installs pinned Playwright test tooling and its matching Chromium build,
-then opens the real loopback dashboard at desktop and 390-pixel mobile widths. It exercises
+A separate Ubuntu 24.04 CI job installs pinned Playwright test tooling and its matching
+Chromium build, then opens the real loopback dashboard at desktop and 390-pixel mobile widths. It exercises
 native Tab/Enter navigation, visible focus, truthful FAIL-view return, rendered engineering
 details, security headers, responsive overflow and a browser-downloaded handoff reopened by
 the independent bundle inspector. Playwright remains test-only and is not added to the wheel

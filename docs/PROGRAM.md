@@ -18,8 +18,8 @@ The 100-developer framing expresses ambition, not actual staffing or throughput.
 | P1 | Local execution core | Graph validation, failure propagation, evidence schema, CLI, package install and CI verified | Conditionally accepted for continued development September 22 |
 | P2 | Durable execution | SQLite run storage; restart recovery and idempotency tested | Conditionally accepted for continued development September 22; bounded recovery limitations retained |
 | P3 | Engineering adapters | Synthetic telemetry ingestion and deterministic fault injection with reference fixtures | In progress; strict CSV ingestion, reference controls, deterministic faults and integrated local operator path implemented |
-| P4 | Verification evidence | Requirement mapping, reproducible JSON/HTML reports, missing-evidence detection | In progress; canonical reopened-evidence JSON/HTML, deterministic self-verifying handoff bundle, integrated local export and executable candidate controls implemented; exact-candidate gate evidence pending |
-| P5 | Operator product | API and accessible dashboard; end-to-end acceptance tests | In progress; API/dashboard, bounded investigation views with context-preserving return navigation, portable handoff download, loopback HTTP and structural-accessibility controls implemented; browser/device and operator acceptance pending |
+| P4 | Verification evidence | Requirement mapping, reproducible JSON/HTML reports, missing-evidence detection | In progress; canonical reopened-evidence JSON/HTML, deterministic self-verifying handoff bundle, integrated local export and executable candidate controls implemented; October 17 exact-candidate disposition overdue |
+| P5 | Operator product | API and accessible dashboard; end-to-end acceptance tests | In progress; API/dashboard, bounded investigation views, portable handoff download, loopback HTTP, structural checks and automated Chromium journey implemented; manual-device, screen-reader and operator acceptance pending |
 | P6 | AI assistance | Provider adapter, bounded permissions, evaluation dataset and measured baseline comparison | Planned |
 | P7 | Release | Reproducible deployment, performance results, threat model, demo and operator guide | Planned |
 
@@ -45,10 +45,14 @@ AI assistance cannot decide that missing evidence is a passing verification.
 - Avoid paid infrastructure and live hardware operations until separately authorized.
 
 ## Next tasks
-Current direction, September 30: retain the executable P3/P4 candidate packet for the
-October 17 exact-candidate gate and complete browser/operator acceptance for the bounded
-multi-run dashboard tracked in
-[issue #19](https://github.com/lvlunario/project-chimera/issues/19) for November 7.
+Current direction, October 23: the October 17 M2 exact-candidate disposition is six days
+late even though the integrated engineering control exists. Hold feature scope, retain one
+exact candidate, and publish a dated P3/P4/P5 operator-acceptance packet covering PASS,
+natural and synthetic FAIL, malformed input, restart, report/handoff agreement and the
+dashboard journey. Complete manual-device, screen-reader and Leo operator observations for
+the bounded dashboard tracked in
+[issue #19](https://github.com/lvlunario/project-chimera/issues/19) before P5 acceptance.
+November 7 is amber; November 28 and December 12 remain achievable with scope frozen.
 The deterministic P4 handoff work is tracked in
 [issue #20](https://github.com/lvlunario/project-chimera/issues/20).
 [Delegated decisions](reviews/2026-09-22-delegated-decisions.md)
@@ -58,8 +62,9 @@ are in the [September 28 weekly review](reviews/2026-09-28.md).
 
 Historical implementation sequence:
 1. Completed-run evidence, boolean-check verdict classification and versioned requirement
-   bindings are implemented; procedure/input provenance and durable multi-artifact storage
-   remain planned for integration.
+   bindings are implemented. The communications vertical now also binds input/configuration
+   provenance and durable artifacts; generalized authenticated provenance remains outside
+   the prototype boundary.
 2. Packaging and Python 3.11/3.12 CI are implemented and verified on the development
    branch; retain their evidence for P1 integration and final gate review.
 3. Strict declarative CLI workflow input is implemented, independently reviewed and
@@ -102,7 +107,8 @@ Historical implementation sequence:
 ## Risks
 Trusted task functions execute in-process and can hang, mutate state or access the host.
 The prototype is not a sandbox. There is no timeout, cancellation, general adapter retry,
-concurrency, web UI or production isolation yet. Bounded resume applies only to tasks
+concurrency, production web service or production isolation yet. A local read-only dashboard
+exists. Bounded resume applies only to tasks
 durably proven pending; running/unknown work is never retried. Synthetic demonstrations
 must remain labeled synthetic; they do not establish physical-system performance.
 
