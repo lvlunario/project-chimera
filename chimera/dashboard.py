@@ -172,7 +172,8 @@ class DashboardApp:
                 "margin:auto;padding:1rem;color:#172033;background:#fff}"
                 "a{color:#0645ad}a:focus{outline:3px solid #ffbf47;outline-offset:2px}"
                 "table{border-collapse:collapse;width:100%}th,td{border:1px solid #8b95a5;"
-                "padding:.5rem;text-align:left;vertical-align:top}th{background:#eef2f7}"
+                "padding:.5rem;text-align:left;vertical-align:top;overflow-wrap:anywhere}"
+                "th{background:#eef2f7}"
                 ".pass{color:#176b2c;font-weight:700}.fail,.invalid{color:#a52222;"
                 "font-weight:700}code{overflow-wrap:anywhere}</style></head><body>"
                 f"<main>{content}</main></body></html>").encode("utf-8")

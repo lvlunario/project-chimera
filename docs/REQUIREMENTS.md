@@ -41,11 +41,12 @@ interface decisions remain open.
 | DASH-006 | Exercise the complete list/detail/report/evidence/bindings journey over a real ephemeral loopback HTTP server and audit the declared semantic HTML contract without network/runtime dependencies | `tests/test_dashboard_http.py` |
 | DASH-007 | Provide bounded, keyboard-navigable views for all validated, PASS, FAIL, synthetic and invalid entries without changing the immutable validated workspace or versioned API | index-view filter and invalid-query tests |
 | DASH-008 | Preserve a truthful allowlisted originating view through run detail navigation so the operator can return to the same investigation set without redirects, cookies or mutable server state; reject a run/view mismatch | direct WSGI, real-loopback and installed-wheel return-navigation tests |
+| DASH-009 | Exercise the real rendered dashboard in headless Chromium at desktop and 390-pixel mobile widths, including native keyboard focus/activation, filtered navigation, evidence inspection, handoff download/reopen, security headers and no horizontal page overflow | dedicated pinned-Playwright browser CI job and `browser_tests/test_dashboard_browser.py` |
 
 The dashboard is a read-only presentation of validated portable artifacts. It does not scan
 recursively, watch for live changes, choose among duplicate identities or repair invalid
 runs. It includes accessibility fundamentals but has not yet completed browser/device or
-operator acceptance testing. No authentication, TLS, remote hosting, multi-user isolation,
+human operator or screen-reader acceptance testing. No authentication, TLS, remote hosting, multi-user isolation,
 live control or production WSGI claim is made.
 
 ## Read-only completed-run operator API v1

@@ -32,6 +32,7 @@ class SemanticAudit(HTMLParser):
         self.caption_count = 0
         self.scoped_headers = 0
         self.focus_rule = False
+        self.responsive_cell_rule = False
         self.links: list[dict[str, object]] = []
         self._link: dict[str, object] | None = None
 
@@ -60,6 +61,8 @@ class SemanticAudit(HTMLParser):
             self._link["text"] = str(self._link["text"]) + data
         if "a:focus" in data and "outline:" in data:
             self.focus_rule = True
+        if "th,td" in data and "overflow-wrap:anywhere" in data:
+            self.responsive_cell_rule = True
 
     def assert_accessible(self, case: unittest.TestCase):
         case.assertEqual("en", self.html_language)
@@ -68,6 +71,7 @@ class SemanticAudit(HTMLParser):
         case.assertGreaterEqual(self.caption_count, 1)
         case.assertGreaterEqual(self.scoped_headers, 3)
         case.assertTrue(self.focus_rule)
+        case.assertTrue(self.responsive_cell_rule)
         case.assertTrue(self.links)
         case.assertTrue(all(item["href"] and str(item["text"]).strip()
                             for item in self.links))
