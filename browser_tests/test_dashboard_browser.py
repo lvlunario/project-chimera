@@ -27,6 +27,18 @@ class QuietHandler(WSGIRequestHandler):
 
 
 class DashboardBrowserTests(unittest.TestCase):
+    def focus_link_with_tab(self, page, text: str, *, maximum_tabs: int = 64):
+        """Reach one visible link through native sequential keyboard navigation."""
+        for _ in range(maximum_tabs + 1):
+            active = page.evaluate(
+                "() => ({tag: document.activeElement.tagName, "
+                "text: document.activeElement.textContent.trim()})"
+            )
+            if active == {"tag": "A", "text": text}:
+                return
+            page.keyboard.press("Tab")
+        self.fail(f"Link was not reachable with Tab: {text}")
+
     @classmethod
     def setUpClass(cls):
         cls._temporary = tempfile.TemporaryDirectory()
@@ -94,7 +106,9 @@ class DashboardBrowserTests(unittest.TestCase):
             self.assertTrue(page.get_by_text("broken-entry", exact=True).is_visible())
 
             # Native tab order reaches the five bounded views without a pointer.
-            page.locator("h1").click()
+            self.assertEqual(
+                "BODY", page.evaluate("() => document.activeElement.tagName")
+            )
             page.keyboard.press("Tab")
             active = page.evaluate(
                 "() => ({tag: document.activeElement.tagName, "
@@ -121,10 +135,7 @@ class DashboardBrowserTests(unittest.TestCase):
             )
             self.assertTrue(page.get_by_text("Current view: FAIL", exact=True).is_visible())
 
-            run_link = page.get_by_role(
-                "link", name=self.synthetic_failure.run_id, exact=True
-            )
-            run_link.focus()
+            self.focus_link_with_tab(page, self.synthetic_failure.run_id)
             page.keyboard.press("Enter")
             page.wait_for_url(
                 self.base + f"/runs/{self.synthetic_failure.run_id}?view=fail"
@@ -136,20 +147,17 @@ class DashboardBrowserTests(unittest.TestCase):
             self.assertTrue(page.get_by_role("cell", name="2.0", exact=True).is_visible())
             self.assertTrue(page.get_by_text("yes", exact=True).is_visible())
 
-            breadcrumb = page.get_by_role("link", name="FAIL runs", exact=True)
-            breadcrumb.focus()
+            self.focus_link_with_tab(page, "FAIL runs")
             with page.expect_navigation(wait_until="networkidle"):
                 page.keyboard.press("Enter")
             self.assertEqual(self.base + "/?view=fail", page.url)
 
-            page.goto(
-                self.base + f"/runs/{self.synthetic_failure.run_id}?view=fail",
-                wait_until="networkidle",
+            self.focus_link_with_tab(page, self.synthetic_failure.run_id)
+            page.keyboard.press("Enter")
+            page.wait_for_url(
+                self.base + f"/runs/{self.synthetic_failure.run_id}?view=fail"
             )
-            download_link = page.get_by_role(
-                "link", name="Download audit handoff ZIP", exact=True
-            )
-            download_link.focus()
+            self.focus_link_with_tab(page, "Download audit handoff ZIP")
             with page.expect_download() as download_info:
                 page.keyboard.press("Enter")
             download = download_info.value
