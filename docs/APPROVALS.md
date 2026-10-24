@@ -197,7 +197,7 @@ For each phase, copy this record into its dated review packet:
 
 - Phase/gate and candidate commit:
 - Evidence/CI/fixture links:
-- Reviewer: Leonardo Lunario
+- Reviewer: Leo (record the actual reviewer)
 - Method: personally executed / observed demonstration / document review
 - Checklist results: item, expected result, actual result, pass/fail/not run
 - Verification conclusion:

@@ -131,3 +131,23 @@ state; completed resume must preserve portable artifacts; and CLI-style export a
 download must be byte-identical and independently inspectable. This is reproducible
 engineering verification, not Leo's walkthrough, physical-system validation or phase
 acceptance.
+
+## Operator acceptance-preparation boundary
+
+The P3/P4/P5 preparation control checks the full clean candidate commit both before controls
+and immediately before publication, and writes outside the source tree. It must stage
+privately, refuse any existing/symbolic-link final
+path and publish no final workspace after a failed engineering control. Regression coverage
+includes invalid/wrong commit identities, dirty state, output races, normal/optimized Python,
+three malformed telemetry shapes, portable-artifact resume hashes, repeated handoff identity,
+dashboard headers/download bytes and canonical record reopening.
+
+The canonical record is an index of this preparation run, not a new product authority. Run
+UUIDs and timestamps make separate preparations different by design. Every retained review
+input, run artifact, handoff and worksheet path is relative and hashed, and the record labels
+its engineering data synthetic.
+The companion worksheet must contain no checked item, observation or decision when generated.
+Manual keyboard/usability, browser diversity, physical-device and screen-reader/WCAG evidence
+must state the actual environment and observer later. A headless browser or responsive
+viewport cannot be relabeled as those observations, and automation cannot record Leo's gate
+decision.

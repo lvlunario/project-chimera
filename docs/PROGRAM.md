@@ -7,7 +7,7 @@ Start with simulated engineering systems; introduce real hardware through explic
 adapters later. The initial vertical is communications-link verification.
 
 ## Roles
-Program manager: Leonardo Lunario — product priorities and milestone acceptance.
+Program manager: Leo (project owner) — product priorities and milestone acceptance.
 Implementation: AI-assisted development — architecture, code, tests, documentation.
 The 100-developer framing expresses ambition, not actual staffing or throughput.
 

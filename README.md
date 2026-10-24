@@ -4,7 +4,7 @@
 that runs engineering checks, evaluates requirements, and preserves the evidence
 needed to investigate failures and hand results to another engineer.
 
-**Prototype target: December 12, 2026. Program manager: Leonardo (Leo) Lunario.**
+**Prototype target: December 12, 2026. Program manager: Leo (project owner).**
 
 ## Start here
 
@@ -25,7 +25,7 @@ entry point; the implementation has not been merged into `main`.
 | Ongoing changes, test evidence and next steps | [Daily engineering logs](https://github.com/lvlunario/project-chimera/tree/magnum-opus/development/docs/daily) |
 | Requirements and quality approach | [Requirements](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/REQUIREMENTS.md) · [Quality plan](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/QUALITY.md) |
 
-## Progress snapshot — October 23, 2026
+## Progress snapshot — October 24, 2026
 
 The development branch includes:
 
@@ -46,6 +46,8 @@ The development branch includes:
   same validated handoff bundle.
 - Test-only headless-Chromium coverage for native keyboard navigation, desktop/mobile-width
   rendering, security headers, and download/reopen behavior.
+- An exact-clean-commit operator-acceptance preparation workspace with machine evidence and
+  a deliberately unfilled human observation worksheet.
 - An installable Python package and CI on Python 3.11 and 3.12.
 
 The [October 23 evidence log](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-10-23.md)

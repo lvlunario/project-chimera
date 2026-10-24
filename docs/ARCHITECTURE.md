@@ -1,5 +1,29 @@
 # Architecture decision 0001: deterministic core first
 
+## Decision 0022: separate machine gate preparation from human acceptance
+
+October 24, 2026. P3/P4/P5 gate-recovery increment; no phase closure.
+
+Prepare the operator review from one explicitly named full Git commit only when that commit
+is the clean checked-out `HEAD`, checking again immediately before publication. Exercise
+public communications, recovery, handoff and dashboard boundaries in a private sibling
+staging directory, then reserve the final directory exclusively and publish only after every
+engineering control passes. Refuse existing or symbolic-link destinations and keep the
+output outside the source checkout.
+
+Write a compact canonical preparation record with relative artifact paths, exact content
+identities, PASS/natural-FAIL/synthetic-FAIL results, malformed-input refusal, completed
+resume agreement, repeated handoff identity and dashboard-download agreement. Run IDs and
+timestamps remain intentionally unique, so canonical serialization does not imply two
+executions are byte-identical. Git and SHA-256 identify content; they are not signatures,
+trusted build attestation, execution authorship or measurement authenticity.
+
+Generate the human worksheet separately and always leave keyboard, browser/device,
+screen-reader/WCAG, usability, Leo validation and phase disposition `not_performed` or
+pending. Automated results can prepare an acceptance review but cannot fill observations or
+approve a phase. This keeps a convenient gate packet from becoming a second authority that
+silently converts test success into PM acceptance.
+
 ## Decision 0021: keep real-browser validation outside the product runtime
 
 October 23, 2026. Bounded P5 verification increment; no phase closure.

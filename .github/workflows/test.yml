@@ -43,6 +43,13 @@ jobs:
       - name: Run regression suite
         run: python -m unittest discover -s tests -v
 
+      - name: Prepare exact operator acceptance workspace
+        run: |
+          CANDIDATE_SHA=$(git rev-parse HEAD)
+          python -m examples.operator_acceptance_prep \
+            --candidate-commit "$CANDIDATE_SHA" \
+            --output "$RUNNER_TEMP/chimera-operator-acceptance"
+
       - name: Verify isolated wheel install
         run: scripts/verify_clean_install.sh
 

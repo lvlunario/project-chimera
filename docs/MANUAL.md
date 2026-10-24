@@ -838,6 +838,54 @@ measurement and it is not phase acceptance.
 See the [September 29 P3/P4 candidate packet](reviews/2026-09-29-p34.md) for the guided
 exercise, expected output, coverage matrix and remaining gate work.
 
+### P3/P4/P5 operator acceptance preparation
+
+Use this only from the exact clean candidate checkout. Replace `CANDIDATE_COMMIT` with the
+full 40-character commit named in the dated review packet; the command refuses a different
+or dirty `HEAD`, an output inside the repository, and any existing or symbolic-link output.
+
+```bash
+git switch --detach CANDIDATE_COMMIT
+python -m examples.operator_acceptance_prep \
+  --candidate-commit CANDIDATE_COMMIT \
+  --output /tmp/chimera-p345-acceptance
+```
+
+Expected: eight `PASS P345-*` lines and paths to `acceptance-preparation.json` and
+`operator-observations.md`. The persistent output includes three dashboard runs (PASS,
+natural FAIL and explicitly synthetic FAIL), three refused malformed inputs, an explicit
+missing-evidence report, two byte-identical file handoffs and the matching dashboard
+download. The canonical preparation record identifies every retained review input, run
+artifact, handoff and worksheet with relative paths, byte counts and SHA-256.
+
+The tool builds in a private sibling staging directory and publishes only after every
+engineering control succeeds. It never replaces an existing destination. Two executions
+have different run IDs and timestamps; canonical JSON makes each record unambiguous, not
+identical to every other execution. The Git SHA and content hashes identify bytes but do not
+sign the run, attest who executed it or authenticate a measurement.
+If an exceptional filesystem failure leaves `.PUBLISHING` in the final directory, do not
+use any content there as evidence; choose a new output after investigating the failed write.
+
+Open `operator-observations.md` before starting the dashboard:
+
+```bash
+python -m chimera.cli serve-dashboard \
+  /tmp/chimera-p345-acceptance/runs --port 8765
+```
+
+The worksheet guides the same-computer keyboard journey, report/handoff inspection and
+actual observation record. It is deliberately generated with every human field unchecked
+and every phase disposition pending. The loopback-only server cannot be tested from a
+separate phone without changing the approved network boundary. Record a physical-device
+observation only when the browser runs on that same device under an explicitly supported
+setup; record screen-reader testing only with an actual combination such as NVDA/Windows or
+VoiceOver/macOS. Automated Chromium and a 390-pixel viewport do not fill those fields.
+
+Teaching note for Leo: this workspace is a prepared lab bench. Automation lays out and
+checks the instruments, samples and sealed evidence, while the blank worksheet preserves
+the questions only you or another actual operator can answer: Was the journey understandable,
+what was confusing, and is the result acceptable for the phase?
+
 ## Phase approval instructions
 
 Use the [phase approval guide](APPROVALS.md) for P0–P7 verification and validation checklists,
