@@ -17,9 +17,9 @@ The 100-developer framing expresses ambition, not actual staffing or throughput.
 | P0 | Charter and architecture | Scope, requirements, risks, development policy recorded and reviewed with Leo | Approved by delegation September 22 |
 | P1 | Local execution core | Graph validation, failure propagation, evidence schema, CLI, package install and CI verified | Conditionally accepted for continued development September 22 |
 | P2 | Durable execution | SQLite run storage; restart recovery and idempotency tested | Conditionally accepted for continued development September 22; bounded recovery limitations retained |
-| P3 | Engineering adapters | Synthetic telemetry ingestion and deterministic fault injection with reference fixtures | In progress; strict CSV ingestion, reference controls, deterministic faults and integrated local operator path implemented |
-| P4 | Verification evidence | Requirement mapping, reproducible JSON/HTML reports, missing-evidence detection | In progress; canonical reopened-evidence JSON/HTML, deterministic self-verifying handoff bundle, integrated local export and executable candidate controls implemented; October 17 exact-candidate disposition overdue |
-| P5 | Operator product | API and accessible dashboard; end-to-end acceptance tests | In progress; API/dashboard, bounded investigation views, portable handoff download, loopback HTTP, structural checks and automated Chromium journey implemented; manual-device, screen-reader and operator acceptance pending |
+| P3 | Engineering adapters | Synthetic telemetry ingestion and deterministic fault injection with reference fixtures | In progress; strict CSV ingestion, deterministic faults, integrated operator path and exact-candidate acceptance preparation implemented; human validation pending |
+| P4 | Verification evidence | Requirement mapping, reproducible JSON/HTML reports, missing-evidence detection | In progress; canonical reports, deterministic handoff, missing-evidence control and exact-candidate preparation implemented; overdue gate disposition pending |
+| P5 | Operator product | API and accessible dashboard; end-to-end acceptance tests | In progress; API/dashboard, investigation views, handoff download, automated Chromium and operator worksheet implemented; manual-device, screen-reader and operator acceptance pending |
 | P6 | AI assistance | Provider adapter, bounded permissions, evaluation dataset and measured baseline comparison | Planned |
 | P7 | Release | Reproducible deployment, performance results, threat model, demo and operator guide | Planned |
 
@@ -45,12 +45,12 @@ AI assistance cannot decide that missing evidence is a passing verification.
 - Avoid paid infrastructure and live hardware operations until separately authorized.
 
 ## Next tasks
-Current direction, October 23: the October 17 M2 exact-candidate disposition is six days
-late even though the integrated engineering control exists. Hold feature scope, retain one
-exact candidate, and publish a dated P3/P4/P5 operator-acceptance packet covering PASS,
-natural and synthetic FAIL, malformed input, restart, report/handoff agreement and the
-dashboard journey. Complete manual-device, screen-reader and Leo operator observations for
-the bounded dashboard tracked in
+Current direction, October 25: the October 17 M2 exact-candidate disposition is eight days
+late. The dated P3/P4/P5 operator-acceptance preparation packet now covers PASS, natural and
+synthetic FAIL, malformed and missing evidence, restart, report/handoff agreement and the
+dashboard journey against exact commit `932062a`. Hold feature scope and execute the packet;
+record actual manual-device, screen-reader and Leo operator observations for the bounded
+dashboard tracked in
 [issue #19](https://github.com/lvlunario/project-chimera/issues/19) before P5 acceptance.
 November 7 is amber; November 28 and December 12 remain achievable with scope frozen.
 The deterministic P4 handoff work is tracked in

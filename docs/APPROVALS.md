@@ -6,7 +6,7 @@ close any phase, or change the [delivery dates](ROADMAP.md).
 
 ## Current disposition — September 22, 2026
 
-Leo explicitly delegated time-critical phase decisions. The [delegated decision record](reviews/2026-09-22-delegated-decisions.md) is authoritative over historical pending statements below: **P0/D-001–003 approved; P1 and P2 approved with conditions for continued development**. Personal walkthroughs remain unperformed. Routine decisions this week do not require another PM response; future gates still require evidence. Final product acceptance remains separate.
+Leo explicitly delegated time-critical phase decisions. The [delegated decision record](reviews/2026-09-22-delegated-decisions.md) is authoritative over historical pending statements below: **P0/D-001–003 approved; P1 and P2 approved with conditions for continued development**. The delegation period has ended, but those recorded decisions remain effective and are not reopened. Personal walkthroughs remain unperformed; future gates still require evidence. Final product acceptance remains separate.
 
 ## Your responsibility
 
@@ -104,6 +104,8 @@ personal walkthrough and final product acceptance remain unperformed.
 
 ## P3 — Engineering data and faults / M2 slice October 17; complete by M3 November 7 (planned)
 
+Exact-candidate packet: [October 24 P3/P4/P5 operator acceptance](reviews/2026-10-24-p345-operator-acceptance.md).
+
 - [ ] Verification: inspect the schema, declared units, reference calculations and fault fixtures.
 - [ ] Load the supplied passing and failing CSVs using the packet's steps. Compare a selected
       sample with its independently calculated expected value and threshold.
@@ -120,6 +122,9 @@ Decision: **Pending**. Actual observations/conditions: **Not yet recorded**.
 
 ## P4 — Requirements and reports / M3, November 7 (planned)
 
+Use the same [October 24 exact-candidate packet](reviews/2026-10-24-p345-operator-acceptance.md)
+and record P4 separately from P3/P5.
+
 - [ ] Verification: select one failing requirement; trace its ID to input identity, procedure/
       configuration version, threshold, calculation, failing samples and final verdict.
 - [ ] Export JSON and HTML, reopen the run, and compare the engineering results across views.
@@ -134,12 +139,17 @@ Decision: **Pending**. Actual observations/conditions: **Not yet recorded**.
 
 ## P5 — Operator dashboard / M3, November 7 (planned)
 
+Use the same [October 24 exact-candidate packet](reviews/2026-10-24-p345-operator-acceptance.md)
+and leave manual-device, screen-reader/WCAG and human observations pending until performed.
+
 - [ ] Verification: review API, dashboard, accessibility and end-to-end test evidence against
       the declared supported environment.
-- [ ] Follow the supplied clicks: select data/procedure, start a run, inspect the failed
-      requirement, find its samples, reopen the saved run and export the report.
-- [ ] Repeat the passing and malformed-input controls. Expected: consistent results in UI,
-      stored evidence and reports; clear recovery guidance for errors.
+- [ ] Use the packet command to prepare the exact-candidate runs, then launch the read-only
+      dashboard. Inspect the failed requirement and samples, return to the investigation
+      view, download the handoff and reopen it with the supplied CLI command.
+- [ ] Inspect the prepared PASS, natural-FAIL and synthetic-FAIL runs plus the retained
+      malformed-input refusals. Expected: dashboard, stored evidence and reports agree;
+      invalid input creates no run and is recorded only in preparation evidence.
 - [ ] Validation: attempt the journey using the operator guide. Record where you need help,
       confusing labels, missing information and steps that do not support your task.
       Assisted steps remain marked assisted and unresolved usability issues get defect IDs.

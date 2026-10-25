@@ -8,17 +8,18 @@ remain unperformed. Original dates below are unchanged; M0's scope decision was 
 September 22, three days after its September 19 target. Downstream forecasts
 remain October 3/17, November 7/28 and December 12 with no baseline movement.
 
-## Status update — October 23, 2026
+## Status update — October 25, 2026
 
-The October 17 M2 baseline was missed by six days. The engineering vertical and eight-control
-P3/P4 candidate are implemented, but no exact-candidate gate disposition or Leo walkthrough
-was recorded by the deadline. This is a schedule slip, not a change to the original baseline.
+The October 17 M2 baseline was missed by eight days. The engineering vertical, eight-control
+P3/P4 candidate and exact-commit P3/P4/P5 acceptance-preparation packet are implemented, but
+no gate disposition or Leo walkthrough has been recorded. This is a schedule slip, not a
+change to the original baseline.
 
-M3 November 7 is **amber**: automated Chromium evidence, an exact current candidate and a
-dated P3/P4/P5 operator-acceptance packet must converge without adding feature scope. Recovery
-is to freeze features, close documentation/evidence gaps, run the operator journey, and use
-remaining time for defects and release preparation. November 28 and December 12 remain
-achievable on that basis; manual-device, screen-reader and Leo acceptance remain separate.
+M3 November 7 is **amber**: automated Chromium and the exact candidate are green, and the
+dated packet is ready. Recovery is now to freeze features, run the operator worksheet, record
+actual manual-device/screen-reader/Leo observations, disposition defects and use remaining
+time for release preparation. November 28 and December 12 remain achievable on that basis;
+automation still cannot substitute for human acceptance.
 
 ## Operational problem and proposed scope
 An integration engineer needs to verify a communications test run, identify failing

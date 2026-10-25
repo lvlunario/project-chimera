@@ -841,8 +841,10 @@ exercise, expected output, coverage matrix and remaining gate work.
 ### P3/P4/P5 operator acceptance preparation
 
 Use this only from the exact clean candidate checkout. Replace `CANDIDATE_COMMIT` with the
-full 40-character commit named in the dated review packet; the command refuses a different
-or dirty `HEAD`, an output inside the repository, and any existing or symbolic-link output.
+full 40-character commit named in the
+[October 24 review packet](reviews/2026-10-24-p345-operator-acceptance.md); the command refuses
+a different or dirty `HEAD`, an output inside the repository, and any existing or symbolic-
+link output.
 
 ```bash
 git switch --detach CANDIDATE_COMMIT
