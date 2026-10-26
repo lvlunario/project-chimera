@@ -8,16 +8,17 @@ remain unperformed. Original dates below are unchanged; M0's scope decision was 
 September 22, three days after its September 19 target. Downstream forecasts
 remain October 3/17, November 7/28 and December 12 with no baseline movement.
 
-## Status update — October 25, 2026
+## Status update — October 26, 2026
 
-The October 17 M2 baseline was missed by eight days. The engineering vertical, eight-control
+The October 17 M2 baseline was missed by nine days. The engineering vertical, eight-control
 P3/P4 candidate and exact-commit P3/P4/P5 acceptance-preparation packet are implemented, but
 no gate disposition or Leo walkthrough has been recorded. This is a schedule slip, not a
 change to the original baseline.
 
-M3 November 7 is **amber**: automated Chromium and the exact candidate are green, and the
-dated packet is ready. Recovery is now to freeze features, run the operator worksheet, record
-actual manual-device/screen-reader/Leo observations, disposition defects and use remaining
+M3 November 7 is **amber** with 12 calendar days remaining: automated Chromium and the exact
+candidate are green, and the dated packet is ready. Recovery is now to freeze features, run
+the operator worksheet, record actual manual-device/screen-reader/Leo observations,
+disposition defects and use remaining
 time for release preparation. November 28 and December 12 remain achievable on that basis;
 automation still cannot substitute for human acceptance.
 

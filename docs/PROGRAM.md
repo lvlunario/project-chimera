@@ -45,14 +45,16 @@ AI assistance cannot decide that missing evidence is a passing verification.
 - Avoid paid infrastructure and live hardware operations until separately authorized.
 
 ## Next tasks
-Current direction, October 25: the October 17 M2 exact-candidate disposition is eight days
+Current direction, October 26: the October 17 M2 exact-candidate disposition is nine days
 late. The dated P3/P4/P5 operator-acceptance preparation packet now covers PASS, natural and
 synthetic FAIL, malformed and missing evidence, restart, report/handoff agreement and the
 dashboard journey against exact commit `932062a`. Hold feature scope and execute the packet;
 record actual manual-device, screen-reader and Leo operator observations for the bounded
 dashboard tracked in
 [issue #19](https://github.com/lvlunario/project-chimera/issues/19) before P5 acceptance.
-November 7 is amber; November 28 and December 12 remain achievable with scope frozen.
+Use the [October 26 weekly review](reviews/2026-10-26.md) to resolve D-004–006 before P5
+disposition. November 7 is amber; November 28 and December 12 remain achievable with scope
+frozen.
 The deterministic P4 handoff work is tracked in
 [issue #20](https://github.com/lvlunario/project-chimera/issues/20).
 [Delegated decisions](reviews/2026-09-22-delegated-decisions.md)

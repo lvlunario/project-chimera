@@ -23,10 +23,11 @@ entry point; the implementation has not been merged into `main`.
 | Core-engine evidence and practical approval exercise | [P1 approval packet](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/reviews/2026-09-15-p1.md) |
 | Durable execution verification and validation exercise | [P2 approval packet](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/reviews/2026-09-22-p2.md) |
 | Current P3/P4/P5 operator exercise | [October 24 acceptance packet](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/reviews/2026-10-24-p345-operator-acceptance.md) |
+| Latest weekly concept review | [October 26 P5 trust-boundary review](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/reviews/2026-10-26.md) |
 | Ongoing changes, test evidence and next steps | [Daily engineering logs](https://github.com/lvlunario/project-chimera/tree/magnum-opus/development/docs/daily) |
 | Requirements and quality approach | [Requirements](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/REQUIREMENTS.md) · [Quality plan](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/QUALITY.md) |
 
-## Progress snapshot — October 25, 2026
+## Progress snapshot — October 26, 2026
 
 The development branch includes:
 
@@ -51,16 +52,17 @@ The development branch includes:
   a deliberately unfilled human observation worksheet.
 - An installable Python package and CI on Python 3.11 and 3.12.
 
-The [October 24 implementation evidence](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-10-24.md)
-and [October 25 packet-publication record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-10-25.md)
+The [October 24 implementation evidence](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-10-24.md),
+[October 25 packet-publication record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-10-25.md),
+and [October 26 weekly-review record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-10-26.md)
 record candidate-specific local, independent and hosted results. Do not infer a new
 candidate's status from an earlier successful run.
 
-**Acceptance state — October 25:** P0 scope (D-001–003) is approved by delegation.
+**Acceptance state — October 26:** P0 scope (D-001–003) is approved by delegation.
 P1 and P2 are conditionally accepted for continued development under the
 [delegated decision record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/reviews/2026-09-22-delegated-decisions.md). Leo's personal walkthroughs remain unperformed;
 final product validation remains open. P3/P4/P5 remain in progress. The October 17 M2
-exact-candidate disposition is eight days late; November 7 is forecast amber while the
+exact-candidate disposition is nine days late; November 7 is forecast amber while the
 prepared operator worksheet and human walkthrough remain open. Synthetic fixtures establish software
 behavior; authorized measured-data validation, production deployment and certification are
 not claimed.

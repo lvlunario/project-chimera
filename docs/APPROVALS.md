@@ -140,7 +140,8 @@ Decision: **Pending**. Actual observations/conditions: **Not yet recorded**.
 ## P5 — Operator dashboard / M3, November 7 (planned)
 
 Use the same [October 24 exact-candidate packet](reviews/2026-10-24-p345-operator-acceptance.md)
-and leave manual-device, screen-reader/WCAG and human observations pending until performed.
+and the [October 26 weekly trust-boundary review](reviews/2026-10-26.md). Leave manual-device,
+screen-reader/WCAG and human observations pending until performed.
 
 - [ ] Verification: review API, dashboard, accessibility and end-to-end test evidence against
       the declared supported environment.
