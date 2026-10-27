@@ -888,6 +888,40 @@ checks the instruments, samples and sealed evidence, while the blank worksheet p
 the questions only you or another actual operator can answer: Was the journey understandable,
 what was confusing, and is the result acceptable for the phase?
 
+### P7 local-prototype performance baseline
+
+From an exact clean candidate checkout, write the machine-readable result outside the
+repository:
+
+```bash
+CANDIDATE_COMMIT=$(git rev-parse HEAD)
+python -m examples.release_performance \
+  --candidate-commit "$CANDIDATE_COMMIT" \
+  --output /tmp/chimera-release-performance.json
+```
+
+The fixed synthetic workload creates 10,000 strict CSV samples, then measures ten fresh
+integrated runs through the public Python operator boundary behind `verify-link`, ten handoff
+create/inspect round trips and five dashboard workspace-snapshot openings over the ten
+completed runs. Interpreter/CLI-process startup, HTTP handling and browser rendering are not
+timed. It expects the last 2.0 dB sample to produce COM-LINK-001 FAIL against
+the 3.0 dB threshold. The canonical JSON record contains every elapsed-time sample,
+p50/p95/max, explicit targets, target results, candidate SHA and a non-identifying runtime
+description. The command checks the same clean commit before measurement and publication and
+never replaces an output or writes the record inside the checkout.
+
+Expected on the supported development environment: three `PASS` lines. The prototype
+regression budgets are operator p95 at most 3,000 ms, handoff p95 at most 1,000 ms and
+dashboard-snapshot p95 at most 3,000 ms. Nearest-rank p95 is the observed maximum for these
+ten/five-sample sets. A missed budget exits 1 and remains evidence to
+investigate; an invalid candidate or unavailable output exits 2. Timings vary by machine, so
+keep the environment and raw samples with any comparison.
+
+Teaching note for Leo: this benchmark times the whole path an operator depends on, not one
+fast internal function. The generous limits act like a smoke alarm for large regressions.
+They do not promise production capacity, concurrency, remote-service latency or radio
+performance; those require different authorized workloads and environments.
+
 ## Phase approval instructions
 
 Use the [phase approval guide](APPROVALS.md) for P0–P7 verification and validation checklists,

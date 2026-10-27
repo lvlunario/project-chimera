@@ -5,6 +5,27 @@ September 22 under [the decision record](reviews/2026-09-22-delegated-decisions.
 Historical pending statements below describe their original slices, not today's decisions.
 Personal walkthroughs and final acceptance remain unperformed/open.
 
+## Release performance baseline v1
+
+This P7 engineering control measures one fixed synthetic local-prototype workload. It is a
+regression budget, not a production service-level objective or physical-radio benchmark.
+
+| ID | Requirement | Evidence |
+|---|---|---|
+| PERF-001 | Generate exactly 10,000 strict communications samples, run ten fresh integrated workflows through the public Python operator boundary behind `verify-link`, and preserve the expected final-sample COM-LINK-001 FAIL at 2.0 dB against 3.0 dB | `examples/release_performance.py`; workload/result tests |
+| PERF-002 | Measure monotonic elapsed time for operator execution, ten complete handoff create/inspect round trips, and five dashboard workspace-snapshot openings over the ten valid runs | raw millisecond samples and p50/p95/max summaries in the versioned record |
+| PERF-003 | Fail the control if operator p95 exceeds 3,000 ms, handoff p95 exceeds 1,000 ms, or dashboard-snapshot p95 exceeds 3,000 ms | exact-boundary assessment tests and Python 3.11/3.12 CI step |
+| PERF-004 | Bind canonical JSON evidence to a full clean candidate commit checked before measurement and publication; record a non-identifying runtime environment; refuse output inside the checkout, existing output, or symbolic links | dirty/wrong candidate, output-boundary and canonical-reopen tests |
+| PERF-005 | Label the fixture synthetic and state that results do not establish hardware performance, production capacity, concurrency, multi-user load or a service-level objective | record schema, CLI output and manual limits |
+
+The operator metric excludes interpreter/CLI-process startup, and the dashboard metric does
+not time HTTP or browser rendering. With ten operator/handoff samples and five dashboard
+samples, nearest-rank p95 is deliberately the observed maximum. The fixed targets are
+intentionally broad prototype regression alarms. Each candidate keeps
+its raw timings and environment so M4 review can compare evidence rather than extrapolate one
+runner into a capacity claim. Run IDs and timestamps vary by execution; only the workload and
+assessment contract are fixed.
+
 ## Operator acceptance preparation v1
 
 This repository-level P3/P4/P5 control prepares a persistent synthetic review workspace;

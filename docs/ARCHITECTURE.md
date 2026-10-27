@@ -1,5 +1,29 @@
 # Architecture decision 0001: deterministic core first
 
+## Decision 0023: benchmark public boundaries without promising production capacity
+
+October 27, 2026. Bounded P7 release-readiness increment; no release or phase closure.
+
+Measure one fixed, synthetic local workload through the public Python communications operator
+boundary used by `verify-link`, the handoff inspector and completed-run workspace loader. Use
+10,000 strict samples, ten fresh durable runs, ten handoff create/inspect round trips and five
+complete dashboard workspace-snapshot openings.
+Record every monotonic elapsed-time sample plus p50, nearest-rank p95 and maximum in canonical
+schema-v1 JSON tied to a full clean Git commit and a non-identifying runtime description.
+
+Use broad regression alarms—3,000 ms operator p95, 1,000 ms handoff p95 and 3,000 ms
+dashboard-snapshot p95—rather than treating a shared CI runner as a capacity laboratory. The
+control fails when a budget is exceeded and runs on both supported Python versions, but raw
+measurements remain the evidence. Recheck the clean commit immediately before exclusive
+publication so a local edit cannot be reported as the named candidate.
+
+Tradeoffs: elapsed time is environment-sensitive, and this workload does not measure
+concurrency, long-lived service behavior, remote clients, production data or physical-radio
+performance. It excludes interpreter/CLI-process startup, HTTP handling and browser rendering.
+A fixed public-path workload is nevertheless more useful for release regression
+than an unversioned microbenchmark: it detects large end-to-end slowdowns while preserving
+the product's zero-runtime-dependency and local-only boundaries.
+
 ## Decision 0022: separate machine gate preparation from human acceptance
 
 October 24, 2026. P3/P4/P5 gate-recovery increment; no phase closure.

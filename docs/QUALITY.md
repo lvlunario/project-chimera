@@ -35,8 +35,28 @@ from verified, independently reviewed, and PM-accepted.
 - Clean install, regression evidence, manuals and acceptance script accompany a tag.
 - Leo records acceptance or outstanding conditions after running/observing the demo.
 
-Workload and latency targets will be baselined at M1 against the chosen use cases.
-No invented performance benchmark or hardware validation claim.
+Workload and latency targets were scheduled for M1; the first fixed local-prototype workload
+is established October 27 after the integrated operator path became available. This slip is
+recorded rather than backdated. No invented hardware-validation or production-capacity claim.
+
+## Release performance evidence
+
+The fixed `p7-local-prototype-v1` workload is the first documented performance baseline.
+It generates 10,000 synthetic communications samples, exercises ten fresh durable runs
+through the public Python operator boundary behind `verify-link`, repeats handoff
+creation/inspection ten times, and opens a ten-run dashboard workspace snapshot five times.
+Interpreter/CLI-process startup, HTTP handling and browser rendering are outside these metrics.
+The control records raw monotonic timings and p50/p95/max summaries against broad regression
+budgets: 3,000 ms operator p95, 1,000 ms handoff p95 and 3,000 ms dashboard-snapshot p95.
+Nearest-rank p95 is the observed maximum for the deliberately small ten/five-sample sets.
+
+Run it from an exact clean candidate on each supported CI interpreter. CI prints the full
+JSON record even when a target misses; preserve the record or inspected job output for M4
+review and do not compare results without their runtime environment. A pass is only a local
+synthetic regression check. It is not evidence of
+physical-radio performance, concurrent or multi-user capacity, remote-service latency,
+production availability or an SLO. Revisit targets only through an explicit versioned
+workload/decision change, never by silently raising a budget after a regression.
 
 ## Defects and risk
 Use GitHub issues: reproduction, expected/actual result, version, environment, severity,

@@ -50,6 +50,8 @@ The development branch includes:
   rendering, security headers, and download/reopen behavior.
 - An exact-clean-commit operator-acceptance preparation workspace with machine evidence and
   a deliberately unfilled human observation worksheet.
+- A versioned exact-commit P7 performance control for the synthetic operator, handoff and
+  dashboard workload, with explicit local-prototype regression budgets.
 - An installable Python package and CI on Python 3.11 and 3.12.
 
 The [October 24 implementation evidence](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-10-24.md),

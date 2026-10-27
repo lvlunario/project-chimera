@@ -50,6 +50,18 @@ jobs:
             --candidate-commit "$CANDIDATE_SHA" \
             --output "$RUNNER_TEMP/chimera-operator-acceptance"
 
+      - name: Measure bounded release performance
+        run: |
+          CANDIDATE_SHA=$(git rev-parse HEAD)
+          status=0
+          python -m examples.release_performance \
+            --candidate-commit "$CANDIDATE_SHA" \
+            --output "$RUNNER_TEMP/chimera-release-performance.json" || status=$?
+          if [ -f "$RUNNER_TEMP/chimera-release-performance.json" ]; then
+            python -m json.tool "$RUNNER_TEMP/chimera-release-performance.json"
+          fi
+          exit "$status"
+
       - name: Verify isolated wheel install
         run: scripts/verify_clean_install.sh
 
