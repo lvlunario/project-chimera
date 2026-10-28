@@ -629,7 +629,8 @@ def main(argv: list[str] | None = None) -> int:
         print(f"chimera threat model: {exc}", file=sys.stderr)
         return 2
     for check in record["checks"]:
-        print(f"{check['status'].upper()} {check['id']}: {check['description']}")
+        label = "PASS" if check["status"] == "passed" else check["status"].upper()
+        print(f"{label} {check['id']}: {check['description']}")
     print(f"candidate-commit: {args.candidate_commit}")
     print(f"model-sha256: {record['model']['sha256']}")
     print(f"threat-model-assessment: {args.output.resolve(strict=False)}")

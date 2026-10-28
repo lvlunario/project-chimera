@@ -1,6 +1,8 @@
 """Protect the exact-candidate P7 threat-model control."""
 import ast
 from copy import deepcopy
+from contextlib import redirect_stdout
+import io
 import json
 import os
 from pathlib import Path
@@ -305,6 +307,28 @@ class ReleaseThreatModelTests(unittest.TestCase):
             any(isinstance(node, ast.Assert) for node in ast.walk(ast.parse(source))),
             "threat-model controls must not depend on removable assert statements",
         )
+
+    def test_cli_uses_pass_label_without_claiming_security(self):
+        record = release_threat_model._build_assessment(
+            candidate_commit=self.candidate,
+            generated_at_utc="2026-10-28T10:00:00Z",
+            model_content=self.model_content,
+            summary=self._validate(),
+        )
+        output = io.StringIO()
+        with (
+            patch.object(release_threat_model, "assess_threat_model", return_value=record),
+            redirect_stdout(output),
+        ):
+            result = release_threat_model.main([
+                "--candidate-commit", self.candidate,
+                "--output", "/tmp/threat-model-assessment.json",
+            ])
+        self.assertEqual(0, result)
+        rendered = output.getvalue()
+        self.assertIn("PASS THREAT-001:", rendered)
+        self.assertNotIn("PASSED THREAT-001:", rendered)
+        self.assertIn("security acceptance remain pending", rendered)
 
 
 if __name__ == "__main__":
