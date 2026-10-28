@@ -58,6 +58,24 @@ physical-radio performance, concurrent or multi-user capacity, remote-service la
 production availability or an SLO. Revisit targets only through an explicit versioned
 workload/decision change, never by silently raising a budget after a regression.
 
+## Threat-model evidence
+
+The fixed `p7-local-prototype-threat-model-v1` model covers the approved single-operator,
+trusted-local-host boundary. Each threat must identify affected assets/boundaries, likelihood,
+impact, current controls, declared requirements, tracked evidence files, residual risk and an
+M4 disposition. Unit controls reject duplicate/unknown fields, boolean schema versions,
+noncanonical JSON, invalid IDs/references, missing residual risk, undeclared requirements,
+path traversal, URLs, untracked/directory/symbolic-link evidence and inconsistent blocker
+lists. Output tests cover wrong/dirty candidates, checkout/symlink destinations, publication
+races, partial writes and canonical reopen in normal and optimized Python.
+
+CI runs the fixed assessment from each exact Python 3.11/3.12 candidate and prints the full
+record. `model_complete` establishes only model completeness, candidate binding and reference
+validity. It does not establish mitigation effectiveness, penetration-test coverage,
+vulnerability absence, build authenticity, security certification, residual-risk acceptance
+or phase approval. A `must_fix_before_m4` threat makes the control nonzero while retaining its
+record. Independent release review and Leo's M4/M5 decisions remain separate.
+
 ## Defects and risk
 Use GitHub issues: reproduction, expected/actual result, version, environment, severity,
 requirement, owner role, target fix and retest evidence. Blocker = cannot run or trust

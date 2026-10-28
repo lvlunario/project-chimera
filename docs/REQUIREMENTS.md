@@ -5,6 +5,26 @@ September 22 under [the decision record](reviews/2026-09-22-delegated-decisions.
 Historical pending statements below describe their original slices, not today's decisions.
 Personal walkthroughs and final acceptance remain unperformed/open.
 
+## Local-prototype threat model v1
+
+This P7 release control consolidates Chimera's approved local-only trust boundary, current
+controls and residual risks. Its machine result validates model structure and traceability;
+it is not a penetration test, control-effectiveness proof, residual-risk acceptance or
+security certification.
+
+| ID | Requirement | Evidence |
+|---|---|---|
+| THREAT-001 | Declare the versioned model scope, assumptions, exclusions, assets, actors and trust boundaries for the single-operator trusted-local-host prototype | `docs/threat-model-v1.json`; human-readable `docs/THREAT_MODEL.md` |
+| THREAT-002 | Give every threat a likelihood, impact, affected assets/boundaries, current controls, explicit residual risk and M4 engineering disposition | strict manifest validation and threat inventory |
+| THREAT-003 | Map every control to declared requirement IDs and regular evidence files tracked in the exact candidate; record each referenced file's byte count and SHA-256 | `examples/release_threat_model.py`; reference/path negative tests |
+| THREAT-004 | Preserve the no-sensitive-data, local-only, trusted-callback and synthetic-data boundaries; explicitly retain unsigned evidence, same-host access, no sandbox/timeout and mutable supply-chain limitations; never infer human acceptance | manifest scope/review fields and documentation assertions |
+| THREAT-005 | Bind a canonical assessment to a full clean candidate and manifest digest; refuse malformed/noncanonical models, broken references, unsafe output and mismatched release-blocker dispositions | `tests/test_release_threat_model.py`; Python 3.11/3.12 CI assessment step |
+
+`model_complete` means that the fixed model and its tracked references passed this repository
+control. It does not mean that every mitigation was independently proven effective or that
+the product is secure. A threat marked `must_fix_before_m4` makes the assessment nonzero while
+retaining the record for review. M4/M5 decisions and residual-risk acceptance remain Leo's.
+
 ## Release performance baseline v1
 
 This P7 engineering control measures one fixed synthetic local-prototype workload. It is a

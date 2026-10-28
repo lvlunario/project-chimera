@@ -8,20 +8,21 @@ remain unperformed. Original dates below are unchanged; M0's scope decision was 
 September 22, three days after its September 19 target. Downstream forecasts
 remain October 3/17, November 7/28 and December 12 with no baseline movement.
 
-## Status update — October 27, 2026
+## Status update — October 28, 2026
 
-The October 17 M2 baseline was missed by ten days. The engineering vertical, eight-control
+The October 17 M2 baseline was missed by eleven days. The engineering vertical, eight-control
 P3/P4 candidate and exact-commit P3/P4/P5 acceptance-preparation packet are implemented, but
 no gate disposition or Leo walkthrough has been recorded. This is a schedule slip, not a
 change to the original baseline.
 
-M3 November 7 is **amber** with 11 calendar days remaining: automated Chromium and the exact
+M3 November 7 is **amber** with 10 calendar days remaining: automated Chromium and the exact
 candidate are green, and the dated packet is ready. Recovery is now to freeze features, run
 the operator worksheet, record actual manual-device/screen-reader/Leo observations,
 disposition defects and use remaining
-time for release preparation. P7 release preparation has started with a fixed versioned
-synthetic performance workload verified locally and on the exact published Python 3.11/3.12
-candidate; the threat model and release-candidate review remain open. November 28 and
+time for release preparation. P7 release preparation includes a fixed versioned synthetic
+performance workload verified locally and on the exact published Python 3.11/3.12 candidate,
+plus a versioned local-prototype threat model and exact-candidate assessment implemented and
+locally reviewed. Hosted threat-assessment evidence and release-candidate review remain open. November 28 and
 December 12 remain achievable on that basis;
 automation still cannot substitute for human acceptance.
 

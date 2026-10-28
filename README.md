@@ -27,7 +27,7 @@ entry point; the implementation has not been merged into `main`.
 | Ongoing changes, test evidence and next steps | [Daily engineering logs](https://github.com/lvlunario/project-chimera/tree/magnum-opus/development/docs/daily) |
 | Requirements and quality approach | [Requirements](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/REQUIREMENTS.md) · [Quality plan](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/QUALITY.md) |
 
-## Progress snapshot — October 27, 2026
+## Progress snapshot — October 28, 2026
 
 The development branch includes:
 
@@ -52,6 +52,9 @@ The development branch includes:
   a deliberately unfilled human observation worksheet.
 - A versioned exact-commit P7 performance control for the synthetic operator, handoff and
   dashboard workload, with explicit local-prototype regression budgets.
+- A versioned local-prototype threat model and exact-clean-candidate assessment that trace
+  ten threats to current controls, evidence files and explicit residual risks without
+  claiming security or human acceptance.
 - An installable Python package and CI on Python 3.11 and 3.12.
 
 The [October 24 implementation evidence](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-10-24.md),
@@ -61,12 +64,12 @@ and the [October 27 performance-baseline record](https://github.com/lvlunario/pr
 record candidate-specific local, independent and hosted results. Do not infer a new
 candidate's status from an earlier successful run.
 
-**Acceptance state — October 27:** P0 scope (D-001–003) is approved by delegation.
+**Acceptance state — October 28:** P0 scope (D-001–003) is approved by delegation.
 P1 and P2 are conditionally accepted for continued development under the
 [delegated decision record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/reviews/2026-09-22-delegated-decisions.md). Leo's personal walkthroughs remain unperformed;
 final product validation remains open. P3/P4/P5 remain in progress; P7 release preparation
-has started with a versioned performance control. The October 17 M2
-exact-candidate disposition is ten days late; November 7 is forecast amber while the
+now includes versioned performance and threat-model controls. The October 17 M2
+exact-candidate disposition is eleven days late; November 7 is forecast amber while the
 prepared operator worksheet and human walkthrough remain open. Synthetic fixtures establish software
 behavior; authorized measured-data validation, production deployment and certification are
 not claimed.

@@ -922,6 +922,42 @@ fast internal function. The generous limits act like a smoke alarm for large reg
 They do not promise production capacity, concurrency, remote-service latency or radio
 performance; those require different authorized workloads and environments.
 
+### P7 local-prototype threat-model assessment
+
+Read the human threat inventory in [`THREAT_MODEL.md`](THREAT_MODEL.md). From the exact clean
+candidate checkout, write its machine assessment outside the repository:
+
+```bash
+CANDIDATE_COMMIT=$(git rev-parse HEAD)
+python -m examples.release_threat_model \
+  --candidate-commit "$CANDIDATE_COMMIT" \
+  --output /tmp/chimera-release-threat-model.json
+```
+
+The fixed version-1 model covers the typed-input, trusted-callback, mutable-filesystem,
+completed-artifact, loopback-browser and CI boundaries. The command validates canonical JSON,
+duplicate/unknown fields, identifiers and cross-references; confirms every control cites
+declared requirements and regular files tracked in the exact candidate; records every cited
+file's byte count/SHA-256; and checks that `must_fix_before_m4` matches the threat
+dispositions. It rechecks the clean commit immediately before atomic no-replace publication.
+
+Expected for the current bounded model: five `PASS THREAT-*` lines and
+`status: model_complete`. Invalid input or unsafe output exits 2. A model with an open
+`must_fix_before_m4` threat preserves a canonical assessment but exits 1. Do not describe
+`model_complete` as “secure”: it means only that model structure, candidate binding and
+evidence references passed. It is not a penetration test, mitigation-effectiveness proof,
+security certification, residual-risk acceptance or P7 closure.
+
+The present disposition assumes one authorized operator on a trusted local host and no
+secrets or personal data. Same-host loopback access, unsigned evidence, trusted unsandboxed
+callbacks without timeout/cancellation, local-path trust and mutable CI inputs remain
+explicit residual risks for M4 review. Remote access, sensitive data, untrusted callbacks or
+authenticity guarantees require a new versioned boundary and controls.
+
+Teaching note for Leo: Chimera's hashes are tamper-evident seals, not signatures. They prove
+that the pieces agree with the named bytes, but they do not prove who produced those bytes.
+That distinction keeps the release claim defensible while M4/M5 acceptance remains pending.
+
 ## Phase approval instructions
 
 Use the [phase approval guide](APPROVALS.md) for P0–P7 verification and validation checklists,

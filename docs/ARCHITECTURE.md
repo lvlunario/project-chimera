@@ -1,5 +1,31 @@
 # Architecture decision 0001: deterministic core first
 
+## Decision 0024: make the trusted local boundary executable and reviewable
+
+October 28, 2026. Bounded P7 threat-model increment; no security, release or phase
+acceptance claim.
+
+Keep one human-readable threat model and one canonical machine manifest for the approved
+single-operator, trusted-local-host prototype. Model assets, actors and boundaries across
+typed input, trusted callbacks, mutable local storage, completed artifacts, loopback HTTP and
+hosted CI. For every threat retain likelihood, impact, current controls, requirement/test
+links and residual risk. Use `tracked_for_m4` rather than “accepted risk”: automation and the
+implementation team cannot accept residual risk for Leo.
+
+Bind a repository-level assessment to a full clean candidate commit and the exact manifest
+digest. Reject duplicate/unknown fields, noncanonical JSON, broken identifiers/references,
+untracked or non-regular evidence paths, unsafe output and mismatched `must_fix_before_m4`
+dispositions. Record exact byte/SHA-256 identities for referenced candidate files. Recheck
+the candidate immediately before atomic no-replace publication. A blocker still produces a
+review record but returns nonzero.
+
+Tradeoffs: the checker proves model completeness and traceability, not that a mitigation is
+effective. It performs no vulnerability scan or penetration test and does not authenticate
+the build, author, execution or measurement. Signing, hostile-host defense, confidentiality,
+callback sandboxing/timeouts and remote-service controls remain outside the approved
+prototype boundary. Expanding to sensitive data, untrusted callbacks or remote access
+requires a new versioned model and controls rather than reusing this assessment.
+
 ## Decision 0023: benchmark public boundaries without promising production capacity
 
 October 27, 2026. Bounded P7 release-readiness increment; no release or phase closure.
