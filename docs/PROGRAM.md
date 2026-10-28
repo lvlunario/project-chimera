@@ -21,7 +21,7 @@ The 100-developer framing expresses ambition, not actual staffing or throughput.
 | P4 | Verification evidence | Requirement mapping, reproducible JSON/HTML reports, missing-evidence detection | In progress; canonical reports, deterministic handoff, missing-evidence control and exact-candidate preparation implemented; overdue gate disposition pending |
 | P5 | Operator product | API and accessible dashboard; end-to-end acceptance tests | In progress; API/dashboard, investigation views, handoff download, automated Chromium and operator worksheet implemented; manual-device, screen-reader and operator acceptance pending |
 | P6 | AI assistance | Provider adapter, bounded permissions, evaluation dataset and measured baseline comparison | Planned |
-| P7 | Release | Reproducible deployment, performance results, threat model, demo and operator guide | In progress; performance control verified; versioned local-prototype threat model and exact-candidate assessment implemented and locally reviewed; hosted candidate assessment and release-candidate evidence pending |
+| P7 | Release | Reproducible deployment, performance results, threat model, demo and operator guide | In progress; performance and versioned local-prototype threat-model controls verified on the exact Python 3.11/3.12 candidate; release-candidate evidence pending |
 
 Prototype delivery target: December 12, 2026 (Asia/Manila). See [dated roadmap](ROADMAP.md).
 This supersedes the original undated plan. Dates are delivery targets; passing evidence and
@@ -60,8 +60,8 @@ P7 release-readiness work is tracked in
 operator/handoff/dashboard-snapshot performance workload is green locally and on the exact
 published Python 3.11/3.12 candidate. The bounded threat model now consolidates ten threats,
 six trust boundaries and their tracked control evidence without widening the approved
-local-only product boundary or claiming security acceptance. Verify that assessment on the
-exact hosted candidate, then assemble release-candidate requirement/defect evidence.
+local-only product boundary or claiming security acceptance. Its exact hosted candidate
+assessment is green; next assemble release-candidate requirement/defect evidence.
 The deterministic P4 handoff work is tracked in
 [issue #20](https://github.com/lvlunario/project-chimera/issues/20).
 [Delegated decisions](reviews/2026-09-22-delegated-decisions.md)

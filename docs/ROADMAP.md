@@ -22,7 +22,8 @@ disposition defects and use remaining
 time for release preparation. P7 release preparation includes a fixed versioned synthetic
 performance workload verified locally and on the exact published Python 3.11/3.12 candidate,
 plus a versioned local-prototype threat model and exact-candidate assessment implemented and
-locally reviewed. Hosted threat-assessment evidence and release-candidate review remain open. November 28 and
+independently reviewed. The hosted threat assessment is green; release-candidate requirement,
+defect and guide review remain open. November 28 and
 December 12 remain achievable on that basis;
 automation still cannot substitute for human acceptance.
 

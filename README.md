@@ -60,7 +60,8 @@ The development branch includes:
 The [October 24 implementation evidence](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-10-24.md),
 [October 25 packet-publication record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-10-25.md),
 the [October 26 weekly-review record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-10-26.md),
-and the [October 27 performance-baseline record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-10-27.md)
+the [October 27 performance-baseline record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-10-27.md),
+and the [October 28 threat-model record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-10-28.md)
 record candidate-specific local, independent and hosted results. Do not infer a new
 candidate's status from an earlier successful run.
 
