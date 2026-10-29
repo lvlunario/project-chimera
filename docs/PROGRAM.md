@@ -21,7 +21,7 @@ The 100-developer framing expresses ambition, not actual staffing or throughput.
 | P4 | Verification evidence | Requirement mapping, reproducible JSON/HTML reports, missing-evidence detection | In progress; canonical reports, deterministic handoff, missing-evidence control and exact-candidate preparation implemented; overdue gate disposition pending |
 | P5 | Operator product | API and accessible dashboard; end-to-end acceptance tests | In progress; API/dashboard, investigation views, handoff download, automated Chromium and operator worksheet implemented; manual-device, screen-reader and operator acceptance pending |
 | P6 | AI assistance | Provider adapter, bounded permissions, evaluation dataset and measured baseline comparison | Planned |
-| P7 | Release | Reproducible deployment, performance results, threat model, demo and operator guide | In progress; performance and versioned local-prototype threat-model controls verified on the exact Python 3.11/3.12 candidate; release-candidate evidence pending |
+| P7 | Release | Reproducible deployment, performance results, threat model, demo and operator guide | In progress; performance, threat-model and release-readiness inventory controls verified on exact Python 3.11/3.12 candidates; release-candidate packet and M4/M5 decisions pending |
 
 Prototype delivery target: December 12, 2026 (Asia/Manila). See [dated roadmap](ROADMAP.md).
 This supersedes the original undated plan. Dates are delivery targets; passing evidence and
@@ -45,7 +45,7 @@ AI assistance cannot decide that missing evidence is a passing verification.
 - Avoid paid infrastructure and live hardware operations until separately authorized.
 
 ## Next tasks
-Current direction, October 28: the October 17 M2 exact-candidate disposition is eleven days
+Current direction, October 29: the October 17 M2 exact-candidate disposition is twelve days
 late. The dated P3/P4/P5 operator-acceptance preparation packet now covers PASS, natural and
 synthetic FAIL, malformed and missing evidence, restart, report/handoff agreement and the
 dashboard journey against exact commit `932062a`. Hold feature scope and execute the packet;
@@ -55,13 +55,18 @@ dashboard tracked in
 Use the [October 26 weekly review](reviews/2026-10-26.md) to resolve D-004–006 before P5
 disposition. November 7 is amber; November 28 and December 12 remain achievable with scope
 frozen.
-P7 release-readiness work is tracked in
+P7 performance work is tracked in
 [issue #21](https://github.com/lvlunario/project-chimera/issues/21). Its fixed synthetic
 operator/handoff/dashboard-snapshot performance workload is green locally and on the exact
 published Python 3.11/3.12 candidate. The bounded threat model now consolidates ten threats,
 six trust boundaries and their tracked control evidence without widening the approved
 local-only product boundary or claiming security acceptance. Its exact hosted candidate
-assessment is green; next assemble release-candidate requirement/defect evidence.
+assessment is green. The release-readiness inventory in
+[issue #23](https://github.com/lvlunario/project-chimera/issues/23) now accounts for all
+116 declared requirements, both open defect issues, zero declared release blockers, six
+required guides and 47 headings on an exact hosted candidate. That is a complete set of
+review inputs, not M4 permission or M5 acceptance. Next assemble the exact M4 release-candidate
+packet, evidence bundle and acceptance script while supporting the November 7 walkthrough.
 The deterministic P4 handoff work is tracked in
 [issue #20](https://github.com/lvlunario/project-chimera/issues/20).
 [Delegated decisions](reviews/2026-09-22-delegated-decisions.md)

@@ -178,9 +178,12 @@ Decision: **Pending**. Actual observations/conditions: **Not yet recorded**.
 
 - [ ] Verification: review requirement coverage, integrated regression, clean-install proof,
       performance results against documented targets, the
-      [candidate-bound threat model](THREAT_MODEL.md) and open defects. A complete machine
-      model is not security acceptance; review its residual risks and confirm the candidate
-      still matches the trusted-local/no-sensitive-data boundary.
+      [candidate-bound threat model](THREAT_MODEL.md), the
+      [release-readiness inventory](release-readiness-v1.json) and open defects. The inventory
+      supplies an exact-candidate coverage/defect/guide checklist; it is an input to this
+      review, not evidence that the review occurred. A complete machine model is not security
+      acceptance; review its residual risks and confirm the candidate still matches the
+      trusted-local/no-sensitive-data boundary.
 - [ ] Follow or observe installation in the declared clean environment using only the guide.
       Expected: the candidate starts and the documented demonstration works.
 - [ ] Validation: confirm the final acceptance script covers your intended workflow and that
