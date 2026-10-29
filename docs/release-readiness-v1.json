@@ -1,0 +1,459 @@
+{
+  "defect_snapshot": {
+    "github_repository": "lvlunario/project-chimera",
+    "observed_at_utc": "2026-10-29T10:47:31Z",
+    "open_defects": [
+      {
+        "engineering_disposition": "fixed_verified_pending_pr_integration",
+        "evidence_paths": [
+          "tests/test_engine.py",
+          "tests/test_evidence_qa.py"
+        ],
+        "github_state": "open",
+        "issue_number": 4,
+        "release_blocker": false,
+        "severity": "major",
+        "title": "Defect: mutable dependency list can bypass failure blocking"
+      },
+      {
+        "engineering_disposition": "fixed_verified_pending_pr_integration",
+        "evidence_paths": [
+          "chimera/telemetry.py",
+          "tests/test_faults_qa.py"
+        ],
+        "github_state": "open",
+        "issue_number": 14,
+        "release_blocker": false,
+        "severity": "major",
+        "title": "Defect: ambient Decimal exponent case changes deterministic evidence identity"
+      }
+    ],
+    "source": "connected GitHub issue search"
+  },
+  "guide_checks": [
+    {
+      "guide_id": "GUIDE-001",
+      "path": "README.md",
+      "required_headings": [
+        "# Chimera — Engineering Verification Platform",
+        "## Start here",
+        "## Try the current foundation",
+        "## How approvals work"
+      ]
+    },
+    {
+      "guide_id": "GUIDE-002",
+      "path": "docs/MANUAL.md",
+      "required_headings": [
+        "# Chimera project manual",
+        "## How to use this manual",
+        "## Phase learning guide",
+        "## Prototype operator/developer chapters",
+        "## Installation",
+        "### Integrated communications operator command",
+        "### Local completed-run dashboard",
+        "### P3/P4/P5 operator acceptance preparation",
+        "### P7 local-prototype performance baseline",
+        "### P7 local-prototype threat-model assessment",
+        "### P7 release-readiness assessment",
+        "## Phase approval instructions"
+      ]
+    },
+    {
+      "guide_id": "GUIDE-003",
+      "path": "docs/APPROVALS.md",
+      "required_headings": [
+        "# Leo's phase approval guide",
+        "## Current disposition — September 22, 2026",
+        "## Required packet before every approval request",
+        "## P3 — Engineering data and faults / M2 slice October 17; complete by M3 November 7 (planned)",
+        "## P4 — Requirements and reports / M3, November 7 (planned)",
+        "## P5 — Operator dashboard / M3, November 7 (planned)",
+        "## P7 — Release / M4 November 28 and M5 December 12 (planned)",
+        "### M4: permission to enter final acceptance testing",
+        "### M5: prototype acceptance",
+        "## How to record your decision"
+      ]
+    },
+    {
+      "guide_id": "GUIDE-004",
+      "path": "docs/QUALITY.md",
+      "required_headings": [
+        "# Quality, test and integration plan",
+        "## Definition of done for an increment",
+        "## Prototype acceptance checklist",
+        "## Release performance evidence",
+        "## Threat-model evidence",
+        "## Defects and risk",
+        "## Continuous integration policy",
+        "## Operator acceptance-preparation boundary"
+      ]
+    },
+    {
+      "guide_id": "GUIDE-005",
+      "path": "docs/THREAT_MODEL.md",
+      "required_headings": [
+        "# Chimera local-prototype threat model",
+        "## Trust boundary",
+        "## Threat inventory",
+        "## Candidate-bound assessment",
+        "## Release use"
+      ]
+    },
+    {
+      "guide_id": "GUIDE-006",
+      "path": "docs/reviews/2026-10-24-p345-operator-acceptance.md",
+      "required_headings": [
+        "# P3/P4/P5 operator acceptance packet — October 24, 2026",
+        "## Prepare the exact candidate",
+        "## Engineering coverage",
+        "## Phase-checklist crosswalk",
+        "## Human operator journey",
+        "## Actual automated verification",
+        "## Limits and risks",
+        "## Decision record — intentionally blank"
+      ]
+    }
+  ],
+  "manifest_id": "p7-local-prototype-release-readiness-v1",
+  "record_type": "chimera.local-prototype-release-readiness",
+  "release_review": {
+    "human_acceptance": "not_granted",
+    "m4_decision": "pending",
+    "m5_decision": "pending",
+    "open_release_blockers": [],
+    "pending_human_evidence": [
+      "D-004 through D-006 interface decisions",
+      "Leo operator walkthrough",
+      "M4 entry-to-acceptance decision",
+      "M5 final product acceptance",
+      "Manual physical-device observations",
+      "Screen-reader and WCAG observations",
+      "Separate P3, P4 and P5 dispositions"
+    ]
+  },
+  "requirement_groups": [
+    {
+      "evidence_paths": [
+        "docs/reviews/2026-10-24-p345-operator-acceptance.md",
+        "examples/operator_acceptance_prep.py",
+        "tests/test_operator_acceptance_prep.py"
+      ],
+      "group_id": "GROUP-001",
+      "requirement_ids": [
+        "ACCEPT-001",
+        "ACCEPT-002",
+        "ACCEPT-003",
+        "ACCEPT-004",
+        "ACCEPT-005"
+      ]
+    },
+    {
+      "evidence_paths": [
+        "examples/link_csv_demo.py",
+        "tests/test_operator.py",
+        "tests/test_reports.py",
+        "tests/test_telemetry.py"
+      ],
+      "group_id": "GROUP-002",
+      "requirement_ids": [
+        "ADAPT-001",
+        "ADAPT-002",
+        "ADAPT-003",
+        "ADAPT-004",
+        "ADAPT-005",
+        "ADAPT-006",
+        "ADAPT-007",
+        "ADAPT-008",
+        "ADAPT-009",
+        "COM-LINK-001"
+      ]
+    },
+    {
+      "evidence_paths": [
+        "tests/test_api.py",
+        "tests/test_api_qa.py"
+      ],
+      "group_id": "GROUP-003",
+      "requirement_ids": [
+        "API-001",
+        "API-002",
+        "API-003",
+        "API-004",
+        "API-005"
+      ]
+    },
+    {
+      "evidence_paths": [
+        "tests/test_bindings.py"
+      ],
+      "group_id": "GROUP-004",
+      "requirement_ids": [
+        "BIND-001",
+        "BIND-002",
+        "BIND-003",
+        "BIND-004"
+      ]
+    },
+    {
+      "evidence_paths": [
+        ".github/workflows/test.yml",
+        "scripts/verify_clean_install.sh"
+      ],
+      "group_id": "GROUP-005",
+      "requirement_ids": [
+        "CI-001",
+        "CI-002",
+        "CI-003",
+        "CI-004"
+      ]
+    },
+    {
+      "evidence_paths": [
+        "pyproject.toml",
+        "tests/test_cli.py",
+        "tests/test_cli_qa.py"
+      ],
+      "group_id": "GROUP-006",
+      "requirement_ids": [
+        "CLI-001",
+        "CLI-002",
+        "CLI-003",
+        "CLI-004",
+        "CLI-005"
+      ]
+    },
+    {
+      "evidence_paths": [
+        "tests/test_engine.py"
+      ],
+      "group_id": "GROUP-007",
+      "requirement_ids": [
+        "CORE-001",
+        "CORE-002",
+        "CORE-003",
+        "CORE-004",
+        "CORE-005",
+        "CORE-006",
+        "CORE-007",
+        "CORE-008",
+        "CORE-009"
+      ]
+    },
+    {
+      "evidence_paths": [
+        "browser_tests/test_dashboard_browser.py",
+        "tests/test_dashboard.py",
+        "tests/test_dashboard_http.py",
+        "tests/test_dashboard_qa.py"
+      ],
+      "group_id": "GROUP-008",
+      "requirement_ids": [
+        "DASH-001",
+        "DASH-002",
+        "DASH-003",
+        "DASH-004",
+        "DASH-005",
+        "DASH-006",
+        "DASH-007",
+        "DASH-008",
+        "DASH-009"
+      ]
+    },
+    {
+      "evidence_paths": [
+        "tests/test_evidence.py",
+        "tests/test_evidence_qa.py"
+      ],
+      "group_id": "GROUP-009",
+      "requirement_ids": [
+        "EVID-001",
+        "EVID-002",
+        "EVID-003",
+        "EVID-004",
+        "EVID-005"
+      ]
+    },
+    {
+      "evidence_paths": [
+        "tests/test_faults.py",
+        "tests/test_faults_qa.py"
+      ],
+      "group_id": "GROUP-010",
+      "requirement_ids": [
+        "FAULT-001",
+        "FAULT-002",
+        "FAULT-003",
+        "FAULT-004",
+        "FAULT-005"
+      ]
+    },
+    {
+      "evidence_paths": [
+        "tests/test_handoff.py"
+      ],
+      "group_id": "GROUP-011",
+      "requirement_ids": [
+        "HANDOFF-001",
+        "HANDOFF-002",
+        "HANDOFF-003",
+        "HANDOFF-004",
+        "HANDOFF-005",
+        "HANDOFF-006"
+      ]
+    },
+    {
+      "evidence_paths": [
+        "examples/p34_candidate_demo.py",
+        "tests/test_operator.py",
+        "tests/test_operator_qa.py"
+      ],
+      "group_id": "GROUP-012",
+      "requirement_ids": [
+        "OPERATOR-001",
+        "OPERATOR-002",
+        "OPERATOR-003",
+        "OPERATOR-004",
+        "OPERATOR-005",
+        "OPERATOR-006",
+        "OPERATOR-007",
+        "OPERATOR-008"
+      ]
+    },
+    {
+      "evidence_paths": [
+        "pyproject.toml",
+        "scripts/verify_clean_install.sh"
+      ],
+      "group_id": "GROUP-013",
+      "requirement_ids": [
+        "PACK-001",
+        "PACK-002",
+        "PACK-003",
+        "PACK-004"
+      ]
+    },
+    {
+      "evidence_paths": [
+        "examples/release_performance.py",
+        "tests/test_release_performance.py"
+      ],
+      "group_id": "GROUP-014",
+      "requirement_ids": [
+        "PERF-001",
+        "PERF-002",
+        "PERF-003",
+        "PERF-004",
+        "PERF-005"
+      ]
+    },
+    {
+      "evidence_paths": [
+        "docs/REQUIREMENTS.md",
+        "docs/release-readiness-v1.json",
+        "examples/release_readiness.py",
+        "tests/test_release_readiness.py"
+      ],
+      "group_id": "GROUP-015",
+      "requirement_ids": [
+        "READINESS-001",
+        "READINESS-002",
+        "READINESS-003",
+        "READINESS-004",
+        "READINESS-005"
+      ]
+    },
+    {
+      "evidence_paths": [
+        "tests/test_commit_recovery.py",
+        "tests/test_journal.py",
+        "tests/test_ownership.py",
+        "tests/test_ownership_qa.py",
+        "tests/test_resume.py"
+      ],
+      "group_id": "GROUP-016",
+      "requirement_ids": [
+        "RECOVER-001",
+        "RECOVER-002",
+        "RECOVER-003",
+        "RECOVER-004",
+        "RECOVER-005",
+        "RECOVER-006",
+        "RECOVER-007"
+      ]
+    },
+    {
+      "evidence_paths": [
+        "tests/test_reports.py",
+        "tests/test_reports_qa.py"
+      ],
+      "group_id": "GROUP-017",
+      "requirement_ids": [
+        "REPORT-001",
+        "REPORT-002",
+        "REPORT-003",
+        "REPORT-004",
+        "REPORT-005",
+        "REPORT-006"
+      ]
+    },
+    {
+      "evidence_paths": [
+        "tests/test_storage.py",
+        "tests/test_storage_qa.py"
+      ],
+      "group_id": "GROUP-018",
+      "requirement_ids": [
+        "STORE-001",
+        "STORE-002",
+        "STORE-003",
+        "STORE-004"
+      ]
+    },
+    {
+      "evidence_paths": [
+        "docs/THREAT_MODEL.md",
+        "docs/threat-model-v1.json",
+        "examples/release_threat_model.py",
+        "tests/test_release_threat_model.py"
+      ],
+      "group_id": "GROUP-019",
+      "requirement_ids": [
+        "THREAT-001",
+        "THREAT-002",
+        "THREAT-003",
+        "THREAT-004",
+        "THREAT-005"
+      ]
+    },
+    {
+      "evidence_paths": [
+        "tests/test_verdicts.py",
+        "tests/test_verdicts_qa.py"
+      ],
+      "group_id": "GROUP-020",
+      "requirement_ids": [
+        "VERDICT-001",
+        "VERDICT-002",
+        "VERDICT-003",
+        "VERDICT-004",
+        "VERDICT-005"
+      ]
+    }
+  ],
+  "schema_version": 1,
+  "scope": {
+    "included": [
+      "Every requirement identifier declared as a table row in docs/REQUIREMENTS.md",
+      "Open GitHub defect issues observed through the connected repository integration",
+      "Required headings in the operator, acceptance, quality and threat-model guides"
+    ],
+    "limitations": [
+      "The defect inventory is a dated snapshot and must be refreshed before M4 disposition",
+      "Tracked file identity and heading presence do not prove that a test passed or a guide is usable",
+      "Manual-device, screen-reader, operator and PM observations remain separate human evidence",
+      "This control does not tag, merge, publish, deploy or approve the prototype"
+    ],
+    "purpose": "Prepare exact-candidate requirement, defect and guide inputs for M4 review without declaring release readiness or human acceptance"
+  }
+}

@@ -1,5 +1,27 @@
 # Architecture decision 0001: deterministic core first
 
+## Decision 0025: make M4 review inputs complete without declaring readiness
+
+October 29, 2026. Bounded P7 release-review increment; no release, phase or acceptance claim.
+
+Keep one canonical offline manifest that assigns every requirement-table identifier to one
+evidence group, captures the current open GitHub defect issues as a dated snapshot, and names
+the exact headings required in the operator and release guides. Bind its assessment to a
+full clean candidate and record byte/SHA-256 identities for every referenced tracked regular
+file. Fail on missing, duplicate or extra requirement coverage, broken evidence paths,
+missing guide headings, inconsistent defect dispositions or unsafe output.
+
+Treat an unresolved defect as a release blocker: preserve the canonical assessment and
+return nonzero. Keep fixed/verified defects open in the snapshot while draft PR integration
+is pending, without mislabeling their GitHub state or treating the open issue alone as a
+current blocker. Recheck the candidate immediately before atomic no-replace publication.
+
+Tradeoffs: this is an offline, candidate-bound review index rather than a live GitHub query.
+It proves inventory completeness and content identity, not that cited tests passed, that a
+guide is understandable, or that the candidate is accepted. The snapshot must be refreshed
+before M4 disposition. Manual-device, screen-reader, operator and PM observations remain
+separate and explicitly pending.
+
 ## Decision 0024: make the trusted local boundary executable and reviewable
 
 October 28, 2026. Bounded P7 threat-model increment; no security, release or phase

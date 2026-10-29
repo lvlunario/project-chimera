@@ -76,6 +76,22 @@ vulnerability absence, build authenticity, security certification, residual-risk
 or phase approval. A `must_fix_before_m4` threat makes the control nonzero while retaining its
 record. Independent release review and Leo's M4/M5 decisions remain separate.
 
+## Release-readiness inventory evidence
+
+The fixed `p7-local-prototype-release-readiness-v1` manifest assigns every requirement table
+row to exactly one evidence group, captures open `Defect:` issues from GitHub as a dated
+snapshot, and declares required headings across the operator and release guides. Its
+exact-candidate assessment records the manifest digest and exact identities of referenced
+tracked files. Unit controls reject incomplete/duplicate requirement coverage, untracked or
+non-regular evidence, missing/out-of-order headings, inconsistent defect/blocker state,
+noncanonical input, dirty/wrong candidates and unsafe publication.
+
+This control is an evidence index, not evidence that every cited test passed. A complete
+record also does not establish guide usability, live issue state, release readiness, phase
+closure or acceptance. Recheck the GitHub defect snapshot and inspect actual hosted test
+logs at M4. Unresolved release blockers make the control nonzero while preserving the record;
+manual-device, screen-reader, operator, D-004–006 and M4/M5 evidence stay explicitly pending.
+
 ## Defects and risk
 Use GitHub issues: reproduction, expected/actual result, version, environment, severity,
 requirement, owner role, target fix and retest evidence. Blocker = cannot run or trust

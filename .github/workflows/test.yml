@@ -74,6 +74,18 @@ jobs:
           fi
           exit "$status"
 
+      - name: Assemble bounded release-readiness review inputs
+        run: |
+          CANDIDATE_SHA=$(git rev-parse HEAD)
+          status=0
+          python -m examples.release_readiness \
+            --candidate-commit "$CANDIDATE_SHA" \
+            --output "$RUNNER_TEMP/chimera-release-readiness.json" || status=$?
+          if [ -f "$RUNNER_TEMP/chimera-release-readiness.json" ]; then
+            python -m json.tool "$RUNNER_TEMP/chimera-release-readiness.json"
+          fi
+          exit "$status"
+
       - name: Verify isolated wheel install
         run: scripts/verify_clean_install.sh
 

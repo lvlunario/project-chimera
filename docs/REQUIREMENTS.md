@@ -5,6 +5,40 @@ September 22 under [the decision record](reviews/2026-09-22-delegated-decisions.
 Historical pending statements below describe their original slices, not today's decisions.
 Personal walkthroughs and final acceptance remain unperformed/open.
 
+## Communications-link prototype requirement v1
+
+The prototype's primary domain requirement is explicit rather than inferred from its use in
+bindings, reports and demonstrations.
+
+| ID | Requirement | Evidence |
+|---|---|---|
+| COM-LINK-001 | For a valid communications dataset and configured threshold, pass only when every link-margin sample is greater than or equal to the threshold; otherwise fail and preserve the below-threshold samples, exact threshold, source identity and any synthetic-fault provenance for investigation | telemetry threshold tests; integrated operator pass/fail controls; reopened JSON/HTML report agreement |
+
+Malformed, unavailable or inconsistent evidence is an error or `not_evaluated`, never a
+COM-LINK-001 pass. Synthetic results remain explicitly labeled and do not establish physical
+radio performance.
+
+## Release-readiness review inputs v1
+
+This P7 control assembles an exact-candidate inventory for M4 review. It covers the
+requirements declared in this document, the dated open-defect snapshot and required guide
+headings. A complete machine record is not a release declaration, test-result substitute,
+phase closure or human acceptance.
+
+| ID | Requirement | Evidence |
+|---|---|---|
+| READINESS-001 | Cover every requirement identifier declared as a table row in this document exactly once, and reject missing, duplicate or undeclared coverage | `docs/release-readiness-v1.json`; inventory mismatch tests |
+| READINESS-002 | Preserve a dated snapshot of every open GitHub issue titled `Defect:`, including severity, engineering disposition, candidate evidence and explicit release-blocker state | connected GitHub issue search; defect consistency and blocker tests |
+| READINESS-003 | Verify exact required headings, in document order, across the README, manual, approval guide, quality plan, threat model and current operator-acceptance packet | guide identity/heading tests |
+| READINESS-004 | Bind a canonical assessment to the full clean candidate, manifest digest and exact byte/SHA-256 identities of every referenced regular tracked file; refuse unsafe output | `examples/release_readiness.py`; candidate/path/publication negative tests |
+| READINESS-005 | Keep P3/P4/P5 observations, D-004–006, M4/M5 decisions and human acceptance explicitly pending; never translate a complete inventory into approval | manifest release-review fields, assessment wording and CLI regression |
+
+`review_inputs_complete` means that the fixed offline inventory is internally complete for
+the named candidate. The defect snapshot can become stale, so it must be refreshed against
+GitHub before M4 disposition. File identity and heading presence do not prove that tests
+passed or that a guide is usable; hosted results and actual human observations remain
+separate evidence.
+
 ## Local-prototype threat model v1
 
 This P7 release control consolidates Chimera's approved local-only trust boundary, current

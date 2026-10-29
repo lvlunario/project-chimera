@@ -958,6 +958,39 @@ Teaching note for Leo: Chimera's hashes are tamper-evident seals, not signatures
 that the pieces agree with the named bytes, but they do not prove who produced those bytes.
 That distinction keeps the release claim defensible while M4/M5 acceptance remains pending.
 
+### P7 release-readiness assessment
+
+The fixed [`release-readiness-v1.json`](release-readiness-v1.json) manifest prepares three
+inputs for M4 review: complete requirement coverage, a dated open-defect snapshot and the
+required operator/release guide headings. From the exact clean candidate checkout, write its
+machine assessment outside the repository:
+
+```bash
+CANDIDATE_COMMIT=$(git rev-parse HEAD)
+python -m examples.release_readiness \
+  --candidate-commit "$CANDIDATE_COMMIT" \
+  --output /tmp/chimera-release-readiness.json
+```
+
+Expected for the current inventory: five `PASS READINESS-*` lines and
+`status: review_inputs_complete`. The record includes the manifest digest, every referenced
+file's byte count/SHA-256, the declared/covered requirement counts, guide and heading counts,
+two open defects with their fixed/verified engineering dispositions, zero current release
+blockers, and the still-pending human evidence. An unresolved defect is retained in the
+record, changes READINESS-002 to `blocked`, and exits 1. Invalid input or unsafe output exits
+2. The command never replaces an output and checks the clean commit before assessment and
+again before publication.
+
+The defect list is a dated offline snapshot of GitHub, not a live issue query. Refresh it
+before M4 disposition. Likewise, a tracked test file or present manual heading is an index to
+evidence—not proof that the test passed or the guide worked for an operator. Use the hosted
+CI logs and actual walkthrough observations alongside this record.
+
+Teaching note for Leo: this assessment is a packing list, not a flight clearance. It proves
+that the review has not silently omitted a requirement, known defect or required guide
+section; Leo still decides whether the assembled evidence is sufficient to enter final
+acceptance testing.
+
 ## Phase approval instructions
 
 Use the [phase approval guide](APPROVALS.md) for P0–P7 verification and validation checklists,
