@@ -184,6 +184,11 @@ Decision: **Pending**. Actual observations/conditions: **Not yet recorded**.
       review, not evidence that the review occurred. A complete machine model is not security
       acceptance; review its residual risks and confirm the candidate still matches the
       trusted-local/no-sensitive-data boundary.
+- [ ] Build or receive the exact-candidate packet using the
+      [manual procedure](MANUAL.md#p7-m4-release-candidate-evidence-packet), run its portable
+      inspector, and review the enclosed blank `M4-ACCEPTANCE-SCRIPT.md`. Confirm the packet
+      reports PACKET-001–006, preserves any release blockers and still marks M4, M5 and human
+      acceptance pending. `packet_complete_for_m4_review` means ready to review, not approved.
 - [ ] Follow or observe installation in the declared clean environment using only the guide.
       Expected: the candidate starts and the documented demonstration works.
 - [ ] Validation: confirm the final acceptance script covers your intended workflow and that

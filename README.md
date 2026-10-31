@@ -27,7 +27,7 @@ entry point; the implementation has not been merged into `main`.
 | Ongoing changes, test evidence and next steps | [Daily engineering logs](https://github.com/lvlunario/project-chimera/tree/magnum-opus/development/docs/daily) |
 | Requirements and quality approach | [Requirements](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/REQUIREMENTS.md) · [Quality plan](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/QUALITY.md) |
 
-## Progress snapshot — October 29, 2026
+## Progress snapshot — October 31, 2026
 
 The development branch includes:
 
@@ -58,6 +58,9 @@ The development branch includes:
 - An exact-clean-candidate release-readiness inventory covering every declared requirement,
   the dated open-defect snapshot, required guide headings and pending human decisions without
   translating inventory completeness into release approval.
+- A bounded exact-candidate M4 evidence packet that composes and portably reinspects the
+  operator, performance, threat and readiness records while retaining a blank acceptance
+  script and pending M4/M5 decisions.
 - An installable Python package and CI on Python 3.11 and 3.12.
 
 The [October 24 implementation evidence](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-10-24.md),
@@ -65,17 +68,18 @@ The [October 24 implementation evidence](https://github.com/lvlunario/project-ch
 the [October 26 weekly-review record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-10-26.md),
 the [October 27 performance-baseline record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-10-27.md),
 the [October 28 threat-model record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-10-28.md),
-and the [October 29 readiness-inventory record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-10-29.md)
+the [October 29 readiness-inventory record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-10-29.md),
+and the [October 31 M4-packet record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-10-31.md)
 record candidate-specific local, independent and hosted results. Do not infer a new
 candidate's status from an earlier successful run.
 
-**Acceptance state — October 29:** P0 scope (D-001–003) is approved by delegation.
+**Acceptance state — October 31:** P0 scope (D-001–003) is approved by delegation.
 P1 and P2 are conditionally accepted for continued development under the
 [delegated decision record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/reviews/2026-09-22-delegated-decisions.md). Leo's personal walkthroughs remain unperformed;
 final product validation remains open. P3/P4/P5 remain in progress; P7 release preparation
-now includes versioned performance, threat-model and release-readiness inventory controls.
-The October 17 M2 exact-candidate disposition is twelve days late; November 7 is forecast
-amber with nine calendar days remaining while the
+now includes versioned performance, threat-model, readiness-inventory and bounded M4-packet
+controls. The October 17 M2 exact-candidate disposition is fourteen days late; November 7 is
+forecast amber with seven calendar days remaining while the
 prepared operator worksheet and human walkthrough remain open. Synthetic fixtures establish software
 behavior; authorized measured-data validation, production deployment and certification are
 not claimed.

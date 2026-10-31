@@ -8,14 +8,14 @@ remain unperformed. Original dates below are unchanged; M0's scope decision was 
 September 22, three days after its September 19 target. Downstream forecasts
 remain October 3/17, November 7/28 and December 12 with no baseline movement.
 
-## Status update — October 29, 2026
+## Status update — October 31, 2026
 
-The October 17 M2 baseline was missed by twelve days. The engineering vertical, eight-control
+The October 17 M2 baseline was missed by fourteen days. The engineering vertical, eight-control
 P3/P4 candidate and exact-commit P3/P4/P5 acceptance-preparation packet are implemented, but
 no gate disposition or Leo walkthrough has been recorded. This is a schedule slip, not a
 change to the original baseline.
 
-M3 November 7 is **amber** with 9 calendar days remaining: automated Chromium and the exact
+M3 November 7 is **amber** with 7 calendar days remaining: automated Chromium and the exact
 candidate are green, and the dated packet is ready. Recovery is now to freeze features, run
 the operator worksheet, record actual manual-device/screen-reader/Leo observations,
 disposition defects and use remaining
@@ -23,12 +23,14 @@ time for release preparation. P7 release preparation includes a fixed versioned 
 performance workload verified locally and on the exact published Python 3.11/3.12 candidate,
 plus a versioned local-prototype threat model and exact-candidate assessment implemented and
 independently reviewed. The hosted threat assessment is green. An exact-candidate readiness
-inventory now covers 116/116 declared requirements, both open fixed/verified defect issues,
-zero declared release blockers, and six operator/release guides with 47 required headings.
-It prepares review inputs but does not grant M4/M5 or human acceptance. The exact M4 packet,
-evidence bundle and acceptance script remain open. November 28 and December 12 remain
-achievable on that basis;
-automation still cannot substitute for human acceptance.
+inventory now covers 122/122 declared requirements across 21 groups, both open fixed/verified
+defect issues, zero declared release blockers, and six operator/release guides with 49 required
+headings. A bounded M4 ZIP now composes and portably reinspects that inventory with the
+operator, performance and threat records, exact candidate documents and a deliberately blank
+acceptance script. Exact candidate `5b5b1ed` passed PACKET-001–006 on Python 3.11 and 3.12.
+It prepares M4 review inputs but does not grant M4/M5 or human acceptance. November 28 and
+December 12 remain achievable on that basis; automation still cannot substitute for human
+acceptance.
 
 ## Operational problem and proposed scope
 An integration engineer needs to verify a communications test run, identify failing
