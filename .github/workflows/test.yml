@@ -1,0 +1,134 @@
+name: test
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - magnum-opus/development
+
+permissions:
+  contents: read
+
+concurrency:
+  group: test-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Prepare offline wheel build tools
+        env:
+          PIP_NO_INPUT: "1"
+        run: python -m pip install --disable-pip-version-check "setuptools>=77" wheel
+
+      - name: Run regression suite
+        run: python -m unittest discover -s tests -v
+
+      - name: Prepare exact operator acceptance workspace
+        run: |
+          CANDIDATE_SHA=$(git rev-parse HEAD)
+          python -m examples.operator_acceptance_prep \
+            --candidate-commit "$CANDIDATE_SHA" \
+            --output "$RUNNER_TEMP/chimera-operator-acceptance"
+
+      - name: Measure bounded release performance
+        run: |
+          CANDIDATE_SHA=$(git rev-parse HEAD)
+          status=0
+          python -m examples.release_performance \
+            --candidate-commit "$CANDIDATE_SHA" \
+            --output "$RUNNER_TEMP/chimera-release-performance.json" || status=$?
+          if [ -f "$RUNNER_TEMP/chimera-release-performance.json" ]; then
+            python -m json.tool "$RUNNER_TEMP/chimera-release-performance.json"
+          fi
+          exit "$status"
+
+      - name: Assess bounded local-prototype threat model
+        run: |
+          CANDIDATE_SHA=$(git rev-parse HEAD)
+          status=0
+          python -m examples.release_threat_model \
+            --candidate-commit "$CANDIDATE_SHA" \
+            --output "$RUNNER_TEMP/chimera-release-threat-model.json" || status=$?
+          if [ -f "$RUNNER_TEMP/chimera-release-threat-model.json" ]; then
+            python -m json.tool "$RUNNER_TEMP/chimera-release-threat-model.json"
+          fi
+          exit "$status"
+
+      - name: Assemble bounded release-readiness review inputs
+        run: |
+          CANDIDATE_SHA=$(git rev-parse HEAD)
+          status=0
+          python -m examples.release_readiness \
+            --candidate-commit "$CANDIDATE_SHA" \
+            --output "$RUNNER_TEMP/chimera-release-readiness.json" || status=$?
+          if [ -f "$RUNNER_TEMP/chimera-release-readiness.json" ]; then
+            python -m json.tool "$RUNNER_TEMP/chimera-release-readiness.json"
+          fi
+          exit "$status"
+
+      - name: Assemble and inspect bounded M4 evidence packet
+        run: |
+          CANDIDATE_SHA=$(git rev-parse HEAD)
+          status=0
+          python -m examples.release_candidate_packet build \
+            --candidate-commit "$CANDIDATE_SHA" \
+            --acceptance-workspace "$RUNNER_TEMP/chimera-operator-acceptance" \
+            --performance-record "$RUNNER_TEMP/chimera-release-performance.json" \
+            --threat-record "$RUNNER_TEMP/chimera-release-threat-model.json" \
+            --readiness-record "$RUNNER_TEMP/chimera-release-readiness.json" \
+            --output "$RUNNER_TEMP/chimera-m4-evidence-packet.zip" || status=$?
+          if [ -f "$RUNNER_TEMP/chimera-m4-evidence-packet.zip" ]; then
+            python -m examples.release_candidate_packet inspect \
+              "$RUNNER_TEMP/chimera-m4-evidence-packet.zip" || status=$?
+          fi
+          exit "$status"
+
+      - name: Verify isolated wheel install
+        run: scripts/verify_clean_install.sh
+
+  browser-dashboard:
+    name: Chromium dashboard journey
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+
+      - name: Install pinned browser test tooling
+        env:
+          PIP_NO_INPUT: "1"
+        run: python -m pip install --disable-pip-version-check "playwright==1.55.0"
+
+      - name: Install Chromium and system dependencies
+        run: python -m playwright install --with-deps chromium
+
+      - name: Run real-browser dashboard journey
+        run: python -m unittest discover -s browser_tests -v
