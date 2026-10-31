@@ -18,6 +18,27 @@ Malformed, unavailable or inconsistent evidence is an error or `not_evaluated`, 
 COM-LINK-001 pass. Synthetic results remain explicitly labeled and do not establish physical
 radio performance.
 
+## M4 release-candidate evidence packet v1
+
+This P7 control packages the already generated operator, performance, threat-model and
+release-readiness records with their exact candidate review documents and an intentionally
+blank M4 acceptance script. The packet is a portable review input, never a release,
+phase decision, CI result or substitute for Leo's observations.
+
+| ID | Requirement | Evidence |
+|---|---|---|
+| PACKET-001 | Assemble only from a full clean candidate checked before assembly and publication; require every canonical source record to identify that candidate, use the fixed scope/limitations and predate the packet | `examples/release_candidate_packet.py`; candidate, chronology and scope negative tests |
+| PACKET-002 | Include the complete operator-acceptance workspace and independently recheck PASS, natural FAIL, synthetic FAIL, malformed refusal, unavailable evidence, unchanged resume, identical handoffs, dashboard export agreement and still-unperformed human observations | operator record/workspace cross-field and mutation tests |
+| PACKET-003 | Derive fixed performance outcomes, threat-model summaries and release-readiness requirement/defect/guide inventories from their underlying candidate evidence; retain coherent release-control failures as explicit packet blockers | performance/threat/readiness adversarial regressions and blocked-packet test |
+| PACKET-004 | Include exact candidate review guides and machine manifests; verify their byte/SHA-256 identities and ordered requirement/heading coverage without treating identity as authenticity | bundled candidate-file, manifest and guide validation tests |
+| PACKET-005 | Emit a bounded fixed-metadata stored ZIP whose manifest indexes the exact version-1 member allowlist; reject duplicate, traversing, encrypted, compressed, unindexed, unexpected or file/path-prefix-colliding members and extract only into a new outside-checkout directory | repeat-byte, archive-tamper, prefix-collision and no-overwrite extraction tests |
+| PACKET-006 | Generate a blank candidate-bound M4 script and keep M4, M5, P3/P4/P5 disposition and human acceptance pending; never tag, merge, publish or deploy | acceptance-script content checks, fixed packet scope and pending-decision assertions |
+
+`packet_complete_for_m4_review` means only that the fixed packet contract is internally
+complete. `blocked_by_release_controls` preserves a reviewable packet while preventing a
+false ready claim. SHA-256 and Git identities detect disagreement; they are not signatures,
+trusted timestamps, execution attestation or human approval.
+
 ## Release-readiness review inputs v1
 
 This P7 control assembles an exact-candidate inventory for M4 review. It covers the

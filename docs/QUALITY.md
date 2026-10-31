@@ -92,6 +92,30 @@ closure or acceptance. Recheck the GitHub defect snapshot and inspect actual hos
 logs at M4. Unresolved release blockers make the control nonzero while preserving the record;
 manual-device, screen-reader, operator, D-004–006 and M4/M5 evidence stay explicitly pending.
 
+## M4 evidence-packet boundary
+
+The `p7-m4-review-evidence-packet-v1` packet is a deterministic transport for existing
+candidate-bound review inputs, not a new authority. It admits only the fixed operator,
+performance, threat and readiness record contracts for one exact clean commit. Packet tests
+must recompute numeric performance outcomes, candidate-model and readiness summaries,
+operator P345 cross-field agreement, source chronology, fixed scope limitations and all
+pending-human states; merely copying an aggregate `passed` string is insufficient.
+
+The stored ZIP has fixed metadata, bounded entry/byte counts and an exact member allowlist.
+Every non-manifest member has a byte count and SHA-256 in the manifest. Portable inspection
+rejects duplicate, extra, unindexed, compressed, encrypted, traversing, malformed and
+file/path-prefix-colliding entries. Extraction uses a new outside-checkout directory and
+never overwrites existing data. Regression coverage includes coherent reindexing attacks,
+not only byte changes that leave an obviously stale manifest.
+
+A coherent failed performance target, open must-fix threat or readiness release blocker is
+retained as `blocked_by_release_controls`; PACKET-003 is blocked and the command returns
+nonzero. The blank acceptance script, M4/M5 decisions and human observations remain pending
+in every machine status. Git/SHA identities are not signatures, trusted timestamps or build
+attestation. CI logs, live GitHub defect state, actual operator observations and Leo's
+recorded decision remain separate evidence. The workflow creates no tag, release artifact,
+deployment or external publication.
+
 ## Defects and risk
 Use GitHub issues: reproduction, expected/actual result, version, environment, severity,
 requirement, owner role, target fix and retest evidence. Blocker = cannot run or trust

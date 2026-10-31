@@ -1,5 +1,30 @@
 # Architecture decision 0001: deterministic core first
 
+## Decision 0026: compose review evidence without turning transport into authority
+
+October 30, 2026. Bounded P7 M4-packet increment; no release, gate or acceptance claim.
+
+Assemble the existing exact-candidate operator, performance, threat and readiness records
+into one deterministic bounded ZIP with the candidate guides/manifests they depend on and an
+intentionally blank M4 script. Make the portable inspector validate source semantics rather
+than trust aggregate status text: derive fixed performance outcomes, reconcile threat and
+readiness summaries with bundled candidate documents, and cross-check the operator controls.
+Require each source timestamp to predate the packet and retain every still-pending human
+decision.
+
+Use an exact version-1 member allowlist, fixed ZIP metadata, bounded reads, canonical JSON,
+an identity for every non-manifest member and explicit file/path-prefix collision rejection.
+Extract only into a new outside-checkout directory with no overwrite. A coherent source
+control failure still produces a reviewable packet but marks PACKET-003 and the aggregate
+status blocked. Recheck the clean commit before assembly and publication.
+
+Tradeoffs: the packet duplicates selected candidate documents so a reviewer can detect
+silent substitution and omission without relying on the assembler's machine. This costs
+space and deliberately couples schema v1 to fixed source contracts. It does not bundle CI
+logs, query live GitHub state, sign or attest the bytes, grant phase disposition, merge, tag
+or deploy. Treat it as a sealed review binder—not as evidence that a human performed the
+review or accepted the product.
+
 ## Decision 0025: make M4 review inputs complete without declaring readiness
 
 October 29, 2026. Bounded P7 release-review increment; no release, phase or acceptance claim.

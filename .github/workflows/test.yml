@@ -86,6 +86,23 @@ jobs:
           fi
           exit "$status"
 
+      - name: Assemble and inspect bounded M4 evidence packet
+        run: |
+          CANDIDATE_SHA=$(git rev-parse HEAD)
+          status=0
+          python -m examples.release_candidate_packet build \
+            --candidate-commit "$CANDIDATE_SHA" \
+            --acceptance-workspace "$RUNNER_TEMP/chimera-operator-acceptance" \
+            --performance-record "$RUNNER_TEMP/chimera-release-performance.json" \
+            --threat-record "$RUNNER_TEMP/chimera-release-threat-model.json" \
+            --readiness-record "$RUNNER_TEMP/chimera-release-readiness.json" \
+            --output "$RUNNER_TEMP/chimera-m4-evidence-packet.zip" || status=$?
+          if [ -f "$RUNNER_TEMP/chimera-m4-evidence-packet.zip" ]; then
+            python -m examples.release_candidate_packet inspect \
+              "$RUNNER_TEMP/chimera-m4-evidence-packet.zip" || status=$?
+          fi
+          exit "$status"
+
       - name: Verify isolated wheel install
         run: scripts/verify_clean_install.sh
 

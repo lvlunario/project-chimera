@@ -991,6 +991,68 @@ that the review has not silently omitted a requirement, known defect or required
 section; Leo still decides whether the assembled evidence is sufficient to enter final
 acceptance testing.
 
+### P7 M4 release-candidate evidence packet
+
+The packet composes the four exact-candidate controls above into one bounded ZIP for M4
+review: the complete operator-acceptance workspace, performance record, threat-model record,
+release-readiness record, exact candidate guides/manifests, and a blank M4 acceptance
+script. Prepare every input from the same clean commit into new outside-checkout paths:
+
+```bash
+CANDIDATE_COMMIT=$(git rev-parse HEAD)
+REVIEW_ROOT=$(mktemp -d)
+
+python -m examples.operator_acceptance_prep \
+  --candidate-commit "$CANDIDATE_COMMIT" \
+  --output "$REVIEW_ROOT/operator-acceptance"
+python -m examples.release_performance \
+  --candidate-commit "$CANDIDATE_COMMIT" \
+  --output "$REVIEW_ROOT/performance.json"
+python -m examples.release_threat_model \
+  --candidate-commit "$CANDIDATE_COMMIT" \
+  --output "$REVIEW_ROOT/threat.json"
+python -m examples.release_readiness \
+  --candidate-commit "$CANDIDATE_COMMIT" \
+  --output "$REVIEW_ROOT/readiness.json"
+```
+
+Each command refuses an existing output. A performance, threat or readiness blocker writes
+its record and returns 1; retain that record rather than rerunning until a convenient pass.
+Build the packet from the records actually produced:
+
+```bash
+python -m examples.release_candidate_packet build \
+  --candidate-commit "$CANDIDATE_COMMIT" \
+  --acceptance-workspace "$REVIEW_ROOT/operator-acceptance" \
+  --performance-record "$REVIEW_ROOT/performance.json" \
+  --threat-record "$REVIEW_ROOT/threat.json" \
+  --readiness-record "$REVIEW_ROOT/readiness.json" \
+  --output "$REVIEW_ROOT/chimera-m4-evidence.zip"
+
+python -m examples.release_candidate_packet inspect \
+  "$REVIEW_ROOT/chimera-m4-evidence.zip" \
+  --extract-to "$REVIEW_ROOT/extracted"
+```
+
+The builder and portable inspector independently cross-check the source contracts. They
+derive performance results from the fixed thresholds and measured p95 values, reconcile the
+threat/readiness summaries with the bundled candidate documents, recheck the operator
+controls, enforce source chronology and accept only the exact version-1 member allowlist.
+Extraction creates a new directory, never overlays existing data, and rejects unsafe ZIP
+paths or file/path-prefix collisions.
+
+`packet_complete_for_m4_review` means the packet is internally complete for review.
+`blocked_by_release_controls` means the packet was retained but at least one performance,
+threat or readiness control blocks M4. Neither status proves CI passed, authenticates who
+produced the bytes, grants P3/P4/P5 disposition, enters final acceptance testing, accepts
+the product, merges the PR, tags a release or deploys anything. The generated
+`M4-ACCEPTANCE-SCRIPT.md` remains unchecked until Leo actually performs and records the
+review.
+
+Teaching note for Leo: think of the ZIP as a sealed review binder, not an approval stamp.
+It makes silent substitutions and omissions visible; the decision still comes from the
+actual engineering results and your recorded acceptance response.
+
 ## Phase approval instructions
 
 Use the [phase approval guide](APPROVALS.md) for P0–P7 verification and validation checklists,

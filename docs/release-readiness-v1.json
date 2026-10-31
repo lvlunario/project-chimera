@@ -56,6 +56,7 @@
         "### P7 local-prototype performance baseline",
         "### P7 local-prototype threat-model assessment",
         "### P7 release-readiness assessment",
+        "### P7 M4 release-candidate evidence packet",
         "## Phase approval instructions"
       ]
     },
@@ -84,6 +85,7 @@
         "## Prototype acceptance checklist",
         "## Release performance evidence",
         "## Threat-model evidence",
+        "## M4 evidence-packet boundary",
         "## Defects and risk",
         "## Continuous integration policy",
         "## Operator acceptance-preparation boundary"
@@ -438,6 +440,23 @@
         "VERDICT-003",
         "VERDICT-004",
         "VERDICT-005"
+      ]
+    },
+    {
+      "evidence_paths": [
+        ".github/workflows/test.yml",
+        "docs/MANUAL.md",
+        "examples/release_candidate_packet.py",
+        "tests/test_release_candidate_packet.py"
+      ],
+      "group_id": "GROUP-021",
+      "requirement_ids": [
+        "PACKET-001",
+        "PACKET-002",
+        "PACKET-003",
+        "PACKET-004",
+        "PACKET-005",
+        "PACKET-006"
       ]
     }
   ],
