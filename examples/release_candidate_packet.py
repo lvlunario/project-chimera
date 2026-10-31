@@ -61,6 +61,9 @@ THREAT_SCOPE = (
     "penetration test, vulnerability scan, control-effectiveness proof, "
     "security certification, residual-risk acceptance or phase approval"
 )
+THREAT_DISPOSITIONS = (
+    "must_fix_before_m4", "tracked_for_m4",
+)
 READINESS_SCOPE = (
     "candidate-bound M4 review inputs only; not a live GitHub query, test-result "
     "claim, release declaration, phase closure, tag, deployment or human acceptance"
@@ -893,14 +896,14 @@ def _validate_threat(record: dict, candidate_commit: str,
     threats = _list(model_document.get("threats"), "candidate threat-model threats")
     evidence_paths: set[str] = set()
     control_ids: set[str] = set()
-    dispositions: dict[str, int] = {}
+    dispositions = {name: 0 for name in THREAT_DISPOSITIONS}
     for threat_index, threat in enumerate(threats):
         _require(type(threat) is dict,
                  f"candidate threat-model threat {threat_index} changed")
         disposition = threat.get("engineering_disposition")
-        _require(type(disposition) is str and disposition,
+        _require(disposition in THREAT_DISPOSITIONS,
                  f"candidate threat-model disposition {threat_index} changed")
-        dispositions[disposition] = dispositions.get(disposition, 0) + 1
+        dispositions[disposition] += 1
         for control_index, control in enumerate(_list(
                 threat.get("controls"),
                 f"candidate threat-model threat {threat_index} controls")):

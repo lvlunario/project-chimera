@@ -105,10 +105,12 @@ class ReleaseCandidatePacketTests(unittest.TestCase):
             for item in threat_document["threats"]
             for control in item["controls"]
         }
-        disposition_counts = {}
+        disposition_counts = {
+            name: 0 for name in release_candidate_packet.THREAT_DISPOSITIONS
+        }
         for item in threat_document["threats"]:
             disposition = item["engineering_disposition"]
-            disposition_counts[disposition] = disposition_counts.get(disposition, 0) + 1
+            disposition_counts[disposition] += 1
         threat = {
             "schema_version": 1,
             "record_type": "chimera.release-threat-model-assessment",
@@ -523,6 +525,14 @@ class ReleaseCandidatePacketTests(unittest.TestCase):
                         }
                     ),
                     "candidate checks are incomplete",
+                    "pretty",
+                ),
+                (
+                    threat,
+                    lambda value: value["model"]["disposition_counts"].pop(
+                        "must_fix_before_m4"
+                    ),
+                    "summary does not match candidate model",
                     "pretty",
                 ),
                 (
