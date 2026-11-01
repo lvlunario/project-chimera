@@ -47,7 +47,8 @@ The development branch includes:
   keep invalid packages visible, provide bounded investigation views, and download the
   same validated handoff bundle.
 - Test-only headless-Chromium coverage for native keyboard navigation, desktop/mobile-width
-  rendering, security headers, and download/reopen behavior.
+  rendering, first-focus bypass links, contextual run names, security headers, and
+  download/reopen behavior.
 - An exact-clean-commit operator-acceptance preparation workspace with machine evidence and
   a deliberately unfilled human observation worksheet.
 - A versioned exact-commit P7 performance control for the synthetic operator, handoff and

@@ -156,6 +156,7 @@ interface decisions remain open.
 | DASH-007 | Provide bounded, keyboard-navigable views for all validated, PASS, FAIL, synthetic and invalid entries without changing the immutable validated workspace or versioned API | index-view filter and invalid-query tests |
 | DASH-008 | Preserve a truthful allowlisted originating view through run detail navigation so the operator can return to the same investigation set without redirects, cookies or mutable server state; reject a run/view mismatch | direct WSGI, real-loopback and installed-wheel return-navigation tests |
 | DASH-009 | Exercise the real rendered dashboard in headless Chromium at desktop and 390-pixel mobile widths, including native keyboard focus/activation, filtered navigation, evidence inspection, handoff download/reopen, security headers and no horizontal page overflow | dedicated pinned-Playwright browser CI job and `browser_tests/test_dashboard_browser.py` |
+| DASH-010 | On dashboard index and run-detail views, make the first focusable control a visible-on-focus page-specific bypass to the result/evidence region; give every index run UUID link a self-contained accessible name with verdict and synthetic-input state | structural target/name assertions and native Chromium Tab/Enter focus checks at desktop/mobile widths |
 
 The dashboard is a read-only presentation of validated portable artifacts. It does not scan
 recursively, watch for live changes, choose among duplicate identities or repair invalid

@@ -32,12 +32,22 @@ class SemanticAudit(HTMLParser):
         self.caption_count = 0
         self.scoped_headers = 0
         self.focus_rule = False
+        self.skip_focus_rule = False
+        self.target_focus_rule = False
         self.responsive_cell_rule = False
+        self.ids: list[str] = []
+        self.tabindex_by_id: dict[str, list[str | None]] = {}
         self.links: list[dict[str, object]] = []
         self._link: dict[str, object] | None = None
 
     def handle_starttag(self, tag, attrs):
         values = dict(attrs)
+        element_id = values.get("id")
+        if element_id is not None:
+            self.ids.append(element_id)
+            self.tabindex_by_id.setdefault(element_id, []).append(
+                values.get("tabindex")
+            )
         if tag == "html":
             self.html_language = values.get("lang")
         elif tag == "main":
@@ -49,7 +59,12 @@ class SemanticAudit(HTMLParser):
         elif tag == "th" and values.get("scope") == "col":
             self.scoped_headers += 1
         elif tag == "a":
-            self._link = {"href": values.get("href"), "text": ""}
+            self._link = {
+                "href": values.get("href"),
+                "text": "",
+                "class": values.get("class", ""),
+                "aria_label": values.get("aria-label"),
+            }
 
     def handle_endtag(self, tag):
         if tag == "a" and self._link is not None:
@@ -61,6 +76,10 @@ class SemanticAudit(HTMLParser):
             self._link["text"] = str(self._link["text"]) + data
         if "a:focus" in data and "outline:" in data:
             self.focus_rule = True
+        if ".skip-link:focus" in data and "top:1rem" in data:
+            self.skip_focus_rule = True
+        if '[tabindex="-1"]:focus' in data and "outline:" in data:
+            self.target_focus_rule = True
         if "th,td" in data and "overflow-wrap:anywhere" in data:
             self.responsive_cell_rule = True
 
@@ -71,10 +90,21 @@ class SemanticAudit(HTMLParser):
         case.assertGreaterEqual(self.caption_count, 1)
         case.assertGreaterEqual(self.scoped_headers, 3)
         case.assertTrue(self.focus_rule)
+        case.assertTrue(self.skip_focus_rule)
+        case.assertTrue(self.target_focus_rule)
         case.assertTrue(self.responsive_cell_rule)
         case.assertTrue(self.links)
-        case.assertTrue(all(item["href"] and str(item["text"]).strip()
-                            for item in self.links))
+        case.assertEqual(len(self.ids), len(set(self.ids)))
+        first = self.links[0]
+        case.assertIn("skip-link", str(first["class"]).split())
+        case.assertTrue(str(first["href"]).startswith("#"))
+        skip_target = str(first["href"])[1:]
+        case.assertEqual(["-1"], self.tabindex_by_id.get(skip_target, []))
+        case.assertTrue(all(
+            item["href"] and (
+                str(item["text"]).strip() or str(item["aria_label"] or "").strip()
+            ) for item in self.links
+        ))
 
 
 class DashboardHTTPEndToEndTests(unittest.TestCase):
@@ -180,6 +210,20 @@ class DashboardHTTPEndToEndTests(unittest.TestCase):
                 audit = SemanticAudit()
                 audit.feed(body)
                 audit.assert_accessible(self)
+                if route == "/":
+                    run_links = [
+                        item for item in audit.links
+                        if str(item["href"]).split("?", 1)[0].count("/") == 2
+                        and str(item["href"]).startswith("/runs/")
+                    ]
+                    self.assertTrue(run_links)
+                    for link in run_links:
+                        label = str(link["aria_label"])
+                        self.assertIn(str(link["text"]).strip(), label)
+                        self.assertRegex(
+                            label,
+                            r"^Open (PASS|FAIL) run .+; synthetic input: (yes|no)$",
+                        )
                 self.assertIn("PASS", body)
 
 

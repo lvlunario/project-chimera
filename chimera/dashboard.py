@@ -164,18 +164,25 @@ class DashboardApp:
         return [body]
 
     @staticmethod
-    def _page(title: str, content: str) -> bytes:
+    def _page(title: str, content: str, *, skip_target: str,
+              skip_label: str) -> bytes:
+        target = escape(skip_target, quote=True)
+        label = escape(skip_label)
         return ("<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\">"
                 "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">"
                 f"<title>{escape(title)}</title><style>"
                 "body{font-family:system-ui,sans-serif;line-height:1.5;max-width:72rem;"
                 "margin:auto;padding:1rem;color:#172033;background:#fff}"
                 "a{color:#0645ad}a:focus{outline:3px solid #ffbf47;outline-offset:2px}"
+                ".skip-link{position:absolute;left:1rem;top:-5rem;padding:.5rem;"
+                "background:#fff;z-index:1}.skip-link:focus{top:1rem}"
+                "[tabindex=\"-1\"]:focus{outline:3px solid #ffbf47;outline-offset:2px}"
                 "table{border-collapse:collapse;width:100%}th,td{border:1px solid #8b95a5;"
                 "padding:.5rem;text-align:left;vertical-align:top;overflow-wrap:anywhere}"
                 "th{background:#eef2f7}"
                 ".pass{color:#176b2c;font-weight:700}.fail,.invalid{color:#a52222;"
                 "font-weight:700}code{overflow-wrap:anywhere}</style></head><body>"
+                f"<a class=\"skip-link\" href=\"#{target}\">{label}</a>"
                 f"<main>{content}</main></body></html>").encode("utf-8")
 
     @staticmethod
@@ -209,12 +216,19 @@ class DashboardApp:
         for run in runs:
             run_id = escape(run["run_id"])
             verdict = escape(run["verdict"])
+            synthetic = "yes" if run["synthetic"] else "no"
+            run_label = escape(
+                f"Open {run['verdict'].upper()} run {run['run_id']}; "
+                f"synthetic input: {synthetic}",
+                quote=True,
+            )
             detail_query = "" if view == "all" else f"?view={view}"
             rows.append(
                 "<tr>"
-                f"<td><a href=\"/runs/{run_id}{detail_query}\"><code>{run_id}</code></a></td>"
+                f"<td><a href=\"/runs/{run_id}{detail_query}\" "
+                f"aria-label=\"{run_label}\"><code>{run_id}</code></a></td>"
                 f"<td><span class=\"{verdict}\">{verdict.upper()}</span></td>"
-                f"<td>{'yes' if run['synthetic'] else 'no'}</td>"
+                f"<td>{synthetic}</td>"
                 f"<td>{escape(run['started_at'])}</td>"
                 "</tr>"
             )
@@ -259,13 +273,17 @@ class DashboardApp:
             "Invalid entries remain visible for investigation.</p>"
             "<nav aria-label=\"Run views\">" + " · ".join(links) + "</nav>"
             f"<p>Current view: <strong>{view_label}</strong></p>"
+            "<h2 id=\"run-results\" tabindex=\"-1\">Run results</h2>"
             f"<table><caption>Validated communications-link runs — {view_label}</caption>"
             "<thead><tr><th scope=\"col\">Run</th><th scope=\"col\">Verdict</th>"
             "<th scope=\"col\">Synthetic</th><th scope=\"col\">Started (UTC)</th>"
             "</tr></thead><tbody>" + "".join(rows) + "</tbody></table>" +
             invalid_section
         )
-        return self._page("Chimera completed runs", content)
+        return self._page(
+            "Chimera completed runs", content,
+            skip_target="run-results", skip_label="Skip to run results",
+        )
 
     def _detail_html(self, completed: CompletedLinkRun, view: str = "all") -> bytes:
         summary = completed.summary()
@@ -303,7 +321,7 @@ class DashboardApp:
             f"<dt>Finished (UTC)</dt><dd>{escape(str(summary['finished_at']))}</dd>"
             f"<dt>Report SHA-256</dt><dd><code>{escape(str(summary['report_sha256']))}</code></dd>"
             "</dl>"
-            "<h2>COM-LINK-001 evidence</h2><dl>"
+            "<h2 id=\"run-evidence\" tabindex=\"-1\">COM-LINK-001 evidence</h2><dl>"
             f"<dt>Threshold</dt><dd>{escape(str(link['threshold_db']))} dB</dd>"
             f"<dt>Minimum</dt><dd>{escape(str(link['minimum_link_margin_db']))} dB</dd>"
             f"<dt>Failing samples</dt><dd>{link['failure_count']}</dd>"
@@ -318,7 +336,10 @@ class DashboardApp:
             f"<a href=\"/api/v1/runs/{run_id}/handoff\">Download audit handoff ZIP</a>"
             "</p>"
         )
-        return self._page(f"Chimera run {run_id}", content)
+        return self._page(
+            f"Chimera run {run_id}", content,
+            skip_target="run-evidence", skip_label="Skip to run evidence",
+        )
 
     def __call__(self, environ: dict, start_response: StartResponse) -> list[bytes]:
         if environ.get("REQUEST_METHOD") != "GET":

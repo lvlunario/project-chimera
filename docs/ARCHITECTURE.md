@@ -1,5 +1,29 @@
 # Architecture decision 0001: deterministic core first
 
+## Decision 0027: bypass repeated controls while retaining run context
+
+November 1, 2026. Bounded P5 accessibility increment; no phase or conformance claim.
+
+Make a page-specific skip link the first focusable element on the dashboard index and
+run-detail views. On the index, place its programmatically focusable target immediately
+after the repeated view navigation and before the run table; on detail, target the evidence
+heading after the run summary. Keep the UUID as visible link text, but give each index run
+link a self-contained accessible name containing the validated verdict and whether its input
+is synthetic. The separately generated readable report retains its own report template and
+is outside this repeated-dashboard-navigation control.
+
+Keep this behavior in script-free semantic HTML and CSS, with no runtime dependency or
+mutable state. Verify unique targets and contextual names structurally, then exercise native
+Tab/Enter activation, resulting focus, contextual role/name and mobile overflow in the pinned
+Chromium job. Update the operator worksheet so the same bypass journey is observable by a
+person against an exact candidate.
+
+Tradeoffs: the accessible name is intentionally more descriptive than the visible UUID, so
+speech output can identify a link without requiring table-cell traversal. Automated markup
+and Chromium evidence reduce a known keyboard burden, but do not establish screen-reader
+interoperability, WCAG conformance, manual-device usability or Leo's P5 acceptance. Those
+observations remain explicit gate inputs.
+
 ## Decision 0026: compose review evidence without turning transport into authority
 
 October 30, 2026. Bounded P7 M4-packet increment; no release, gate or acceptance claim.

@@ -168,6 +168,14 @@ exercise the dashboard against a completed operator run. These automated checks 
 accessibility fundamentals; they do not replace keyboard/browser/device testing or Leo's
 operator validation before P5 acceptance.
 
+The dashboard index and run-detail views must expose a page-specific skip link as their first
+focusable element. The target must be unique and programmatically focusable after the
+repeated controls. The separately generated readable report uses its own report template and
+is outside this bypass-navigation contract. Index run links must retain a visible UUID while
+their accessible name also identifies the validated verdict and synthetic-input state. The
+dependency-free structural audit checks these contracts and duplicate IDs; the browser job
+checks that native activation actually moves focus to the intended region.
+
 An end-to-end standard-library control starts the actual WSGI application on an ephemeral
 IPv4 loopback port and retrieves the list, a filtered view, detail, canonical report, portable
 evidence and requirement bindings over HTTP. It also proves an ambiguous view query receives
@@ -178,11 +186,12 @@ screen-reader, browser/device and human usability testing.
 
 A separate Ubuntu 24.04 CI job installs pinned Playwright test tooling and its matching
 Chromium build, then opens the real loopback dashboard at desktop and 390-pixel mobile widths. It exercises
-native Tab/Enter navigation, visible focus, truthful FAIL-view return, rendered engineering
-details, security headers, responsive overflow and a browser-downloaded handoff reopened by
-the independent bundle inspector. Playwright remains test-only and is not added to the wheel
-or runtime dependencies. This is real-browser automation, not a manual device assessment,
-screen-reader/WCAG conformance claim or Leo's operator acceptance.
+native Tab/Enter navigation, visible and activated bypass focus, contextual run-link role/name,
+truthful FAIL-view return, rendered engineering details, security headers, responsive
+overflow and a browser-downloaded handoff reopened by the independent bundle inspector.
+Playwright remains test-only and is not added to the wheel or runtime dependencies. This is
+real-browser automation, not a manual device assessment, screen-reader/WCAG conformance claim
+or Leo's operator acceptance.
 
 ## Portable handoff boundary
 

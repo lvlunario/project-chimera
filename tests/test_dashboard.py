@@ -73,10 +73,26 @@ class DashboardTests(unittest.TestCase):
             app = DashboardApp(CompletedRunWorkspace.open(root))
 
             all_view = request(app)
+            self.assertIn(
+                b'<a class="skip-link" href="#run-results">Skip to run results</a>',
+                all_view["body"],
+            )
+            self.assertIn(
+                b'<h2 id="run-results" tabindex="-1">Run results</h2>',
+                all_view["body"],
+            )
             self.assertIn(b'aria-label="Run views"', all_view["body"])
             self.assertIn(b'aria-current="page">All validated (2)', all_view["body"])
             self.assertIn(passed.run_id.encode(), all_view["body"])
             self.assertIn(failed.run_id.encode(), all_view["body"])
+            self.assertIn(
+                f'aria-label="Open PASS run {passed.run_id}; synthetic input: no"'.encode(),
+                all_view["body"],
+            )
+            self.assertIn(
+                f'aria-label="Open FAIL run {failed.run_id}; synthetic input: yes"'.encode(),
+                all_view["body"],
+            )
             self.assertIn(b"broken", all_view["body"])
 
             pass_view = request(app, query="view=pass")
@@ -125,6 +141,14 @@ class DashboardTests(unittest.TestCase):
             detail = request(app, f"/runs/{result.run_id}")
             self.assertEqual("200 OK", detail["status"])
             self.assertIn(b"Open readable report", detail["body"])
+            self.assertIn(
+                b'<a class="skip-link" href="#run-evidence">Skip to run evidence</a>',
+                detail["body"],
+            )
+            self.assertIn(
+                b'<h2 id="run-evidence" tabindex="-1">COM-LINK-001 evidence</h2>',
+                detail["body"],
+            )
             self.assertIn(b"COM-LINK-001 evidence", detail["body"])
             self.assertIn(b"Threshold", detail["body"])
             filtered_detail = request(

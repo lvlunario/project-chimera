@@ -794,8 +794,13 @@ cookie or server-side session is involved. The table links to a run detail and i
 or canonical JSON report, portable evidence,
 requirement bindings and deterministic audit bundle. The versioned index is `/api/v1/runs`;
 per-run audit resources are `/api/v1/runs/RUN_ID/report`, `/evidence`, `/bindings` and
-`/handoff`. Use Tab/Shift+Tab and Enter to
-traverse native links; the interface does not require a mouse or JavaScript.
+`/handoff`. Use Tab/Shift+Tab and Enter to traverse native links; the interface does not
+require a mouse or JavaScript. On the index, the first Tab reveals `Skip to run results`;
+Enter moves focus beyond the repeated view controls to the result heading, and the next Tab
+reaches a run when the selected view is nonempty. Run-detail pages provide the equivalent
+`Skip to run evidence` control. The separately generated readable report does not repeat
+these dashboard controls. A run link's accessible name includes its PASS/FAIL verdict and
+`synthetic input: yes/no`, while the UUID stays visible in the table.
 
 At startup Chimera inspects only the workspace's immediate entries, with a 1,000-entry
 limit. Every candidate must pass the same request/evidence/binding/report/HTML agreement
@@ -805,13 +810,15 @@ order choose the displayed record. Restart the command to discover newly added r
 
 Teaching note for Leo: the dashboard is an index of sealed evidence packages, not a repair
 tool. Showing a broken package as “invalid” is safer than silently hiding it, while refusing
-its detail route prevents a polished page from lending it false credibility.
+its detail route prevents a polished page from lending it false credibility. The skip link
+starts hidden off-screen and appears when focused: this avoids repeating five view links on
+every keyboard pass without removing those useful controls for anyone who needs them.
 
 Current boundary: local IPv4 loopback, read-only GET requests, no CORS, accounts, TLS,
 remote hosting, live progress or control. Semantic HTML and keyboard fundamentals are
-implemented. Automated headless-Chromium coverage exercises a native Tab/Enter journey at
-desktop and mobile width; manual-device, screen-reader/WCAG and your operator walkthrough
-remain pending before P5 acceptance.
+implemented. Automated headless-Chromium coverage exercises bypass focus, contextual run-link
+names and a native Tab/Enter journey at desktop and mobile width; manual-device,
+screen-reader/WCAG and your operator walkthrough remain pending before P5 acceptance.
 
 ### P3/P4 integrated candidate control
 

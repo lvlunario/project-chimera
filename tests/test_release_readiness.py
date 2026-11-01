@@ -41,7 +41,7 @@ class ReleaseReadinessTests(unittest.TestCase):
 
     def test_checked_in_manifest_covers_current_review_inputs(self):
         summary = self._validate()
-        self.assertEqual(122, summary["requirement_count"])
+        self.assertEqual(123, summary["requirement_count"])
         self.assertEqual(21, summary["requirement_group_count"])
         self.assertEqual(2, summary["defect_count"])
         self.assertEqual([], summary["open_release_blockers"])
@@ -83,8 +83,8 @@ class ReleaseReadinessTests(unittest.TestCase):
             self.assertEqual("pending", record["m4_decision"])
             self.assertEqual("pending", record["m5_decision"])
             self.assertEqual("not_granted", record["human_acceptance"])
-            self.assertEqual(122, record["requirements"]["declared_count"])
-            self.assertEqual(122, record["requirements"]["covered_count"])
+            self.assertEqual(123, record["requirements"]["declared_count"])
+            self.assertEqual(123, record["requirements"]["covered_count"])
             self.assertEqual(2, record["defects"]["open_count"])
             self.assertEqual([], record["defects"]["open_release_blockers"])
             self.assertEqual(

@@ -141,8 +141,9 @@ approval or phase disposition. Complete it only while reviewing the exact candid
 - [ ] From this exact checkout, start
       `python -m chimera.cli serve-dashboard <acceptance-output>/runs --port 8765` on the
       same computer. The loopback-only prototype is not reachable from a separate phone.
-- [ ] Using only Tab, Shift+Tab and Enter, select FAIL, open the synthetic failure,
-      return to FAIL, reopen it and download the audit handoff ZIP.
+- [ ] Using only Tab, Shift+Tab and Enter, confirm the first Tab reveals
+      `Skip to run results`, then press Enter to activate it; select FAIL, open the synthetic
+      failure, return to FAIL, reopen it and download the audit handoff ZIP.
 - [ ] Confirm COM-LINK-001 is FAIL, threshold is 3.0 dB, minimum is 2.0 dB and the
       failing sample is understandable.
 - [ ] Run `python -m chimera.cli inspect-link <downloaded-zip>` from this exact checkout

@@ -105,18 +105,46 @@ class DashboardBrowserTests(unittest.TestCase):
             ).is_visible())
             self.assertTrue(page.get_by_text("broken-entry", exact=True).is_visible())
 
-            # Native tab order reaches the five bounded views without a pointer.
+            # The first native Tab reveals the bypass link; activation moves focus
+            # past the repeated view controls to the run-result region.
             self.assertEqual(
                 "BODY", page.evaluate("() => document.activeElement.tagName")
             )
             page.keyboard.press("Tab")
             active = page.evaluate(
                 "() => ({tag: document.activeElement.tagName, "
-                "text: document.activeElement.textContent.trim()})"
+                "text: document.activeElement.textContent.trim(), "
+                "top: document.activeElement.getBoundingClientRect().top})"
             )
-            self.assertEqual({"tag": "A", "text": "All validated (3)"}, active)
+            self.assertEqual("A", active["tag"])
+            self.assertEqual("Skip to run results", active["text"])
+            self.assertGreaterEqual(active["top"], 0)
+            page.keyboard.press("Enter")
+            page.wait_for_url(self.base + "/#run-results")
+            target = page.evaluate(
+                "() => ({tag: document.activeElement.tagName, "
+                "id: document.activeElement.id, "
+                "outline: getComputedStyle(document.activeElement).outlineStyle})"
+            )
+            self.assertEqual("H2", target["tag"])
+            self.assertEqual("run-results", target["id"])
+            self.assertEqual("solid", target["outline"])
             page.keyboard.press("Tab")
-            page.keyboard.press("Tab")
+            first_run = page.evaluate(
+                "() => ({tag: document.activeElement.tagName, "
+                "href: document.activeElement.getAttribute('href'), "
+                "name: document.activeElement.getAttribute('aria-label')})"
+            )
+            self.assertEqual("A", first_run["tag"])
+            self.assertTrue(first_run["href"].startswith("/runs/"))
+            self.assertRegex(
+                first_run["name"],
+                r"^Open (PASS|FAIL) run .+; synthetic input: (yes|no)$",
+            )
+
+            # Native tab order still reaches each bounded view without a pointer.
+            page.goto(self.base + "/", wait_until="networkidle")
+            self.focus_link_with_tab(page, "FAIL (2)")
             active = page.evaluate(
                 "() => ({tag: document.activeElement.tagName, "
                 "text: document.activeElement.textContent.trim(), "
@@ -134,6 +162,12 @@ class DashboardBrowserTests(unittest.TestCase):
                 page.locator('a[aria-current="page"]').inner_text(),
             )
             self.assertTrue(page.get_by_text("Current view: FAIL", exact=True).is_visible())
+            self.assertTrue(page.get_by_role(
+                "link",
+                name=(f"Open FAIL run {self.synthetic_failure.run_id}; "
+                      "synthetic input: yes"),
+                exact=True,
+            ).is_visible())
 
             self.focus_link_with_tab(page, self.synthetic_failure.run_id)
             page.keyboard.press("Enter")
@@ -144,9 +178,31 @@ class DashboardBrowserTests(unittest.TestCase):
             self.assertTrue(page.get_by_role(
                 "heading", name="COM-LINK-001 evidence", exact=True
             ).is_visible())
+            page.keyboard.press("Tab")
+            self.assertEqual(
+                "Skip to run evidence",
+                page.evaluate("() => document.activeElement.textContent.trim()"),
+            )
+            page.keyboard.press("Enter")
+            page.wait_for_url(
+                self.base + f"/runs/{self.synthetic_failure.run_id}"
+                "?view=fail#run-evidence"
+            )
+            self.assertEqual(
+                {"tag": "H2", "id": "run-evidence", "outline": "solid"},
+                page.evaluate(
+                    "() => ({tag: document.activeElement.tagName, "
+                    "id: document.activeElement.id, "
+                    "outline: getComputedStyle(document.activeElement).outlineStyle})"
+                ),
+            )
             self.assertTrue(page.get_by_role("cell", name="2.0", exact=True).is_visible())
             self.assertTrue(page.get_by_text("yes", exact=True).is_visible())
 
+            page.goto(
+                self.base + f"/runs/{self.synthetic_failure.run_id}?view=fail",
+                wait_until="networkidle",
+            )
             self.focus_link_with_tab(page, "FAIL runs")
             with page.expect_navigation(wait_until="networkidle"):
                 page.keyboard.press("Enter")
@@ -180,11 +236,11 @@ class DashboardBrowserTests(unittest.TestCase):
         page = self.browser.new_page(viewport={"width": 390, "height": 844})
         try:
             paths = (
-                "/",
-                "/?view=fail",
-                f"/runs/{self.natural_failure.run_id}?view=fail",
+                ("/", "run-results"),
+                ("/?view=fail", "run-results"),
+                (f"/runs/{self.natural_failure.run_id}?view=fail", "run-evidence"),
             )
-            for path in paths:
+            for path, target_id in paths:
                 response = page.goto(self.base + path, wait_until="networkidle")
                 self.assertIsNotNone(response)
                 self.assertEqual(200, response.status)
@@ -198,6 +254,37 @@ class DashboardBrowserTests(unittest.TestCase):
                     dimensions["scrollWidth"], dimensions["innerWidth"], path
                 )
                 self.assertGreaterEqual(dimensions["bodyFont"], 16.0)
+                page.keyboard.press("Tab")
+                self.assertEqual(
+                    "skip-link",
+                    page.evaluate("() => document.activeElement.className"),
+                )
+                self.assertGreaterEqual(
+                    page.evaluate(
+                        "() => document.activeElement.getBoundingClientRect().left"
+                    ),
+                    0,
+                )
+                focused = page.evaluate(
+                    "() => ({innerWidth: window.innerWidth, "
+                    "scrollWidth: document.documentElement.scrollWidth, "
+                    "right: document.activeElement.getBoundingClientRect().right})"
+                )
+                self.assertLessEqual(focused["scrollWidth"], focused["innerWidth"])
+                self.assertLessEqual(focused["right"], focused["innerWidth"])
+                page.keyboard.press("Enter")
+                page.wait_for_url(self.base + path + f"#{target_id}")
+                self.assertEqual(
+                    {"tag": "H2", "id": target_id},
+                    page.evaluate(
+                        "() => ({tag: document.activeElement.tagName, "
+                        "id: document.activeElement.id})"
+                    ),
+                )
+                self.assertLessEqual(
+                    page.evaluate("() => document.documentElement.scrollWidth"),
+                    390,
+                )
             self.assertTrue(page.get_by_role(
                 "link", name="FAIL runs", exact=True
             ).is_visible())
