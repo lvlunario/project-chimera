@@ -70,17 +70,18 @@ the [October 26 weekly-review record](https://github.com/lvlunario/project-chime
 the [October 27 performance-baseline record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-10-27.md),
 the [October 28 threat-model record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-10-28.md),
 the [October 29 readiness-inventory record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-10-29.md),
-and the [October 31 M4-packet record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-10-31.md)
+the [October 31 M4-packet record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-10-31.md),
+and the [November 1 dashboard-accessibility record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-01.md)
 record candidate-specific local, independent and hosted results. Do not infer a new
 candidate's status from an earlier successful run.
 
-**Acceptance state — October 31:** P0 scope (D-001–003) is approved by delegation.
+**Acceptance state — November 1:** P0 scope (D-001–003) is approved by delegation.
 P1 and P2 are conditionally accepted for continued development under the
 [delegated decision record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/reviews/2026-09-22-delegated-decisions.md). Leo's personal walkthroughs remain unperformed;
 final product validation remains open. P3/P4/P5 remain in progress; P7 release preparation
 now includes versioned performance, threat-model, readiness-inventory and bounded M4-packet
-controls. The October 17 M2 exact-candidate disposition is fourteen days late; November 7 is
-forecast amber with seven calendar days remaining while the
+controls. The October 17 M2 exact-candidate disposition is fifteen days late; November 7 is
+forecast amber with six calendar days remaining while the
 prepared operator worksheet and human walkthrough remain open. Synthetic fixtures establish software
 behavior; authorized measured-data validation, production deployment and certification are
 not claimed.
@@ -100,8 +101,9 @@ All dates below are 2026 delivery targets, subject to the documented scope and r
 | December 12 | Stabilized prototype, manuals and final acceptance demonstration |
 
 The implemented dashboard lists sealed completed runs, exposes PASS/FAIL and synthetic
-status, shows failing samples, and links canonical evidence, reports and handoff bundles.
-It is a local read-only prototype, not a hosted multi-user service.
+status, provides first-focus bypass navigation and contextual run-link names, shows failing
+samples, and links canonical evidence, reports and handoff bundles. It is a local read-only
+prototype, not a hosted multi-user service.
 
 ## Try the current foundation
 

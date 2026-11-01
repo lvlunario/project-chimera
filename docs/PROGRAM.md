@@ -19,7 +19,7 @@ The 100-developer framing expresses ambition, not actual staffing or throughput.
 | P2 | Durable execution | SQLite run storage; restart recovery and idempotency tested | Conditionally accepted for continued development September 22; bounded recovery limitations retained |
 | P3 | Engineering adapters | Synthetic telemetry ingestion and deterministic fault injection with reference fixtures | In progress; strict CSV ingestion, deterministic faults, integrated operator path and exact-candidate acceptance preparation implemented; human validation pending |
 | P4 | Verification evidence | Requirement mapping, reproducible JSON/HTML reports, missing-evidence detection | In progress; canonical reports, deterministic handoff, missing-evidence control and exact-candidate preparation implemented; overdue gate disposition pending |
-| P5 | Operator product | API and accessible dashboard; end-to-end acceptance tests | In progress; API/dashboard, investigation views, handoff download, automated Chromium and operator worksheet implemented; manual-device, screen-reader and operator acceptance pending |
+| P5 | Operator product | API and accessible dashboard; end-to-end acceptance tests | In progress; API/dashboard, investigation views, handoff download, first-focus bypass/contextual run names, automated Chromium controls and operator worksheet implemented; manual-device, screen-reader and operator acceptance pending |
 | P6 | AI assistance | Provider adapter, bounded permissions, evaluation dataset and measured baseline comparison | Planned |
 | P7 | Release | Reproducible deployment, performance results, threat model, demo and operator guide | In progress; performance, threat-model, release-readiness and bounded M4 packet controls verified on exact Python 3.11/3.12 candidates; M4/M5 and human decisions pending |
 
@@ -45,15 +45,17 @@ AI assistance cannot decide that missing evidence is a passing verification.
 - Avoid paid infrastructure and live hardware operations until separately authorized.
 
 ## Next tasks
-Current direction, October 31: the October 17 M2 exact-candidate disposition is fourteen days
-late. The dated P3/P4/P5 operator-acceptance preparation packet now covers PASS, natural and
+Current direction, November 1: the October 17 M2 exact-candidate disposition is fifteen days
+late. The dated P3/P4/P5 operator-acceptance preparation packet covers PASS, natural and
 synthetic FAIL, malformed and missing evidence, restart, report/handoff agreement and the
-dashboard journey against exact commit `932062a`. Hold feature scope and execute the packet;
-record actual manual-device, screen-reader and Leo operator observations for the bounded
-dashboard tracked in
+dashboard journey against exact commit `932062a`. A bounded DASH-010 increment now makes
+the first keyboard focus a page-specific bypass on index/run-detail views and gives each run
+link verdict/synthetic context; this is automated engineering evidence, not accessibility
+acceptance. Hold feature scope and execute the packet; record actual manual-device,
+screen-reader and Leo operator observations for the bounded dashboard tracked in
 [issue #19](https://github.com/lvlunario/project-chimera/issues/19) before P5 acceptance.
 Use the [October 26 weekly review](reviews/2026-10-26.md) to resolve D-004–006 before P5
-disposition. November 7 is amber with seven calendar days remaining; November 28 and
+disposition. November 7 is amber with six calendar days remaining; November 28 and
 December 12 remain achievable with scope frozen.
 P7 performance work is tracked in
 [issue #21](https://github.com/lvlunario/project-chimera/issues/21). Its fixed synthetic
@@ -63,15 +65,17 @@ six trust boundaries and their tracked control evidence without widening the app
 local-only product boundary or claiming security acceptance. Its exact hosted candidate
 assessment is green. The release-readiness inventory in
 [issue #23](https://github.com/lvlunario/project-chimera/issues/23) now accounts for all
-122 declared requirements across 21 groups, both open defect issues, zero declared release
-blockers, six required guides and 49 headings on an exact hosted candidate. The bounded M4
-packet tracked in [issue #24](https://github.com/lvlunario/project-chimera/issues/24) now
-assembles those records, the complete operator workspace, exact candidate guides and a blank
-acceptance script into a fixed, portably reinspected ZIP. Exact candidate `5b5b1ed` passed
+123 declared requirements across 21 groups, both open defect issues, zero declared release
+blockers, six required guides and 49 headings on an exact hosted candidate. The October 31
+bounded M4 packet tracked in
+[issue #24](https://github.com/lvlunario/project-chimera/issues/24) assembled its then-current
+records, complete operator workspace, exact candidate guides and a blank acceptance script
+into a fixed, portably reinspected ZIP. Exact candidate `5b5b1ed` passed
 PACKET-001–006 on Python 3.11 and 3.12. This is a complete review binder, not M4 permission,
-M5 acceptance or proof of authorship. Next support the November 7 operator walkthrough,
-record actual observations and decisions, then refresh live defect state and rebuild from the
-chosen clean M4 candidate.
+M5 acceptance or proof of authorship. Because DASH-010 changes the declared inventory after
+that packet candidate, refresh live defect state and rebuild the packet from the chosen clean
+M4 candidate after supporting the November 7 operator walkthrough and recording actual
+observations and decisions.
 The deterministic P4 handoff work is tracked in
 [issue #20](https://github.com/lvlunario/project-chimera/issues/20).
 [Delegated decisions](reviews/2026-09-22-delegated-decisions.md)
