@@ -45,17 +45,15 @@ AI assistance cannot decide that missing evidence is a passing verification.
 - Avoid paid infrastructure and live hardware operations until separately authorized.
 
 ## Next tasks
-Current direction, November 1: the October 17 M2 exact-candidate disposition is fifteen days
-late. The dated P3/P4/P5 operator-acceptance preparation packet covers PASS, natural and
-synthetic FAIL, malformed and missing evidence, restart, report/handoff agreement and the
-dashboard journey against exact commit `932062a`. A bounded DASH-010 increment now makes
-the first keyboard focus a page-specific bypass on index/run-detail views and gives each run
-link verdict/synthetic context; this is automated engineering evidence, not accessibility
-acceptance. Hold feature scope and execute the packet; record actual manual-device,
-screen-reader and Leo operator observations for the bounded dashboard tracked in
+Current direction, November 2: the October 17 M2 exact-candidate disposition is sixteen days
+late. The [November 2 weekly review](reviews/2026-11-02.md) pins published commit `9a3320e`,
+separates deterministic controls, rendered-Chromium behavior and human validation, and gives
+Leo a 25–30 minute keyboard, failure-trace and handoff exercise. It is a prepared packet, not
+a completed meeting or approval. Hold feature scope and execute it; record actual
+manual-device, screen-reader and Leo operator observations for the bounded dashboard tracked in
 [issue #19](https://github.com/lvlunario/project-chimera/issues/19) before P5 acceptance.
-Use the [October 26 weekly review](reviews/2026-10-26.md) to resolve D-004–006 before P5
-disposition. November 7 is amber with six calendar days remaining; November 28 and
+Use the review to resolve D-004–006 and disposition P3/P4/P5 separately. November 7 is amber
+with five calendar days remaining; November 28 and
 December 12 remain achievable with scope frozen.
 P7 performance work is tracked in
 [issue #21](https://github.com/lvlunario/project-chimera/issues/21). Its fixed synthetic
