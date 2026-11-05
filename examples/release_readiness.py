@@ -34,6 +34,10 @@ _SEVERITIES = {"blocker", "major", "minor"}
 _EXPECTED_OPEN_DEFECTS = {
     4: "Defect: mutable dependency list can bypass failure blocking",
     14: "Defect: ambient Decimal exponent case changes deterministic evidence identity",
+    25: (
+        "Defect: operator worksheet implies unsupported cross-platform "
+        "screen-reader setup"
+    ),
 }
 _EXPECTED_GUIDE_PATHS = (
     "README.md",

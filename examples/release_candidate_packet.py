@@ -137,6 +137,7 @@ CANDIDATE_FILES = (
     "docs/release-readiness-v1.json",
     "docs/threat-model-v1.json",
     "docs/reviews/2026-10-24-p345-operator-acceptance.md",
+    "docs/reviews/2026-11-02.md",
 )
 ACCEPTANCE_FIELDS = {
     "schema_version", "record_type", "candidate_commit_sha",

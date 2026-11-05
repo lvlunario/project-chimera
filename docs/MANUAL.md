@@ -848,10 +848,14 @@ exercise, expected output, coverage matrix and remaining gate work.
 ### P3/P4/P5 operator acceptance preparation
 
 Use this only from the exact clean candidate checkout. Replace `CANDIDATE_COMMIT` with the
-full 40-character commit named in the
-[October 24 review packet](reviews/2026-10-24-p345-operator-acceptance.md); the command refuses
-a different or dirty `HEAD`, an output inside the repository, and any existing or symbolic-
-link output.
+full 40-character commit explicitly published in the latest dated acceptance record or active
+draft-PR update; never infer it from a branch name or reuse an older packet's pinned SHA. The
+[November 2 exact-candidate review](reviews/2026-11-02.md) records its then-current candidate
+and remains a runbook, but its pinned commit predates later hardening and is not the current
+candidate. The
+[October 24 detailed packet](reviews/2026-10-24-p345-operator-acceptance.md) remains the
+phase-checklist crosswalk. The command refuses a different or dirty `HEAD`, an output inside
+the repository, and any existing or symbolic-link output.
 
 ```bash
 git switch --detach CANDIDATE_COMMIT
@@ -884,11 +888,18 @@ python -m chimera.cli serve-dashboard \
 
 The worksheet guides the same-computer keyboard journey, report/handoff inspection and
 actual observation record. It is deliberately generated with every human field unchecked
-and every phase disposition pending. The loopback-only server cannot be tested from a
-separate phone without changing the approved network boundary. Record a physical-device
-observation only when the browser runs on that same device under an explicitly supported
-setup; record screen-reader testing only with an actual combination such as NVDA/Windows or
-VoiceOver/macOS. Automated Chromium and a 390-pixel viewport do not fill those fields.
+and every phase disposition pending. Before the 25–30 minute review, prepare the same-computer
+Linux/local-filesystem checkout with Git, Python 3.11 or 3.12 and a desktop browser, then run
+from the clone root with output outside the repository. The review must compare the P3 source
+CSV/fault plan and synthetic limitation, trace P4 source identity through request,
+COM-LINK-001, JSON/HTML reports and handoff, and record D-004–006 plus P3/P4/P5 separately.
+The loopback-only server cannot be tested from a separate phone without changing the approved
+network boundary. Record a physical-device observation only when the browser runs on that
+same device under an explicitly supported setup. Record screen-reader evidence only from an
+actually used compatible arrangement such as Orca/Linux; other operating systems require a
+separately prepared supported setup, otherwise leave the field unperformed. Automated
+Chromium and a 390-pixel viewport do not fill those fields. A critical acceptance blocker
+requires correction or an explicit scope/baseline change, not a conditions label.
 
 Teaching note for Leo: this workspace is a prepared lab bench. Automation lays out and
 checks the instruments, samples and sealed evidence, while the blank worksheet preserves

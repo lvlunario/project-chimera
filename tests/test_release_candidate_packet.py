@@ -16,8 +16,8 @@ from examples import operator_acceptance_prep, release_candidate_packet
 
 class ReleaseCandidatePacketTests(unittest.TestCase):
     candidate = "a" * 40
-    generated = "2026-10-30T10:00:00Z"
-    source_generated = "2026-10-30T09:59:00Z"
+    generated = "2026-11-05T10:30:00Z"
+    source_generated = "2026-11-05T10:29:00Z"
 
     def _acceptance_workspace(self, root: Path) -> Path:
         root.mkdir(parents=True, exist_ok=True)
@@ -784,7 +784,7 @@ class ReleaseCandidatePacketTests(unittest.TestCase):
             future_members = dict(members)
             performance_path = release_candidate_packet.ASSESSMENT_NAMES["performance"]
             performance = json.loads(future_members[performance_path].decode("utf-8"))
-            performance["generated_at_utc"] = "2026-10-30T10:00:01Z"
+            performance["generated_at_utc"] = "2026-11-05T10:30:01Z"
             future_members[performance_path] = release_candidate_packet._compact(
                 performance
             )

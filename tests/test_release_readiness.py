@@ -41,9 +41,9 @@ class ReleaseReadinessTests(unittest.TestCase):
 
     def test_checked_in_manifest_covers_current_review_inputs(self):
         summary = self._validate()
-        self.assertEqual(123, summary["requirement_count"])
+        self.assertEqual(124, summary["requirement_count"])
         self.assertEqual(21, summary["requirement_group_count"])
-        self.assertEqual(2, summary["defect_count"])
+        self.assertEqual(3, summary["defect_count"])
         self.assertEqual([], summary["open_release_blockers"])
         self.assertEqual(6, summary["guide_count"])
         self.assertEqual(49, summary["guide_heading_count"])
@@ -55,6 +55,19 @@ class ReleaseReadinessTests(unittest.TestCase):
         evidence_paths = {item["path"] for item in summary["evidence_files"]}
         self.assertIn("docs/REQUIREMENTS.md", evidence_paths)
         self.assertIn("docs/release-readiness-v1.json", evidence_paths)
+        defects = {
+            item["issue_number"]: item
+            for item in self.document["defect_snapshot"]["open_defects"]
+        }
+        self.assertEqual(
+            "fixed_verified_pending_pr_integration",
+            defects[25]["engineering_disposition"],
+        )
+        self.assertFalse(defects[25]["release_blocker"])
+        self.assertIn(
+            "tests/test_operator_acceptance_prep.py",
+            defects[25]["evidence_paths"],
+        )
         self.assertEqual(
             list(release_readiness._PENDING_HUMAN_EVIDENCE),
             summary["pending_human_evidence"],
@@ -75,7 +88,7 @@ class ReleaseReadinessTests(unittest.TestCase):
                 record = release_readiness.assess_release_readiness(
                     output,
                     candidate_commit=self.candidate,
-                    generated_at_utc="2026-10-29T11:00:00Z",
+                    generated_at_utc="2026-11-05T10:25:00Z",
                 )
             self.assertEqual(2, validate_candidate.call_count)
             self.assertEqual("review_inputs_complete", record["status"])
@@ -83,9 +96,9 @@ class ReleaseReadinessTests(unittest.TestCase):
             self.assertEqual("pending", record["m4_decision"])
             self.assertEqual("pending", record["m5_decision"])
             self.assertEqual("not_granted", record["human_acceptance"])
-            self.assertEqual(123, record["requirements"]["declared_count"])
-            self.assertEqual(123, record["requirements"]["covered_count"])
-            self.assertEqual(2, record["defects"]["open_count"])
+            self.assertEqual(124, record["requirements"]["declared_count"])
+            self.assertEqual(124, record["requirements"]["covered_count"])
+            self.assertEqual(3, record["defects"]["open_count"])
             self.assertEqual([], record["defects"]["open_release_blockers"])
             self.assertEqual(
                 release_readiness.hashlib.sha256(
@@ -206,7 +219,7 @@ class ReleaseReadinessTests(unittest.TestCase):
                 release_readiness.ReleaseReadinessError, "cannot be later"):
             release_readiness._build_assessment(
                 candidate_commit=self.candidate,
-                generated_at_utc="2026-10-29T11:00:00Z",
+                generated_at_utc="2026-11-05T10:25:00Z",
                 manifest_content=self.manifest_content,
                 summary=summary,
             )
@@ -220,7 +233,7 @@ class ReleaseReadinessTests(unittest.TestCase):
         summary = self._validate(document)
         record = release_readiness._build_assessment(
             candidate_commit=self.candidate,
-            generated_at_utc="2026-10-29T11:00:00Z",
+            generated_at_utc="2026-11-05T10:25:00Z",
             manifest_content=self.manifest_content,
             summary=summary,
         )
@@ -280,7 +293,7 @@ class ReleaseReadinessTests(unittest.TestCase):
     def test_cli_uses_pass_label_without_claiming_acceptance(self):
         record = release_readiness._build_assessment(
             candidate_commit=self.candidate,
-            generated_at_utc="2026-10-29T11:00:00Z",
+            generated_at_utc="2026-11-05T10:25:00Z",
             manifest_content=self.manifest_content,
             summary=self._validate(),
         )

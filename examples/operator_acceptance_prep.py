@@ -130,9 +130,23 @@ approval or phase disposition. Complete it only while reviewing the exact candid
 - Candidate commit: `{candidate_commit}`
 - Engineering preparation record: `acceptance-preparation.json`
 - Reviewer:
+- Review method: personally executed / observed / document review / deferred
 - Review date/time and timezone:
-- Operating system and desktop browser:
-- Screen reader and version, if used:
+- Actual Linux distribution and desktop browser/version:
+- Python version (3.11 or 3.12):
+- Assistive technology and version, if actually used:
+
+## Prepared review environment — complete before the timed review
+
+- [ ] Use a prepared same-computer Linux/local-filesystem environment with Git, Python 3.11
+      or 3.12 and a desktop browser. Run commands from the clone root.
+- [ ] Finish checkout, installation and environment setup before the 25–30 minute review.
+      A native Windows/macOS setup failure is not evidence from this Linux-only preparation.
+- [ ] Keep the acceptance output outside the repository and use only this worksheet's exact
+      candidate. Do not use a directory containing `.PUBLISHING`.
+- [ ] Record screen-reader evidence only from the actually used same-computer compatible
+      arrangement, such as Orca/Linux. Other operating-system arrangements require a
+      separately prepared supported setup; otherwise leave the observation not performed.
 
 ## Guided operator journey
 
@@ -150,6 +164,15 @@ approval or phase disposition. Complete it only while reviewing the exact candid
       and compare its run ID/verdict with the dashboard and file handoff.
 - [ ] Inspect the PASS and natural FAIL runs; confirm labels and the next action are
       understandable without developer assistance.
+- [ ] For P3, inspect `examples/fixtures/link_margin_passed.csv`,
+      `examples/fixtures/link_margin_failed.csv` and
+      `examples/fixtures/link_fault_plan.json`. Compare the selected source sample, literal
+      fault replacement, 3.0 dB threshold and resulting 2.0 dB minimum. Record that synthetic
+      evidence validates software behavior, not measured radio performance.
+- [ ] For P4, trace the synthetic failure from source/fault-plan identity through
+      `request.json`, COM-LINK-001, canonical `report.json`, readable `report.html` and the
+      inspected handoff. Explain the failure and next investigation step without asking a
+      developer to reconstruct it.
 - [ ] Review the stored error text for all three malformed-input controls. If useful, rerun
       `python -m chimera.cli verify-link <acceptance-output>/inputs/CASE.csv`
       with `--threshold-db 3.0` and a new outside-checkout `--output`; confirm no run state.
@@ -164,9 +187,14 @@ Desktop browser diversity (browser/version and result):
 
 Physical-device observation within the declared loopback boundary:
 
-Screen-reader observation (for example NVDA/Windows or VoiceOver/macOS):
+Screen-reader observation (actual supported arrangement, for example Orca/Linux; otherwise
+NOT PERFORMED):
 
 WCAG observations; this worksheet does not itself establish conformance:
+
+P3 source/fault-plan comparison and synthetic-data limitation:
+
+P4 input → requirement → JSON/HTML/handoff trace and failure explanation:
 
 Labels, navigation or instructions that were confusing:
 
@@ -176,11 +204,20 @@ Assisted steps, if any:
 
 ## Phase disposition — pending until Leo responds
 
-- P3 verification/validation: pending
-- P4 verification/validation: pending
-- P5 verification/validation: pending
-- Decision: pending / approve / approve with conditions / request changes / defer
-- Conditions, owner and due date:
+- D-004 response: pending / approve / approve with conditions / request changes / defer
+- D-004 conditions, owner and due date:
+- D-005 response: pending / approve / approve with conditions / request changes / defer
+- D-005 conditions, owner and due date:
+- D-006 response: pending / approve / approve with conditions / request changes / defer
+- D-006 conditions, owner and due date:
+- P3 decision: pending / approve / approve with conditions / request changes / defer
+- P3 conditions, owner and due date:
+- P4 decision: pending / approve / approve with conditions / request changes / defer
+- P4 conditions, owner and due date:
+- P5 decision: pending / approve / approve with conditions / request changes / defer
+- P5 conditions, owner and due date:
+- Critical acceptance blockers require correction or an explicit scope/baseline change;
+  they cannot be waived by wording them as conditions.
 - Actual response (verbatim) and response date/time:
 """
 

@@ -1,7 +1,7 @@
 {
   "defect_snapshot": {
     "github_repository": "lvlunario/project-chimera",
-    "observed_at_utc": "2026-10-29T10:47:31Z",
+    "observed_at_utc": "2026-11-05T10:20:11Z",
     "open_defects": [
       {
         "engineering_disposition": "fixed_verified_pending_pr_integration",
@@ -26,6 +26,19 @@
         "release_blocker": false,
         "severity": "major",
         "title": "Defect: ambient Decimal exponent case changes deterministic evidence identity"
+      },
+      {
+        "engineering_disposition": "fixed_verified_pending_pr_integration",
+        "evidence_paths": [
+          "docs/MANUAL.md",
+          "examples/operator_acceptance_prep.py",
+          "tests/test_operator_acceptance_prep.py"
+        ],
+        "github_state": "open",
+        "issue_number": 25,
+        "release_blocker": false,
+        "severity": "major",
+        "title": "Defect: operator worksheet implies unsupported cross-platform screen-reader setup"
       }
     ],
     "source": "connected GitHub issue search"
@@ -137,7 +150,9 @@
   "requirement_groups": [
     {
       "evidence_paths": [
+        "docs/MANUAL.md",
         "docs/reviews/2026-10-24-p345-operator-acceptance.md",
+        "docs/reviews/2026-11-02.md",
         "examples/operator_acceptance_prep.py",
         "tests/test_operator_acceptance_prep.py"
       ],
@@ -147,7 +162,8 @@
         "ACCEPT-002",
         "ACCEPT-003",
         "ACCEPT-004",
-        "ACCEPT-005"
+        "ACCEPT-005",
+        "ACCEPT-006"
       ]
     },
     {

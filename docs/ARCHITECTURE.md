@@ -1,5 +1,29 @@
 # Architecture decision 0001: deterministic core first
 
+## Decision 0028: bind acceptance prompts to an executable review environment
+
+November 5, 2026. Acceptance-evidence correction; no phase or accessibility claim.
+
+Treat the generated operator worksheet as a candidate-bound control surface. Name the
+environment the repository preparation actually supports: a prepared same-computer Linux and
+local-filesystem checkout with Git, Python 3.11/3.12, a desktop browser, commands run from the
+clone root and output outside the repository. Keep setup outside the 25–30 minute review.
+Allow assistive-technology evidence only from the arrangement actually prepared and used,
+such as Orca/Linux. A Windows or macOS observation needs a separately prepared supported path;
+the Linux-only preparation cannot imply that support.
+
+Require the worksheet to expose the evidence chain a phase decision depends on. P3 compares
+the source CSV, fault plan, threshold/result and synthetic limitation. P4 traces source and
+fault identity through request, COM-LINK-001, canonical JSON, readable HTML and independently
+inspected handoff. D-004–006 and P3/P4/P5 are recorded separately. A critical blocker requires
+correction or an explicit scope/baseline change; it cannot be converted to acceptance by a
+conditions label. Select the candidate only from the latest explicit dated record or draft-PR
+update, never from a moving branch or an older packet SHA.
+
+Tradeoffs: the worksheet becomes longer and environment-specific, but it can no longer
+manufacture cross-platform or phase-complete evidence from a Linux automation path. Manual
+observations, WCAG conformance and Leo's decisions remain unperformed until actually recorded.
+
 ## Decision 0027: bypass repeated controls while retaining run context
 
 November 1, 2026. Bounded P5 accessibility increment; no phase or conformance claim.

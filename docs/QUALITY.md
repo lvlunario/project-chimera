@@ -238,3 +238,13 @@ Manual keyboard/usability, browser diversity, physical-device and screen-reader/
 must state the actual environment and observer later. A headless browser or responsive
 viewport cannot be relabeled as those observations, and automation cannot record Leo's gate
 decision.
+
+The generated worksheet is a versioned acceptance-control surface, not informal prose. Its
+canonical contract requires a prepared same-computer Linux/local-filesystem checkout, Git,
+Python 3.11/3.12, a desktop browser, setup outside the timed review, the clone root as the
+command context and output outside the repository. Screen-reader evidence is valid only for
+the actually used compatible arrangement (for example Orca/Linux); another operating system
+needs a separately prepared supported setup. Permanent regression tests require the P3
+source/fault-plan and synthetic-limit comparison, the P4 source-to-JSON/HTML/handoff trace,
+D-004–006, separate P3/P4/P5 decisions and fail-closed critical-blocker wording. These prompts
+do not constitute observations or approval.

@@ -4,6 +4,7 @@ from hashlib import sha256
 import json
 import os
 from pathlib import Path
+import re
 import subprocess
 import tempfile
 import unittest
@@ -143,7 +144,7 @@ class OperatorAcceptancePreparationTests(unittest.TestCase):
             self.assertIn("**NOT PERFORMED.**", worksheet)
             self.assertIn("- [ ]", worksheet)
             self.assertNotIn("- [x]", worksheet.lower())
-            self.assertIn("P5 verification/validation: pending", worksheet)
+            self.assertIn("P5 decision: pending", worksheet)
 
             before = self._tree_bytes(output)
             with self.assertRaisesRegex(
@@ -151,6 +152,53 @@ class OperatorAcceptancePreparationTests(unittest.TestCase):
                     "already exists"):
                 self._prepare(output)
             self.assertEqual(before, self._tree_bytes(output))
+
+    def test_worksheet_requires_supported_environment_and_separate_dispositions(self):
+        worksheet = operator_acceptance_prep._worksheet(self.candidate)
+        required = (
+            "same-computer Linux/local-filesystem environment",
+            "Git, Python 3.11",
+            "desktop browser",
+            "Run commands from the clone root",
+            "before the 25–30 minute review",
+            "output outside the repository",
+            "Orca/Linux",
+            "link_margin_passed.csv",
+            "link_margin_failed.csv",
+            "link_fault_plan.json",
+            "evidence validates software behavior",
+            "request.json",
+            "report.json",
+            "report.html",
+            "inspected handoff",
+            "D-004 response: pending",
+            "D-004 conditions, owner and due date",
+            "D-005 response: pending",
+            "D-005 conditions, owner and due date",
+            "D-006 response: pending",
+            "D-006 conditions, owner and due date",
+            "P3 decision: pending",
+            "P3 conditions, owner and due date",
+            "P4 decision: pending",
+            "P4 conditions, owner and due date",
+            "P5 decision: pending",
+            "P5 conditions, owner and due date",
+            "Critical acceptance blockers require correction",
+            "NOT PERFORMED",
+        )
+        for phrase in required:
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, worksheet)
+        self.assertNotIn("NVDA/Windows", worksheet)
+        self.assertNotIn("VoiceOver/macOS", worksheet)
+        self.assertNotIn("- [x]", worksheet.lower())
+        self.assertEqual(
+            [self.candidate],
+            re.findall(r"(?<![0-9a-f])[0-9a-f]{40}(?![0-9a-f])", worksheet),
+        )
+        self.assertNotIn(
+            "9a3320e975a42b6306abad274fc72acaad4f3ac6", worksheet
+        )
 
     def test_candidate_checkout_validation_fails_closed_before_output(self):
         invalid = ("", "abc", "A" * 40, " " + "a" * 40, "g" * 40)

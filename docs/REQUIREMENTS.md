@@ -113,11 +113,14 @@ it is not a new trusted product-evidence schema and cannot record human acceptan
 | ACCEPT-003 | Prove completed resume preserves the five portable artifacts, repeated handoff exports are byte-identical and independently inspectable, and dashboard download bytes/headers agree with file export | canonical preparation record and integration assertions |
 | ACCEPT-004 | Write one canonical UTF-8 engineering record with only relative paths, exact byte/SHA-256 identities for retained inputs/runs/handoffs/worksheet, twice-checked candidate identity, synthetic limits and explicit `pending_human_observation` acceptance state | record reopen/digest/path tests |
 | ACCEPT-005 | Generate a separate unchecked worksheet whose keyboard, browser/device, screen-reader/WCAG, operator-usability, Leo-validation and phase-disposition fields remain unperformed/pending | worksheet truthfulness tests and manual inspection |
+| ACCEPT-006 | Bind the generated worksheet to the prepared same-computer Linux/local-filesystem environment; require P3 source/fault-plan comparison and synthetic limitation, P4 JSON/HTML/handoff tracing, separate D-004–006 and P3/P4/P5 dispositions, and correction or an explicit scope/baseline change for critical blockers | worksheet environment/disposition contract tests; issue #25 |
 
 The preparation command is verified in normal and optimized regression runs and as a
 separate exact-checkout CI step on Python 3.11/3.12. Browser automation remains the dedicated
 Chromium job. A 390-pixel emulated viewport is not a physical-device observation, and a
 headless browser is not screen-reader/WCAG or human-usability acceptance.
+Cross-platform assistive-technology evidence requires its own prepared supported arrangement;
+the repository-level acceptance command does not establish one.
 
 ## Completed-run handoff bundle v1
 
