@@ -45,16 +45,22 @@ AI assistance cannot decide that missing evidence is a passing verification.
 - Avoid paid infrastructure and live hardware operations until separately authorized.
 
 ## Next tasks
-Current direction, November 2: the October 17 M2 exact-candidate disposition is sixteen days
-late. The [November 2 weekly review](reviews/2026-11-02.md) pins published commit `9a3320e`,
-separates deterministic controls, rendered-Chromium behavior and human validation, and gives
-Leo a 25–30 minute keyboard, failure-trace and handoff exercise. It is a prepared packet, not
-a completed meeting or approval. Hold feature scope and execute it; record actual
-manual-device, screen-reader and Leo operator observations for the bounded dashboard tracked in
+Current direction, November 5: the October 17 M2 exact-candidate disposition is nineteen days
+late. Acceptance-evidence defect
+[issue #25](https://github.com/lvlunario/project-chimera/issues/25) is corrected in exact
+published candidate `7abf8b09a0f7a006e77d91e34c5df0b971e01ff5`: the executable worksheet
+now binds the review to its prepared Linux/local environment, requires the complete P3
+source/fault and P4 JSON/HTML/handoff traces, and records D-004–006 plus P3/P4/P5 separately.
+The [November 2 weekly review](reviews/2026-11-02.md) remains the 25–30 minute runbook, but its
+pinned SHA is historical and must not be reused. The correction passed local and hosted
+verification plus independent AI re-review; it is not a human walkthrough or approval.
+Hold feature scope and use the current explicitly published SHA. Record actual manual-device,
+screen-reader and Leo operator observations for the bounded dashboard tracked in
 [issue #19](https://github.com/lvlunario/project-chimera/issues/19) before P5 acceptance.
-Use the review to resolve D-004–006 and disposition P3/P4/P5 separately. November 7 is amber
-with five calendar days remaining; November 28 and
-December 12 remain achievable with scope frozen.
+November 7 is red with two calendar days remaining because those observations and separate
+dispositions are still open. If they are not completed by the baseline, report M3 missed and
+keep affected phases pending. November 28 and December 12 remain achievable only with scope
+frozen and the final two weeks preserved for stabilization.
 P7 performance work is tracked in
 [issue #21](https://github.com/lvlunario/project-chimera/issues/21). Its fixed synthetic
 operator/handoff/dashboard-snapshot performance workload is green locally and on the exact
@@ -63,7 +69,7 @@ six trust boundaries and their tracked control evidence without widening the app
 local-only product boundary or claiming security acceptance. Its exact hosted candidate
 assessment is green. The release-readiness inventory in
 [issue #23](https://github.com/lvlunario/project-chimera/issues/23) now accounts for all
-123 declared requirements across 21 groups, both open defect issues, zero declared release
+124 declared requirements across 21 groups, three open defect issues, zero declared release
 blockers, six required guides and 49 headings on an exact hosted candidate. The October 31
 bounded M4 packet tracked in
 [issue #24](https://github.com/lvlunario/project-chimera/issues/24) assembled its then-current
@@ -73,7 +79,8 @@ PACKET-001–006 on Python 3.11 and 3.12. This is a complete review binder, not 
 M5 acceptance or proof of authorship. Because DASH-010 changes the declared inventory after
 that packet candidate, refresh live defect state and rebuild the packet from the chosen clean
 M4 candidate after supporting the November 7 operator walkthrough and recording actual
-observations and decisions.
+observations and decisions. The current selected operator-exercise candidate is `7abf8b0`;
+its push and PR-integration CI both passed all three jobs.
 The deterministic P4 handoff work is tracked in
 [issue #20](https://github.com/lvlunario/project-chimera/issues/20).
 [Delegated decisions](reviews/2026-09-22-delegated-decisions.md)

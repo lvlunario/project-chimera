@@ -27,7 +27,7 @@ entry point; the implementation has not been merged into `main`.
 | Ongoing changes, test evidence and next steps | [Daily engineering logs](https://github.com/lvlunario/project-chimera/tree/magnum-opus/development/docs/daily) |
 | Requirements and quality approach | [Requirements](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/REQUIREMENTS.md) · [Quality plan](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/QUALITY.md) |
 
-## Progress snapshot — October 31, 2026
+## Progress snapshot — November 5, 2026
 
 The development branch includes:
 
@@ -50,7 +50,8 @@ The development branch includes:
   rendering, first-focus bypass links, contextual run names, security headers, and
   download/reopen behavior.
 - An exact-clean-commit operator-acceptance preparation workspace with machine evidence and
-  a deliberately unfilled human observation worksheet.
+  a deliberately unfilled worksheet bound to its prepared Linux/local review environment,
+  complete P3/P4 trace prompts and separate D-004–006/P3–P5 dispositions.
 - A versioned exact-commit P7 performance control for the synthetic operator, handoff and
   dashboard workload, with explicit local-prototype regression budgets.
 - A versioned local-prototype threat model and exact-clean-candidate assessment that trace
@@ -72,18 +73,22 @@ the [October 28 threat-model record](https://github.com/lvlunario/project-chimer
 the [October 29 readiness-inventory record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-10-29.md),
 the [October 31 M4-packet record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-10-31.md),
 the [November 1 dashboard-accessibility record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-01.md),
-and the [November 2 gate-review record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-02.md)
+the [November 2 gate-review record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-02.md),
+and the [November 5 acceptance-evidence correction](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-05.md)
 record candidate-specific local, independent and hosted results. Do not infer a new
 candidate's status from an earlier successful run.
 
-**Acceptance state — November 2:** P0 scope (D-001–003) is approved by delegation.
+**Acceptance state — November 5:** P0 scope (D-001–003) is approved by delegation.
 P1 and P2 are conditionally accepted for continued development under the
 [delegated decision record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/reviews/2026-09-22-delegated-decisions.md). Leo's personal walkthroughs remain unperformed;
 final product validation remains open. P3/P4/P5 remain in progress; P7 release preparation
 now includes versioned performance, threat-model, readiness-inventory and bounded M4-packet
-controls. The October 17 M2 exact-candidate disposition is sixteen days late; November 7 is
-forecast amber with five calendar days remaining. The November 2 exact-candidate review
-packet is prepared, but the human walkthrough and decisions remain open. Synthetic fixtures
+controls. The current readiness inventory covers 124 requirements and three open defect
+records with no declared release blocker. The October 17 M2 exact-candidate disposition is
+nineteen days late; November 7 is forecast red with two calendar days remaining because the
+human walkthrough and decisions remain open. The November 2 packet is retained as a runbook,
+but its pinned candidate is historical; use the latest explicitly published full SHA.
+Synthetic fixtures
 establish software behavior; authorized measured-data validation, production deployment and
 certification are not claimed.
 
@@ -97,7 +102,7 @@ All dates below are 2026 delivery targets, subject to the documented scope and r
 | September 19 | M0 baseline; delegated scope decision recorded September 22 |
 | October 3 | M1 baseline; P1 retained as conditionally accepted for progression |
 | October 17 | M2 baseline missed; engineering candidate exists, exact disposition overdue |
-| November 7 | M3 operator packet and walkthrough; current forecast amber |
+| November 7 | M3 operator packet and walkthrough; current forecast red |
 | November 28 | Release candidate for structured acceptance testing |
 | December 12 | Stabilized prototype, manuals and final acceptance demonstration |
 
