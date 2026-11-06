@@ -116,6 +116,26 @@ attestation. CI logs, live GitHub defect state, actual operator observations and
 recorded decision remain separate evidence. The workflow creates no tag, release artifact,
 deployment or external publication.
 
+## Exact-candidate review-rehearsal boundary
+
+The `p7-m4-review-rehearsal-v1` command composes the existing operator, performance,
+threat, readiness and packet controls for one clean commit and one canonical timestamp. It
+uses a private sibling staging directory, self-inspects the packet, inventories every regular
+output by relative path, byte count and SHA-256, then rechecks the candidate before reserving
+a new outside-checkout destination. Publication retains `.PUBLISHING` until the moved tree is
+reinspected; the canonical receipt is moved last and the completed tree is reinspected again.
+
+Regression coverage rejects existing, in-checkout, missing-parent and symlinked destinations;
+late candidate changes; component failures; incomplete publication; extra or changed output;
+malformed/noncanonical receipts; and false acceptance fields. The same focused tests run under
+normal and optimized Python so safety does not depend on removable assertions.
+
+A coherent release-control failure remains reviewable with `blocked_by_release_controls` and
+a nonzero exit. `packet_complete_for_m4_review` means only that this machine-prepared directory
+is internally coherent. The rehearsal does not prove hosted CI, perform the walkthrough,
+upload an artifact or grant M4/M5, P3/P4/P5 or human acceptance; it never merges, tags,
+releases or deploys.
+
 ## Defects and risk
 Use GitHub issues: reproduction, expected/actual result, version, environment, severity,
 requirement, owner role, target fix and retest evidence. Blocker = cannot run or trust

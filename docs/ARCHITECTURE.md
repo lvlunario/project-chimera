@@ -1,5 +1,28 @@
 # Architecture decision 0001: deterministic core first
 
+## Decision 0029: compose release controls without creating new authority
+
+November 6, 2026. Bounded P7 review-preparation increment; no phase or acceptance claim.
+
+Provide one repository-level rehearsal command that invokes the existing exact-candidate
+operator preparation, performance, threat, readiness and M4-packet controls. Give every
+source record and the packet the same canonical UTC timestamp and full clean commit identity.
+Self-inspect the completed packet, then publish a canonical receipt containing sorted
+relative byte/SHA-256 identities for every regular output and explicit component, packet and
+blocker states.
+
+Build under a private sibling staging directory and publish into a new outside-checkout
+directory only after a final clean-candidate check. Reserve the destination with a
+`.PUBLISHING` marker, move the receipt last, and reinspect the final tree before removing the
+marker so an interrupted, raced or tampered publication cannot look complete. A source
+control failure leaves no final output; a coherent release-control blocker remains in the
+published packet and makes the command nonzero rather than being converted to success.
+
+Tradeoffs: the rehearsal repeats work already exercised by the individual commands and does
+not upload its output. That small local cost avoids a second implementation of release logic,
+keeps zero runtime dependencies and preserves the distinction between preparation,
+transport, hosted CI and Leo's actual decisions.
+
 ## Decision 0028: bind acceptance prompts to an executable review environment
 
 November 5, 2026. Acceptance-evidence correction; no phase or accessibility claim.

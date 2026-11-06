@@ -63,6 +63,8 @@ The development branch includes:
 - A bounded exact-candidate M4 evidence packet that composes and portably reinspects the
   operator, performance, threat and readiness records while retaining a blank acceptance
   script and pending M4/M5 decisions.
+- A one-command exact-candidate review rehearsal that prepares those existing records and
+  packet with fail-closed publication and a canonical receipt, without granting acceptance.
 - An installable Python package and CI on Python 3.11 and 3.12.
 
 The [October 24 implementation evidence](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-10-24.md),
@@ -78,15 +80,16 @@ and the [November 5 acceptance-evidence correction](https://github.com/lvlunario
 record candidate-specific local, independent and hosted results. Do not infer a new
 candidate's status from an earlier successful run.
 
-**Acceptance state — November 5:** P0 scope (D-001–003) is approved by delegation.
+**Acceptance state — November 6:** P0 scope (D-001–003) is approved by delegation.
 P1 and P2 are conditionally accepted for continued development under the
 [delegated decision record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/reviews/2026-09-22-delegated-decisions.md). Leo's personal walkthroughs remain unperformed;
 final product validation remains open. P3/P4/P5 remain in progress; P7 release preparation
-now includes versioned performance, threat-model, readiness-inventory and bounded M4-packet
-controls. The current readiness inventory covers 124 requirements and three open defect
-records with no declared release blocker. The October 17 M2 exact-candidate disposition is
-nineteen days late; November 7 is forecast red with two calendar days remaining because the
-human walkthrough and decisions remain open. The November 2 packet is retained as a runbook,
+now includes versioned performance, threat-model, readiness-inventory, bounded M4-packet and
+one-command review-rehearsal controls. The current readiness inventory covers 128 requirements
+across 22 groups and three open defect records with no declared release blocker. The October
+17 M2 exact-candidate disposition is twenty days late; November 7 is forecast red with one
+calendar day remaining because the human walkthrough and decisions remain open. The November
+2 packet is retained as a runbook,
 but its pinned candidate is historical; use the latest explicitly published full SHA.
 Synthetic fixtures
 establish software behavior; authorized measured-data validation, production deployment and

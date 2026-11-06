@@ -475,6 +475,22 @@
         "PACKET-005",
         "PACKET-006"
       ]
+    },
+    {
+      "evidence_paths": [
+        ".github/workflows/test.yml",
+        "docs/MANUAL.md",
+        "docs/QUALITY.md",
+        "examples/release_review_rehearsal.py",
+        "tests/test_release_review_rehearsal.py"
+      ],
+      "group_id": "GROUP-022",
+      "requirement_ids": [
+        "REHEARSAL-001",
+        "REHEARSAL-002",
+        "REHEARSAL-003",
+        "REHEARSAL-004"
+      ]
     }
   ],
   "schema_version": 1,

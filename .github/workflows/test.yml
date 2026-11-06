@@ -43,63 +43,21 @@ jobs:
       - name: Run regression suite
         run: python -m unittest discover -s tests -v
 
-      - name: Prepare exact operator acceptance workspace
-        run: |
-          CANDIDATE_SHA=$(git rev-parse HEAD)
-          python -m examples.operator_acceptance_prep \
-            --candidate-commit "$CANDIDATE_SHA" \
-            --output "$RUNNER_TEMP/chimera-operator-acceptance"
-
-      - name: Measure bounded release performance
+      - name: Prepare and inspect exact M4 review rehearsal
         run: |
           CANDIDATE_SHA=$(git rev-parse HEAD)
           status=0
-          python -m examples.release_performance \
+          python -m examples.release_review_rehearsal \
             --candidate-commit "$CANDIDATE_SHA" \
-            --output "$RUNNER_TEMP/chimera-release-performance.json" || status=$?
-          if [ -f "$RUNNER_TEMP/chimera-release-performance.json" ]; then
-            python -m json.tool "$RUNNER_TEMP/chimera-release-performance.json"
+            --output "$RUNNER_TEMP/chimera-m4-review" || status=$?
+          if [ -f "$RUNNER_TEMP/chimera-m4-review/review-rehearsal.json" ]; then
+            python -m json.tool \
+              "$RUNNER_TEMP/chimera-m4-review/review-rehearsal.json"
           fi
-          exit "$status"
-
-      - name: Assess bounded local-prototype threat model
-        run: |
-          CANDIDATE_SHA=$(git rev-parse HEAD)
-          status=0
-          python -m examples.release_threat_model \
-            --candidate-commit "$CANDIDATE_SHA" \
-            --output "$RUNNER_TEMP/chimera-release-threat-model.json" || status=$?
-          if [ -f "$RUNNER_TEMP/chimera-release-threat-model.json" ]; then
-            python -m json.tool "$RUNNER_TEMP/chimera-release-threat-model.json"
-          fi
-          exit "$status"
-
-      - name: Assemble bounded release-readiness review inputs
-        run: |
-          CANDIDATE_SHA=$(git rev-parse HEAD)
-          status=0
-          python -m examples.release_readiness \
-            --candidate-commit "$CANDIDATE_SHA" \
-            --output "$RUNNER_TEMP/chimera-release-readiness.json" || status=$?
-          if [ -f "$RUNNER_TEMP/chimera-release-readiness.json" ]; then
-            python -m json.tool "$RUNNER_TEMP/chimera-release-readiness.json"
-          fi
-          exit "$status"
-
-      - name: Assemble and inspect bounded M4 evidence packet
-        run: |
-          CANDIDATE_SHA=$(git rev-parse HEAD)
-          status=0
-          python -m examples.release_candidate_packet build \
-            --candidate-commit "$CANDIDATE_SHA" \
-            --acceptance-workspace "$RUNNER_TEMP/chimera-operator-acceptance" \
-            --performance-record "$RUNNER_TEMP/chimera-release-performance.json" \
-            --threat-record "$RUNNER_TEMP/chimera-release-threat-model.json" \
-            --readiness-record "$RUNNER_TEMP/chimera-release-readiness.json" \
-            --output "$RUNNER_TEMP/chimera-m4-evidence-packet.zip" || status=$?
-          if [ -f "$RUNNER_TEMP/chimera-m4-evidence-packet.zip" ]; then
+          if [ -f "$RUNNER_TEMP/chimera-m4-review/chimera-m4-evidence.zip" ]; then
             python -m examples.release_candidate_packet inspect \
-              "$RUNNER_TEMP/chimera-m4-evidence-packet.zip" || status=$?
+              "$RUNNER_TEMP/chimera-m4-review/chimera-m4-evidence.zip" \
+              || status=$?
           fi
           exit "$status"
 

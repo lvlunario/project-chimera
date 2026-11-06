@@ -993,7 +993,7 @@ python -m examples.release_readiness \
 Expected for the current inventory: five `PASS READINESS-*` lines and
 `status: review_inputs_complete`. The record includes the manifest digest, every referenced
 file's byte count/SHA-256, the declared/covered requirement counts, guide and heading counts,
-two open defects with their fixed/verified engineering dispositions, zero current release
+three open defects with their fixed/verified engineering dispositions, zero current release
 blockers, and the still-pending human evidence. An unresolved defect is retained in the
 record, changes READINESS-002 to `blocked`, and exits 1. Invalid input or unsafe output exits
 2. The command never replaces an output and checks the clean commit before assessment and
@@ -1014,7 +1014,31 @@ acceptance testing.
 The packet composes the four exact-candidate controls above into one bounded ZIP for M4
 review: the complete operator-acceptance workspace, performance record, threat-model record,
 release-readiness record, exact candidate guides/manifests, and a blank M4 acceptance
-script. Prepare every input from the same clean commit into new outside-checkout paths:
+script.
+
+For the normal rehearsal, use the one-command wrapper from an exact clean checkout. It
+uses fail-closed publication into one new outside-checkout directory and leaves the human
+fields pending:
+
+```bash
+CANDIDATE_COMMIT=$(git rev-parse HEAD)
+python -m examples.release_review_rehearsal \
+  --candidate-commit "$CANDIDATE_COMMIT" \
+  --output /tmp/chimera-m4-review
+```
+
+Expected: component statuses, `packet: packet_complete_for_m4_review`, receipt and packet
+SHA-256 values, and paths to `review-rehearsal.json` plus
+`chimera-m4-evidence.zip`. The canonical receipt identifies every regular output except
+itself with a sorted relative path, byte count and SHA-256. A coherent release-control blocker
+is retained as `blocked_by_release_controls` and returns 1. Invalid candidate, output or
+publication state returns 2 and no complete final directory. A `.PUBLISHING` marker means
+the directory is incomplete and must not be used. The command never uploads, merges, tags,
+releases or deploys; runner files are not retained by CI.
+
+The expanded component procedure below remains useful for troubleshooting or separately
+retaining a blocked source record. Prepare every input from the same clean commit into new
+outside-checkout paths:
 
 ```bash
 CANDIDATE_COMMIT=$(git rev-parse HEAD)
