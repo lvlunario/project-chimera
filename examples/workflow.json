@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "tasks": [
+    {"id": "ingest", "operation": "emit", "value": {"source": "synthetic", "samples": 3}},
+    {"id": "link-check", "operation": "fail", "message": "synthetic link margin below threshold", "dependencies": ["ingest"]},
+    {"id": "report", "operation": "emit", "value": "ready", "dependencies": ["link-check"]},
+    {"id": "health", "operation": "emit", "value": "nominal"}
+  ]
+}

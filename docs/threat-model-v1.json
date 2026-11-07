@@ -1,0 +1,665 @@
+{
+  "actors": [
+    {
+      "description": "Runs the documented local workflow and protects the host, checkout and evidence directories.",
+      "id": "ACTOR-001",
+      "name": "Authorized local operator",
+      "trust": "trusted"
+    },
+    {
+      "description": "May access loopback or mutable local paths but is outside the approved single-operator trust boundary.",
+      "id": "ACTOR-002",
+      "name": "Other same-host process or user",
+      "trust": "untrusted_local"
+    },
+    {
+      "description": "Provides workflow, telemetry, fault-plan or archive bytes that require strict validation.",
+      "id": "ACTOR-003",
+      "name": "Supplied data source",
+      "trust": "untrusted_data"
+    },
+    {
+      "description": "Provides in-process task callbacks and stable operation identities outside the declarative CLI.",
+      "id": "ACTOR-004",
+      "name": "Trusted Python integrator",
+      "trust": "trusted"
+    },
+    {
+      "description": "Provides hosted runner images, build tools, browser tooling and operating-system packages.",
+      "id": "ACTOR-005",
+      "name": "CI and dependency provider",
+      "trust": "external_dependency"
+    }
+  ],
+  "assets": [
+    {
+      "description": "Exact workflow, telemetry, threshold and fault-plan bytes and their declared identities.",
+      "id": "ASSET-001",
+      "name": "Input and configuration identity",
+      "security_properties": [
+        "confidentiality",
+        "integrity"
+      ]
+    },
+    {
+      "description": "Journal lifecycle, task markers, results, ownership and conservative recovery decisions.",
+      "id": "ASSET-002",
+      "name": "Durable execution state",
+      "security_properties": [
+        "availability",
+        "confidentiality",
+        "integrity"
+      ]
+    },
+    {
+      "description": "Evidence, bindings, reports and exact trace from input identity to requirement verdict.",
+      "id": "ASSET-003",
+      "name": "Completed verification evidence",
+      "security_properties": [
+        "confidentiality",
+        "integrity"
+      ]
+    },
+    {
+      "description": "Deterministic archive and manifest used to transfer one validated completed run.",
+      "id": "ASSET-004",
+      "name": "Portable handoff bundle",
+      "security_properties": [
+        "confidentiality",
+        "integrity"
+      ]
+    },
+    {
+      "description": "Loopback-only read-only projections of cross-validated completed evidence.",
+      "id": "ASSET-005",
+      "name": "Operator API and dashboard",
+      "security_properties": [
+        "confidentiality",
+        "integrity"
+      ]
+    },
+    {
+      "description": "Host resources, local files and process state used by trusted in-process execution.",
+      "id": "ASSET-006",
+      "name": "Local host",
+      "security_properties": [
+        "availability",
+        "confidentiality",
+        "integrity"
+      ]
+    },
+    {
+      "description": "Exact-candidate tests, performance records, threat assessment and human decision boundaries.",
+      "id": "ASSET-007",
+      "name": "Release evidence",
+      "security_properties": [
+        "integrity"
+      ]
+    }
+  ],
+  "model_id": "p7-local-prototype-threat-model-v1",
+  "record_type": "chimera.local-prototype-threat-model",
+  "release_review": {
+    "decision_status": "pending_m4_review",
+    "human_acceptance": "not_granted",
+    "must_fix_before_m4": [],
+    "notes": [
+      "No must-fix threat is identified inside the approved trusted-host, local-only, no-sensitive-data prototype boundary; independent review and M4 disposition remain required.",
+      "Remote access, sensitive data, untrusted callbacks, authenticity guarantees or hostile-host operation would expand the boundary and require new controls before use."
+    ]
+  },
+  "schema_version": 1,
+  "scope": {
+    "assumptions": [
+      "The operator controls and protects the local host, checkout and output directories",
+      "Typed product inputs are untrusted data, while Python callbacks and operation identities are trusted declarations",
+      "Inputs contain no secrets or personal data unless a separately authorized confidentiality design is added",
+      "Synthetic fixtures establish software behavior and never establish physical-radio performance"
+    ],
+    "deployment": "One authorized operator on one trusted local host using local files, loopback HTTP and synthetic or separately authorized data",
+    "excluded": [
+      "Remote hosting, accounts, multi-user isolation, TLS and production service operation",
+      "Sandboxing arbitrary Python callbacks, general exactly-once external effects and hostile-host filesystem defense",
+      "Digital signatures, trusted time, build attestation, measurement authenticity, live hardware and certification",
+      "Handoff transport, receiver-host security and authenticity across an untrusted channel"
+    ],
+    "included": [
+      "Strict workflow, telemetry and fault-plan input boundaries",
+      "Durable execution, completed evidence, reports, handoff and read-only dashboard",
+      "Repository-level acceptance, performance and release evidence controls"
+    ]
+  },
+  "threats": [
+    {
+      "asset_ids": [
+        "ASSET-002",
+        "ASSET-006"
+      ],
+      "boundary_ids": [
+        "BOUNDARY-002"
+      ],
+      "category": "elevation_of_privilege",
+      "controls": [
+        {
+          "description": "The declarative workflow accepts only bounded emit and fail operations and cannot name Python, shell, URL or adapter code.",
+          "evidence_paths": [
+            "tests/test_cli_qa.py",
+            "tests/test_workflow.py"
+          ],
+          "id": "CONTROL-001",
+          "requirement_ids": [
+            "CLI-001",
+            "CLI-002",
+            "CLI-003"
+          ]
+        },
+        {
+          "description": "The communications product path is a typed operator command with explicit input, output and no-overwrite contracts.",
+          "evidence_paths": [
+            "tests/test_operator.py",
+            "tests/test_operator_qa.py"
+          ],
+          "id": "CONTROL-002",
+          "requirement_ids": [
+            "OPERATOR-001",
+            "OPERATOR-003",
+            "OPERATOR-007"
+          ]
+        }
+      ],
+      "engineering_disposition": "tracked_for_m4",
+      "id": "RISK-001",
+      "impact": "The callback can hang, mutate host state, access local data or bypass product evidence boundaries.",
+      "impact_severity": "high",
+      "likelihood": "medium",
+      "preconditions": "An untrusted party can select executable behavior or a trusted integrator supplies a hostile or defective callback.",
+      "residual_risk": "The public Python kernel still trusts in-process callbacks and has no sandbox, timeout or cancellation. Untrusted code execution is outside prototype scope.",
+      "title": "Untrusted code or callback gains host authority"
+    },
+    {
+      "asset_ids": [
+        "ASSET-001",
+        "ASSET-003",
+        "ASSET-006"
+      ],
+      "boundary_ids": [
+        "BOUNDARY-001",
+        "BOUNDARY-004"
+      ],
+      "category": "denial_of_service",
+      "controls": [
+        {
+          "description": "Strict schemas, duplicate-field rejection, exact units and byte, row, task and dependency bounds fail before use.",
+          "evidence_paths": [
+            "tests/test_cli_qa.py",
+            "tests/test_telemetry.py",
+            "tests/test_workflow.py"
+          ],
+          "id": "CONTROL-003",
+          "requirement_ids": [
+            "ADAPT-001",
+            "ADAPT-002",
+            "ADAPT-003",
+            "CLI-001"
+          ]
+        },
+        {
+          "description": "Reports, handoffs, completed artifacts and dashboard discovery use fixed allowlists and bounded reads or entry counts.",
+          "evidence_paths": [
+            "tests/test_api.py",
+            "tests/test_dashboard_qa.py",
+            "tests/test_handoff.py",
+            "tests/test_reports_qa.py"
+          ],
+          "id": "CONTROL-004",
+          "requirement_ids": [
+            "API-001",
+            "DASH-001",
+            "HANDOFF-004",
+            "REPORT-006"
+          ]
+        }
+      ],
+      "engineering_disposition": "tracked_for_m4",
+      "id": "RISK-002",
+      "impact": "The operator can receive a false interpretation, excessive resource use or unavailable evidence.",
+      "impact_severity": "medium",
+      "likelihood": "medium",
+      "preconditions": "A supplied workflow, telemetry file, report, workspace or archive is malformed, ambiguous or deliberately large.",
+      "residual_risk": "A trusted callback can still consume unbounded CPU, memory or I/O, and local disk exhaustion remains a host operational risk.",
+      "title": "Malformed or oversized input exhausts resources or changes meaning"
+    },
+    {
+      "asset_ids": [
+        "ASSET-003",
+        "ASSET-004",
+        "ASSET-005"
+      ],
+      "boundary_ids": [
+        "BOUNDARY-003",
+        "BOUNDARY-004"
+      ],
+      "category": "tampering",
+      "controls": [
+        {
+          "description": "Canonical schemas, hashes and completed-run cross-validation reject disagreement among request, evidence, bindings, report and HTML.",
+          "evidence_paths": [
+            "tests/test_api.py",
+            "tests/test_api_qa.py",
+            "tests/test_reports.py"
+          ],
+          "id": "CONTROL-005",
+          "requirement_ids": [
+            "API-001",
+            "API-002",
+            "REPORT-002",
+            "REPORT-003"
+          ]
+        },
+        {
+          "description": "The deterministic handoff reconstructs an exact allowlisted bundle from the immutable validated view and revalidates it on inspection.",
+          "evidence_paths": [
+            "chimera/handoff.py",
+            "tests/test_handoff.py"
+          ],
+          "id": "CONTROL-006",
+          "requirement_ids": [
+            "HANDOFF-001",
+            "HANDOFF-002",
+            "HANDOFF-003",
+            "HANDOFF-004"
+          ]
+        }
+      ],
+      "engineering_disposition": "tracked_for_m4",
+      "id": "RISK-003",
+      "impact": "Another engineer can investigate or hand off a result that did not originate from the claimed execution or measurement.",
+      "impact_severity": "high",
+      "likelihood": "medium",
+      "preconditions": "A party with write access alters one or more completed artifacts or replaces an entire unsigned evidence set.",
+      "residual_risk": "SHA-256 and cross-validation prove agreement, not authorship, trusted time, execution identity or measurement authenticity; coherent unsigned replacement remains possible.",
+      "title": "Evidence or report substitution creates a coherent false record"
+    },
+    {
+      "asset_ids": [
+        "ASSET-001",
+        "ASSET-002",
+        "ASSET-003",
+        "ASSET-006"
+      ],
+      "boundary_ids": [
+        "BOUNDARY-003"
+      ],
+      "category": "tampering",
+      "controls": [
+        {
+          "description": "Product and release controls refuse symbolic-link or existing output and use bounded regular-file reads and exclusive publication.",
+          "evidence_paths": [
+            "examples/operator_acceptance_prep.py",
+            "tests/test_handoff.py",
+            "tests/test_operator_qa.py"
+          ],
+          "id": "CONTROL-007",
+          "requirement_ids": [
+            "ACCEPT-001",
+            "HANDOFF-005",
+            "OPERATOR-007"
+          ]
+        },
+        {
+          "description": "Linux journal ownership holds the database inode across callbacks and rejects aliases or changed paths at critical transitions.",
+          "evidence_paths": [
+            "chimera/ownership.py",
+            "tests/test_ownership.py",
+            "tests/test_ownership_qa.py"
+          ],
+          "id": "CONTROL-008",
+          "requirement_ids": [
+            "RECOVER-005"
+          ]
+        }
+      ],
+      "engineering_disposition": "tracked_for_m4",
+      "id": "RISK-004",
+      "impact": "Chimera can read unintended bytes, overwrite or expose local data, or associate evidence with the wrong durable state.",
+      "impact_severity": "high",
+      "likelihood": "low",
+      "preconditions": "An untrusted same-host actor controls a directory or changes a path, inode, link or output name during operation.",
+      "residual_risk": "The prototype assumes trusted stable local directories and cooperative local processes; it is not hardened for hostile directory owners, every TOCTOU race or network filesystems.",
+      "title": "Path substitution, symbolic links or publication races redirect state"
+    },
+    {
+      "asset_ids": [
+        "ASSET-002",
+        "ASSET-003",
+        "ASSET-006"
+      ],
+      "boundary_ids": [
+        "BOUNDARY-002",
+        "BOUNDARY-003"
+      ],
+      "category": "repudiation",
+      "controls": [
+        {
+          "description": "Lifetime ownership, pre-callback running markers, pending-only resume and exact commit reconciliation fail closed to needs_attention.",
+          "evidence_paths": [
+            "tests/test_commit_recovery.py",
+            "tests/test_journal.py",
+            "tests/test_resume.py"
+          ],
+          "id": "CONTROL-009",
+          "requirement_ids": [
+            "RECOVER-001",
+            "RECOVER-002",
+            "RECOVER-003",
+            "RECOVER-005",
+            "RECOVER-006"
+          ]
+        }
+      ],
+      "engineering_disposition": "tracked_for_m4",
+      "id": "RISK-005",
+      "impact": "A non-idempotent effect can be repeated, or incomplete work can be presented as completed evidence.",
+      "impact_severity": "high",
+      "likelihood": "medium",
+      "preconditions": "A process or commit fails around a callback whose external outcome is uncertain.",
+      "residual_risk": "Operation IDs are trusted declarations, uncooperative systems can bypass ownership, and ambiguous external effects require adapter-specific investigation rather than automatic exactly-once recovery.",
+      "title": "Interrupted work repeats an external side effect or is misreported complete"
+    },
+    {
+      "asset_ids": [
+        "ASSET-003",
+        "ASSET-005",
+        "ASSET-006"
+      ],
+      "boundary_ids": [
+        "BOUNDARY-004",
+        "BOUNDARY-005"
+      ],
+      "category": "information_disclosure",
+      "controls": [
+        {
+          "description": "The API and dashboard bind only to IPv4 loopback, expose GET-only immutable snapshots, enable no CORS and return restrictive headers.",
+          "evidence_paths": [
+            "browser_tests/test_dashboard_browser.py",
+            "tests/test_api.py",
+            "tests/test_dashboard.py"
+          ],
+          "id": "CONTROL-010",
+          "requirement_ids": [
+            "API-004",
+            "API-005",
+            "DASH-004",
+            "DASH-005"
+          ]
+        },
+        {
+          "description": "Report and dashboard HTML escape untrusted text, remain script-free and use restrictive content and framing policies.",
+          "evidence_paths": [
+            "tests/test_dashboard_qa.py",
+            "tests/test_reports.py",
+            "tests/test_reports_qa.py"
+          ],
+          "id": "CONTROL-017",
+          "requirement_ids": [
+            "DASH-004",
+            "REPORT-005"
+          ]
+        }
+      ],
+      "engineering_disposition": "tracked_for_m4",
+      "id": "RISK-006",
+      "impact": "Local evidence can be disclosed, an audit interface can weaken evidence integrity, or crafted text can mislead an operator or execute active browser content.",
+      "impact_severity": "medium",
+      "likelihood": "medium",
+      "preconditions": "Another same-host process can connect to loopback, the operator treats presentation as mutation authority, or crafted evidence text reaches rendered HTML.",
+      "residual_risk": "Loopback is not authentication or confidentiality from other same-host processes; there is no TLS, account, authorization or hostile-host isolation, and future templates require the same escaping discipline.",
+      "title": "Loopback presentation discloses, mutates or injects rendered evidence"
+    },
+    {
+      "asset_ids": [
+        "ASSET-003",
+        "ASSET-004",
+        "ASSET-006"
+      ],
+      "boundary_ids": [
+        "BOUNDARY-004"
+      ],
+      "category": "tampering",
+      "controls": [
+        {
+          "description": "Inspection admits the exact six-entry order and allowlist, stored unencrypted bytes, bounded sizes and a complete cross-validated reopened run.",
+          "evidence_paths": [
+            "chimera/handoff.py",
+            "tests/test_handoff.py"
+          ],
+          "id": "CONTROL-011",
+          "requirement_ids": [
+            "HANDOFF-002",
+            "HANDOFF-004",
+            "HANDOFF-005"
+          ]
+        }
+      ],
+      "engineering_disposition": "tracked_for_m4",
+      "id": "RISK-007",
+      "impact": "Archive processing can expose the host or accept evidence outside the declared portable artifact set.",
+      "impact_severity": "high",
+      "likelihood": "medium",
+      "preconditions": "An operator inspects a crafted, changed, oversized or path-bearing ZIP archive.",
+      "residual_risk": "Archive integrity is unsigned and local temporary/output directory trust still applies; handoffs over untrusted channels need a separately authorized authenticity design.",
+      "title": "A malicious handoff archive writes or validates unintended content"
+    },
+    {
+      "asset_ids": [
+        "ASSET-001",
+        "ASSET-002",
+        "ASSET-003",
+        "ASSET-004",
+        "ASSET-005",
+        "ASSET-006"
+      ],
+      "boundary_ids": [
+        "BOUNDARY-001",
+        "BOUNDARY-003",
+        "BOUNDARY-005"
+      ],
+      "category": "information_disclosure",
+      "controls": [
+        {
+          "description": "The manual prohibits secrets and personal data, while the approved dashboard remains local, read-only and no-cache.",
+          "evidence_paths": [
+            "docs/MANUAL.md",
+            "tests/test_api.py",
+            "tests/test_dashboard.py"
+          ],
+          "id": "CONTROL-012",
+          "requirement_ids": [
+            "API-004",
+            "DASH-005"
+          ]
+        }
+      ],
+      "engineering_disposition": "tracked_for_m4",
+      "id": "RISK-008",
+      "impact": "Sensitive bytes can persist in JSON, SQLite, reports, archives or loopback responses without redaction or encryption.",
+      "impact_severity": "high",
+      "likelihood": "medium",
+      "preconditions": "An operator supplies sensitive task values, error text or telemetry despite the declared no-sensitive-data assumption.",
+      "residual_risk": "Chimera has no automatic redaction, encryption at rest, access control or confidentiality guarantee. Sensitive-data use requires a scope and threat-model change before release use.",
+      "title": "Secrets or personal data persist in evidence and local responses"
+    },
+    {
+      "asset_ids": [
+        "ASSET-006",
+        "ASSET-007"
+      ],
+      "boundary_ids": [
+        "BOUNDARY-006"
+      ],
+      "category": "supply_chain",
+      "controls": [
+        {
+          "description": "CI uses read-only permissions, no persisted checkout credential, bounded jobs, exact official Action pins and no deployment step.",
+          "evidence_paths": [
+            ".github/workflows/test.yml",
+            "docs/QUALITY.md"
+          ],
+          "id": "CONTROL-013",
+          "requirement_ids": [
+            "CI-003",
+            "CI-004"
+          ]
+        },
+        {
+          "description": "The isolated wheel check proves installation and runtime dependency shape outside the source checkout.",
+          "evidence_paths": [
+            "scripts/verify_clean_install.sh"
+          ],
+          "id": "CONTROL-014",
+          "requirement_ids": [
+            "PACK-001",
+            "PACK-002",
+            "PACK-004"
+          ]
+        }
+      ],
+      "engineering_disposition": "tracked_for_m4",
+      "id": "RISK-009",
+      "impact": "Hosted evidence or built artifacts can differ from reviewed source without an authenticated, reproducible build chain.",
+      "impact_severity": "high",
+      "likelihood": "medium",
+      "preconditions": "A runner image, package index, build tool, browser package or operating-system dependency changes or is compromised.",
+      "residual_risk": "Hosted runners, ranged build tools, PyPI, Chromium and system packages remain mutable; no signed artifact, SBOM or trusted build attestation is claimed.",
+      "title": "Mutable CI or dependency inputs produce untrusted release evidence"
+    },
+    {
+      "asset_ids": [
+        "ASSET-003",
+        "ASSET-007"
+      ],
+      "boundary_ids": [
+        "BOUNDARY-001",
+        "BOUNDARY-006"
+      ],
+      "category": "spoofing",
+      "controls": [
+        {
+          "description": "Acceptance preparation is exact-candidate bound and always leaves every human observation and phase disposition blank or pending.",
+          "evidence_paths": [
+            "examples/operator_acceptance_prep.py",
+            "tests/test_operator_acceptance_prep.py"
+          ],
+          "id": "CONTROL-015",
+          "requirement_ids": [
+            "ACCEPT-001",
+            "ACCEPT-004",
+            "ACCEPT-005"
+          ]
+        },
+        {
+          "description": "Performance evidence is explicitly synthetic and excludes hardware, capacity, browser, HTTP and service-level claims.",
+          "evidence_paths": [
+            "docs/APPROVALS.md",
+            "examples/release_performance.py",
+            "tests/test_release_performance.py"
+          ],
+          "id": "CONTROL-016",
+          "requirement_ids": [
+            "PERF-004",
+            "PERF-005"
+          ]
+        }
+      ],
+      "engineering_disposition": "tracked_for_m4",
+      "id": "RISK-010",
+      "impact": "A phase or release can appear accepted without the required human observation or valid engineering evidence.",
+      "impact_severity": "high",
+      "likelihood": "medium",
+      "preconditions": "A test, benchmark, blank worksheet or synthetic result is described as operator approval, product acceptance or physical-system validation.",
+      "residual_risk": "Automation cannot perform Leo's walkthrough, accept residual risk, approve M4/M5 or establish measurement authenticity; those decisions remain pending.",
+      "title": "Automated or synthetic evidence is misrepresented as human or physical acceptance"
+    }
+  ],
+  "trust_boundaries": [
+    {
+      "actor_ids": [
+        "ACTOR-001",
+        "ACTOR-003"
+      ],
+      "asset_ids": [
+        "ASSET-001",
+        "ASSET-003"
+      ],
+      "description": "Untrusted JSON, CSV, fault-plan and archive bytes enter typed bounded product interfaces.",
+      "id": "BOUNDARY-001",
+      "name": "Data input to strict parsers"
+    },
+    {
+      "actor_ids": [
+        "ACTOR-004"
+      ],
+      "asset_ids": [
+        "ASSET-002",
+        "ASSET-006"
+      ],
+      "description": "Trusted Python callbacks run in process with the operator's host permissions.",
+      "id": "BOUNDARY-002",
+      "name": "Trusted callback to host"
+    },
+    {
+      "actor_ids": [
+        "ACTOR-001",
+        "ACTOR-002"
+      ],
+      "asset_ids": [
+        "ASSET-001",
+        "ASSET-002",
+        "ASSET-003"
+      ],
+      "description": "Local paths, SQLite files and no-overwrite publications preserve or expose run state.",
+      "id": "BOUNDARY-003",
+      "name": "Mutable local filesystem to durable artifacts"
+    },
+    {
+      "actor_ids": [
+        "ACTOR-001",
+        "ACTOR-002"
+      ],
+      "asset_ids": [
+        "ASSET-003",
+        "ASSET-004",
+        "ASSET-005"
+      ],
+      "description": "Validated evidence is reconstructed into reports, archives and dashboard snapshots.",
+      "id": "BOUNDARY-004",
+      "name": "Completed artifacts to portable views"
+    },
+    {
+      "actor_ids": [
+        "ACTOR-001",
+        "ACTOR-002"
+      ],
+      "asset_ids": [
+        "ASSET-003",
+        "ASSET-005",
+        "ASSET-006"
+      ],
+      "description": "A local browser retrieves immutable completed-run views over IPv4 loopback.",
+      "id": "BOUNDARY-005",
+      "name": "Loopback HTTP to local browser"
+    },
+    {
+      "actor_ids": [
+        "ACTOR-005"
+      ],
+      "asset_ids": [
+        "ASSET-006",
+        "ASSET-007"
+      ],
+      "description": "Pinned source and partly mutable external build and browser inputs produce hosted evidence.",
+      "id": "BOUNDARY-006",
+      "name": "Repository and dependencies to CI runner"
+    }
+  ]
+}
