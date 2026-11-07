@@ -1036,6 +1036,20 @@ publication state returns 2 and no complete final directory. A `.PUBLISHING` mar
 the directory is incomplete and must not be used. The command never uploads, merges, tags,
 releases or deploys; runner files are not retained by CI.
 
+Reinspect an already published directory without consulting the candidate checkout or
+changing the directory:
+
+```bash
+python -m examples.release_review_rehearsal \
+  inspect /tmp/chimera-m4-review
+```
+
+Expected: the same component, packet, candidate, receipt and packet-identity summary. Exit 0
+means the directory is coherent and complete for review; exit 1 preserves a coherent release
+blocker; exit 2 rejects an incomplete, malformed, added, removed, changed, reindexed or
+packet-divergent directory. The inspector derives the candidate from the receipt. It does not
+prove who produced the directory, authenticate its source or grant a phase decision.
+
 The expanded component procedure below remains useful for troubleshooting or separately
 retaining a blocked source record. Prepare every input from the same clean commit into new
 outside-checkout paths:

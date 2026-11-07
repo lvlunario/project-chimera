@@ -28,7 +28,7 @@ or perform Leo's walkthrough.
 |---|---|---|
 | REHEARSAL-001 | Require a full clean candidate commit, a new output outside the checkout and private staging; publish only after a final clean-candidate check, with an incomplete-publication marker on failure | `examples/release_review_rehearsal.py`; candidate/output/publication tests |
 | REHEARSAL-002 | Generate the operator workspace, performance record, threat assessment, readiness inventory and M4 packet for one candidate and one canonical UTC timestamp; self-inspect the packet before publication | integrated rehearsal regression; packet inspection equality |
-| REHEARSAL-003 | Publish a canonical receipt with sorted relative byte/SHA-256 identities for every regular output except the receipt, plus explicit component, packet and blocker status | receipt reopen/tree-identity tests |
+| REHEARSAL-003 | Publish a canonical receipt with sorted relative byte/SHA-256 identities for every regular output except the receipt, plus explicit component, packet and blocker status; expose read-only CLI reinspection that does not consult Git or change the published directory | receipt reopen/tree-identity and portable CLI reinspection tests |
 | REHEARSAL-004 | Retain blocked release-control status and keep P3/P4/P5, M4/M5 and human acceptance pending; never upload, merge, tag, release or deploy | blocked CLI regression, fixed scope and pending-decision assertions |
 
 `packet_complete_for_m4_review` still means only that the existing packet contract is

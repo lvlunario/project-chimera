@@ -1,5 +1,22 @@
 # Architecture decision 0001: deterministic core first
 
+## Decision 0030: make rehearsal reinspection read-only and bounded
+
+November 7, 2026. P7 stabilization increment; no milestone, phase or acceptance claim.
+
+Expose the existing full rehearsal-directory validation as `inspect DIRECTORY` while
+preserving the preparation command. Derive the candidate from the canonical receipt, consult
+no Git state and change no files. Bound traversal before reading content—512 entries, 16
+relative path components, 128 indexed files and 32 MB total indexed content—then retain the
+receipt, component, packet/source and pending-acceptance checks. This lets a reviewer detect
+an incomplete, added, removed, changed, reindexed or packet-divergent artifact without
+preparing a second candidate or timestamp.
+
+Tradeoffs: the inspector still runs from Chimera's repository tools; this increment does not
+package the `examples` modules as an installed console command or authenticate transferred
+bytes. It proves internal agreement within explicit resource bounds, not authorship, trusted
+time, hosted-CI success, human review or a gate decision.
+
 ## Decision 0029: compose release controls without creating new authority
 
 November 6, 2026. Bounded P7 review-preparation increment; no phase or acceptance claim.

@@ -31,6 +31,8 @@ REHEARSAL_ID = "p7-m4-review-rehearsal-v1"
 RECEIPT_NAME = "review-rehearsal.json"
 PACKET_NAME = "chimera-m4-evidence.zip"
 MAX_FILES = 128
+MAX_ENTRIES = 512
+MAX_DEPTH = 16
 MAX_CONTENT_BYTES = 32_000_000
 MAX_RECEIPT_BYTES = 262_144
 _COMMIT = re.compile(r"[0-9a-f]{40}")
@@ -142,7 +144,59 @@ def _has_symlink_ancestor(path: Path) -> bool:
     return any(item.is_symlink() for item in (path, *path.parents))
 
 
-def _artifact(path: Path, root: Path) -> dict:
+def _read_bounded(path: Path, limit: int, label: str) -> bytes:
+    try:
+        with path.open("rb") as stream:
+            content = stream.read(limit + 1)
+    except OSError as exc:
+        raise ReviewRehearsalError(f"{label} cannot be read") from exc
+    _require(len(content) <= limit, f"{label} exceeds its size bound")
+    return content
+
+
+def _regular_files(root: Path) -> list[Path]:
+    """Enumerate a bounded, non-symlinked tree without an unbounded listing."""
+    pending = [root]
+    files = []
+    entries = 0
+    try:
+        while pending:
+            directory = pending.pop()
+            with os.scandir(directory) as scanned:
+                for entry in scanned:
+                    entries += 1
+                    _require(
+                        entries <= MAX_ENTRIES,
+                        "review rehearsal output has too many entries",
+                    )
+                    path = Path(entry.path)
+                    relative = path.relative_to(root)
+                    _require(
+                        len(relative.parts) <= MAX_DEPTH,
+                        "review rehearsal output exceeds the depth bound",
+                    )
+                    if entry.is_symlink():
+                        raise ReviewRehearsalError(
+                            "review rehearsal output contains a symbolic link"
+                        )
+                    if entry.is_dir(follow_symlinks=False):
+                        pending.append(path)
+                    elif entry.is_file(follow_symlinks=False):
+                        files.append(path)
+                    else:
+                        raise ReviewRehearsalError(
+                            "review rehearsal output is not regular"
+                        )
+    except ReviewRehearsalError:
+        raise
+    except OSError as exc:
+        raise ReviewRehearsalError(
+            "review rehearsal output cannot be enumerated"
+        ) from exc
+    return sorted(files, key=lambda item: item.as_posix())
+
+
+def _artifact(path: Path, root: Path, *, remaining_bytes: int) -> dict:
     _require(
         not path.is_symlink() and path.is_file(),
         f"review rehearsal artifact is unavailable: {path.name}",
@@ -152,7 +206,11 @@ def _artifact(path: Path, root: Path) -> dict:
         not relative.is_absolute() and ".." not in relative.parts,
         "review rehearsal artifact path is unsafe",
     )
-    content = path.read_bytes()
+    content = _read_bounded(
+        path,
+        remaining_bytes,
+        "review rehearsal output",
+    )
     return {
         "byte_count": len(content),
         "path": relative.as_posix(),
@@ -163,20 +221,7 @@ def _artifact(path: Path, root: Path) -> dict:
 def _artifact_inventory(root: Path) -> list[dict]:
     artifacts = []
     total = 0
-    try:
-        paths = sorted(root.rglob("*"), key=lambda item: item.as_posix())
-    except OSError as exc:
-        raise ReviewRehearsalError(
-            "review rehearsal output cannot be enumerated"
-        ) from exc
-    for path in paths:
-        if path.is_symlink():
-            raise ReviewRehearsalError(
-                "review rehearsal output contains a symbolic link"
-            )
-        if path.is_dir():
-            continue
-        _require(path.is_file(), "review rehearsal output is not regular")
+    for path in _regular_files(root):
         relative = path.relative_to(root).as_posix()
         if relative in {RECEIPT_NAME, ".PUBLISHING"}:
             continue
@@ -186,17 +231,17 @@ def _artifact_inventory(root: Path) -> list[dict]:
             and ".." not in Path(relative).parts,
             "review rehearsal output path is unsafe",
         )
-        artifact = _artifact(path, root)
+        _require(
+            len(artifacts) < MAX_FILES,
+            "review rehearsal output has too many files",
+        )
+        artifact = _artifact(
+            path,
+            root,
+            remaining_bytes=MAX_CONTENT_BYTES - total,
+        )
         total += artifact["byte_count"]
         artifacts.append(artifact)
-    _require(
-        len(artifacts) <= MAX_FILES,
-        "review rehearsal output has too many files",
-    )
-    _require(
-        total <= MAX_CONTENT_BYTES,
-        "review rehearsal output exceeds the content bound",
-    )
     return artifacts
 
 
@@ -205,8 +250,7 @@ def _load_source(path: Path, label: str) -> dict:
         not path.is_symlink() and path.is_file(),
         f"{label} is unavailable",
     )
-    content = path.read_bytes()
-    _require(len(content) <= 2_097_152, f"{label} exceeds its size bound")
+    content = _read_bounded(path, 2_097_152, label)
     return _decode_json(content, label)
 
 
@@ -274,10 +318,10 @@ def _validate_rehearsal_directory(
         not receipt_path.is_symlink() and receipt_path.is_file(),
         "review rehearsal receipt is unavailable",
     )
-    receipt_content = receipt_path.read_bytes()
-    _require(
-        len(receipt_content) <= MAX_RECEIPT_BYTES,
-        "review rehearsal receipt exceeds its size bound",
+    receipt_content = _read_bounded(
+        receipt_path,
+        MAX_RECEIPT_BYTES,
+        "review rehearsal receipt",
     )
     receipt = _decode_json(receipt_content, "review rehearsal receipt")
     _require(
@@ -611,22 +655,52 @@ def prepare_review_rehearsal(
 
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="prepare one exact-candidate Chimera review rehearsal"
+        description=(
+            "prepare or reinspect one exact-candidate Chimera review rehearsal"
+        )
     )
-    parser.add_argument("--candidate-commit", required=True)
-    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument(
+        "command",
+        nargs="?",
+        choices=("inspect",),
+        help="use 'inspect DIRECTORY' to validate a published directory",
+    )
+    parser.add_argument("directory", nargs="?", type=Path)
+    parser.add_argument("--candidate-commit")
+    parser.add_argument("--output", type=Path)
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
-    args = _parser().parse_args(argv)
+    parser = _parser()
+    args = parser.parse_args(argv)
+    if args.command == "inspect":
+        if args.directory is None:
+            parser.error("inspect requires DIRECTORY")
+        if args.candidate_commit is not None or args.output is not None:
+            parser.error(
+                "inspect cannot be combined with "
+                "--candidate-commit or --output"
+            )
+        review_root = args.directory
+    else:
+        if args.directory is not None:
+            parser.error("unexpected rehearsal directory")
+        if args.candidate_commit is None or args.output is None:
+            parser.error(
+                "preparation requires --candidate-commit and --output"
+            )
+        review_root = args.output
     try:
-        receipt = prepare_review_rehearsal(
-            args.output,
-            candidate_commit=args.candidate_commit,
-        )
-        receipt_path = args.output / RECEIPT_NAME
-        packet_path = args.output / PACKET_NAME
+        if args.command == "inspect":
+            receipt = inspect_review_rehearsal(review_root)
+        else:
+            receipt = prepare_review_rehearsal(
+                review_root,
+                candidate_commit=args.candidate_commit,
+            )
+        receipt_path = review_root / RECEIPT_NAME
+        packet_path = review_root / PACKET_NAME
         receipt_digest = sha256(receipt_path.read_bytes()).hexdigest()
         packet_digest = sha256(packet_path.read_bytes()).hexdigest()
         receipt_location = receipt_path.resolve(strict=False)
@@ -650,7 +724,11 @@ def main(argv: list[str] | None = None) -> int:
     print(f"review-packet: {packet_location}")
     print(f"receipt-sha256: {receipt_digest}")
     print(f"packet-sha256: {packet_digest}")
-    print("Review preparation only; M4/M5 decisions and human acceptance remain pending")
+    action = "inspection" if args.command == "inspect" else "preparation"
+    print(
+        f"Review {action} only; M4/M5 decisions and human acceptance "
+        "remain pending"
+    )
     return 0 if receipt["status"] == "packet_complete_for_m4_review" else 1
 
 

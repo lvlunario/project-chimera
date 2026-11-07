@@ -130,6 +130,11 @@ late candidate changes; component failures; incomplete publication; extra or cha
 malformed/noncanonical receipts; and false acceptance fields. The same focused tests run under
 normal and optimized Python so safety does not depend on removable assertions.
 
+The read-only `inspect DIRECTORY` CLI path accepts only an existing published directory, derives
+the candidate from its receipt, consults no Git state and performs no write. It must return
+the same 0/1 status distinction as preparation for a coherent complete/blocked directory and
+return 2 without a success summary for malformed or inconsistent content.
+
 A coherent release-control failure remains reviewable with `blocked_by_release_controls` and
 a nonzero exit. `packet_complete_for_m4_review` means only that this machine-prepared directory
 is internally coherent. The rehearsal does not prove hosted CI, perform the walkthrough,

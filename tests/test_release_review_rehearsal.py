@@ -461,6 +461,216 @@ class ReleaseReviewRehearsalTests(unittest.TestCase):
         self.assertIn("packet: blocked_by_release_controls", output.getvalue())
         self.assertIn("human acceptance remain pending", output.getvalue())
 
+    def test_cli_reinspects_existing_directory_without_git_validation(self):
+        output = io.StringIO()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            review = root / "review"
+            validators = self._validators()
+            with (
+                validators[0],
+                validators[1],
+                validators[2],
+                validators[3],
+                validators[4],
+                validators[5],
+            ):
+                prepared = (
+                    release_review_rehearsal.prepare_review_rehearsal(
+                        review,
+                        candidate_commit=self.candidate,
+                        generated_at_utc=self.generated,
+                    )
+                )
+            before = self._tree_bytes(review)
+
+            with (
+                patch.object(
+                    operator_acceptance_prep,
+                    "_validate_candidate_checkout",
+                    side_effect=AssertionError(
+                        "inspection must not consult the candidate checkout"
+                    ),
+                ),
+                patch.object(
+                    release_review_rehearsal,
+                    "prepare_review_rehearsal",
+                    side_effect=AssertionError(
+                        "inspection must not prepare a new rehearsal"
+                    ),
+                ),
+                redirect_stdout(output),
+            ):
+                result = release_review_rehearsal.main([
+                    "inspect", str(review),
+                ])
+            after = self._tree_bytes(review)
+
+            self.assertEqual(
+                prepared,
+                release_review_rehearsal.inspect_review_rehearsal(review),
+            )
+        self.assertEqual(0, result)
+        self.assertIn(
+            f"candidate-commit: {self.candidate}", output.getvalue()
+        )
+        self.assertIn(
+            "packet: packet_complete_for_m4_review", output.getvalue()
+        )
+        self.assertIn("receipt-sha256:", output.getvalue())
+        self.assertIn("packet-sha256:", output.getvalue())
+        self.assertEqual(before, after)
+
+    def test_cli_reinspection_rejects_tampered_directory(self):
+        output = io.StringIO()
+        with tempfile.TemporaryDirectory() as directory:
+            review = Path(directory) / "review"
+            review.mkdir()
+            (review / release_review_rehearsal.RECEIPT_NAME).write_bytes(
+                b"{}\n"
+            )
+            with redirect_stderr(output):
+                result = release_review_rehearsal.main([
+                    "inspect", str(review),
+                ])
+        self.assertEqual(2, result)
+        self.assertIn("receipt fields changed", output.getvalue())
+        self.assertNotIn("human acceptance remain pending", output.getvalue())
+
+    def test_cli_reinspection_preserves_coherent_blocker_exit_one(self):
+        blocked = {
+            "candidate_commit_sha": self.candidate,
+            "component_statuses": {
+                "operator_acceptance": "passed",
+                "performance": "target_missed",
+                "release_readiness": "review_inputs_complete",
+                "threat_model": "model_complete",
+            },
+            "human_acceptance": "not_granted",
+            "m4_decision": "pending",
+            "m5_decision": "pending",
+            "packet_status": "blocked_by_release_controls",
+            "status": "blocked_by_release_controls",
+        }
+        output = io.StringIO()
+        with tempfile.TemporaryDirectory() as directory:
+            review = Path(directory) / "review"
+            review.mkdir()
+            (review / release_review_rehearsal.RECEIPT_NAME).write_bytes(
+                b"{}\n"
+            )
+            (review / release_review_rehearsal.PACKET_NAME).write_bytes(
+                b"packet"
+            )
+            with (
+                patch.object(
+                    release_review_rehearsal,
+                    "inspect_review_rehearsal",
+                    return_value=blocked,
+                ),
+                patch.object(
+                    release_review_rehearsal,
+                    "prepare_review_rehearsal",
+                    side_effect=AssertionError(
+                        "inspection must not prepare a rehearsal"
+                    ),
+                ),
+                redirect_stdout(output),
+            ):
+                result = release_review_rehearsal.main([
+                    "inspect", str(review),
+                ])
+        self.assertEqual(1, result)
+        self.assertIn("packet: blocked_by_release_controls", output.getvalue())
+        self.assertIn("human acceptance remain pending", output.getvalue())
+
+    def test_cli_reinspection_arguments_are_mutually_exclusive(self):
+        output = io.StringIO()
+        with redirect_stderr(output), self.assertRaises(SystemExit) as raised:
+            release_review_rehearsal.main([
+                "inspect", "/tmp/chimera-review-test",
+                "--candidate-commit", self.candidate,
+            ])
+        self.assertEqual(2, raised.exception.code)
+        self.assertIn("cannot be combined", output.getvalue())
+
+    def test_inspection_bounds_tree_before_reading_untrusted_content(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            review = root / "review"
+            validators = self._validators()
+            with (
+                validators[0],
+                validators[1],
+                validators[2],
+                validators[3],
+                validators[4],
+                validators[5],
+            ):
+                release_review_rehearsal.prepare_review_rehearsal(
+                    review,
+                    candidate_commit=self.candidate,
+                    generated_at_utc=self.generated,
+                )
+
+            with (
+                patch.object(release_review_rehearsal, "MAX_ENTRIES", 1),
+                self.assertRaisesRegex(
+                    release_review_rehearsal.ReviewRehearsalError,
+                    "too many entries",
+                ),
+            ):
+                release_review_rehearsal.inspect_review_rehearsal(review)
+
+            with (
+                patch.object(release_review_rehearsal, "MAX_DEPTH", 0),
+                self.assertRaisesRegex(
+                    release_review_rehearsal.ReviewRehearsalError,
+                    "depth bound",
+                ),
+            ):
+                release_review_rehearsal.inspect_review_rehearsal(review)
+
+            with (
+                patch.object(
+                    release_review_rehearsal, "MAX_CONTENT_BYTES", 1
+                ),
+                self.assertRaisesRegex(
+                    release_review_rehearsal.ReviewRehearsalError,
+                    "exceeds its size bound",
+                ),
+            ):
+                release_review_rehearsal.inspect_review_rehearsal(review)
+
+            with (
+                patch.object(
+                    release_review_rehearsal, "MAX_RECEIPT_BYTES", 1
+                ),
+                self.assertRaisesRegex(
+                    release_review_rehearsal.ReviewRehearsalError,
+                    "exceeds its size bound",
+                ),
+            ):
+                release_review_rehearsal.inspect_review_rehearsal(review)
+
+    def test_cli_reinspection_maps_operational_error_to_exit_two(self):
+        output = io.StringIO()
+        with (
+            patch.object(
+                release_review_rehearsal,
+                "inspect_review_rehearsal",
+                side_effect=OSError("injected read failure"),
+            ),
+            redirect_stderr(output),
+        ):
+            result = release_review_rehearsal.main([
+                "inspect", "/tmp/chimera-review-test",
+            ])
+        self.assertEqual(2, result)
+        self.assertIn("injected read failure", output.getvalue())
+        self.assertNotIn("Traceback", output.getvalue())
+        self.assertNotIn("human acceptance remain pending", output.getvalue())
+
     def test_cli_reports_control_error_without_success_claim(self):
         output = io.StringIO()
         with (
