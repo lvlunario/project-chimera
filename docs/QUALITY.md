@@ -82,8 +82,10 @@ The fixed `p7-local-prototype-release-readiness-v1` manifest assigns every requi
 row to exactly one evidence group, captures open `Defect:` issues from GitHub as a dated
 snapshot, and declares required headings across the operator and release guides. Its
 exact-candidate assessment records the manifest digest and exact identities of referenced
-tracked files. Unit controls reject incomplete/duplicate requirement coverage, untracked or
-non-regular evidence, missing/out-of-order headings, inconsistent defect/blocker state,
+tracked files plus the defect snapshot's exact nonnegative age at assessment generation.
+Packet validation independently recomputes that age. Unit controls reject
+incomplete/duplicate requirement coverage, untracked or non-regular evidence,
+missing/out-of-order headings, inconsistent defect/blocker state, tampered assessment age,
 noncanonical input, dirty/wrong candidates and unsafe publication.
 
 This control is an evidence index, not evidence that every cited test passed. A complete

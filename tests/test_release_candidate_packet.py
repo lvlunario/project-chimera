@@ -16,8 +16,8 @@ from examples import operator_acceptance_prep, release_candidate_packet
 
 class ReleaseCandidatePacketTests(unittest.TestCase):
     candidate = "a" * 40
-    generated = "2026-11-05T10:30:00Z"
-    source_generated = "2026-11-05T10:29:00Z"
+    generated = "2026-11-08T10:13:26Z"
+    source_generated = "2026-11-08T10:12:26Z"
 
     def _acceptance_workspace(self, root: Path) -> Path:
         root.mkdir(parents=True, exist_ok=True)
@@ -182,7 +182,7 @@ class ReleaseCandidatePacketTests(unittest.TestCase):
         ]
         snapshot = readiness_document["defect_snapshot"]
         readiness = {
-            "schema_version": 1,
+            "schema_version": 2,
             "record_type": "chimera.release-readiness-assessment",
             "candidate_commit_sha": self.candidate,
             "candidate_checks": {
@@ -201,6 +201,7 @@ class ReleaseCandidatePacketTests(unittest.TestCase):
                     item["issue_number"] for item in snapshot["open_defects"]
                     if item["release_blocker"]
                 ],
+                "snapshot_age_at_assessment_seconds": 300,
                 "snapshot_at_utc": snapshot["observed_at_utc"],
             },
             "evidence_files": [
@@ -401,6 +402,88 @@ class ReleaseCandidatePacketTests(unittest.TestCase):
                             )
                     self.assertFalse(output.exists())
                     path.write_bytes(original)
+
+    def test_readiness_v2_age_is_exact_and_v1_is_inspection_only(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            _, _, readiness_path = self._records(root)
+            record = json.loads(readiness_path.read_text(encoding="utf-8"))
+            candidate_files = {
+                relative: (release_candidate_packet.ROOT / relative).read_bytes()
+                for relative in release_candidate_packet.CANDIDATE_FILES
+            }
+
+            self.assertEqual(
+                [],
+                release_candidate_packet._validate_readiness(
+                    record, self.candidate, candidate_files
+                ),
+            )
+
+            cases = []
+            for label, value in (
+                ("wrong", 301),
+                ("negative", -1),
+                ("boolean", True),
+                ("float", 300.0),
+            ):
+                changed = deepcopy(record)
+                changed["defects"]["snapshot_age_at_assessment_seconds"] = value
+                cases.append((label, changed, "snapshot age is inconsistent"))
+            missing = deepcopy(record)
+            missing["defects"].pop("snapshot_age_at_assessment_seconds")
+            cases.append(("missing", missing, "defect inventory changed"))
+            extra = deepcopy(record)
+            extra["defects"]["unexpected"] = 0
+            cases.append(("extra", extra, "defect inventory changed"))
+            changed_time = deepcopy(record)
+            changed_time["generated_at_utc"] = "2026-11-08T10:12:27Z"
+            cases.append(("changed-time", changed_time, "snapshot age is inconsistent"))
+
+            for label, changed, message in cases:
+                with self.subTest(label=label):
+                    with self.assertRaisesRegex(
+                            release_candidate_packet.ReleaseCandidatePacketError,
+                            message):
+                        release_candidate_packet._validate_readiness(
+                            changed, self.candidate, candidate_files
+                        )
+
+            legacy = deepcopy(record)
+            legacy["schema_version"] = 1
+            legacy["defects"].pop("snapshot_age_at_assessment_seconds")
+            with self.assertRaisesRegex(
+                    release_candidate_packet.ReleaseCandidatePacketError,
+                    "schema version changed"):
+                release_candidate_packet._validate_readiness(
+                    legacy, self.candidate, candidate_files
+                )
+            self.assertEqual(
+                [],
+                release_candidate_packet._validate_readiness(
+                    legacy,
+                    self.candidate,
+                    candidate_files,
+                    allow_legacy_schema=True,
+                ),
+            )
+
+    def test_portable_inspection_retains_historical_v1_readiness_support(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            packet, _ = self._assemble(root)
+            manifest, members = release_candidate_packet._read_packet(packet)
+            readiness_name = release_candidate_packet.ASSESSMENT_NAMES["readiness"]
+            readiness = json.loads(members[readiness_name].decode("utf-8"))
+            readiness["schema_version"] = 1
+            readiness["defects"].pop("snapshot_age_at_assessment_seconds")
+            members[readiness_name] = release_candidate_packet._pretty(readiness)
+            historical = root / "historical-v1.zip"
+            self._repack(historical, manifest, members)
+
+            inspected = release_candidate_packet.inspect_packet(historical)
+            self.assertEqual("packet_complete_for_m4_review", inspected["status"])
+            self.assertEqual([], inspected["release_blockers"])
 
     def test_rejects_changed_unexpected_and_symbolic_acceptance_files(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -784,7 +867,7 @@ class ReleaseCandidatePacketTests(unittest.TestCase):
             future_members = dict(members)
             performance_path = release_candidate_packet.ASSESSMENT_NAMES["performance"]
             performance = json.loads(future_members[performance_path].decode("utf-8"))
-            performance["generated_at_utc"] = "2026-11-05T10:30:01Z"
+            performance["generated_at_utc"] = "2026-11-08T10:13:27Z"
             future_members[performance_path] = release_candidate_packet._compact(
                 performance
             )

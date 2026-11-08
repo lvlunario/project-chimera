@@ -132,7 +132,10 @@ current blocker. Recheck the candidate immediately before atomic no-replace publ
 Tradeoffs: this is an offline, candidate-bound review index rather than a live GitHub query.
 It proves inventory completeness and content identity, not that cited tests passed, that a
 guide is understandable, or that the candidate is accepted. The snapshot must be refreshed
-before M4 disposition. Manual-device, screen-reader, operator and PM observations remain
+before M4 disposition. Assessment schema v2 reports the exact snapshot age in seconds at
+assessment generation and the M4 packet recomputes it; that exposes staleness without
+inventing a machine acceptance threshold or trusted timestamp. Manual-device, screen-reader,
+operator and PM observations remain
 separate and explicitly pending.
 
 ## Decision 0024: make the trusted local boundary executable and reviewable

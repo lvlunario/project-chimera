@@ -994,13 +994,16 @@ Expected for the current inventory: five `PASS READINESS-*` lines and
 `status: review_inputs_complete`. The record includes the manifest digest, every referenced
 file's byte count/SHA-256, the declared/covered requirement counts, guide and heading counts,
 three open defects with their fixed/verified engineering dispositions, zero current release
-blockers, and the still-pending human evidence. An unresolved defect is retained in the
+blockers, the exact age in seconds of the dated defect snapshot at assessment generation,
+and the still-pending human evidence. An unresolved defect is retained in the
 record, changes READINESS-002 to `blocked`, and exits 1. Invalid input or unsafe output exits
 2. The command never replaces an output and checks the clean commit before assessment and
 again before publication.
 
-The defect list is a dated offline snapshot of GitHub, not a live issue query. Refresh it
-before M4 disposition. Likewise, a tracked test file or present manual heading is an index to
+The defect list is a dated offline snapshot of GitHub, not a live issue query. Assessment
+schema v2 makes its age machine-visible and the M4 packet rechecks the arithmetic, but that
+number is not a freshness threshold or trusted timestamp. Refresh the snapshot before M4
+disposition. Likewise, a tracked test file or present manual heading is an index to
 evidence—not proof that the test passed or the guide worked for an operator. Use the hosted
 CI logs and actual walkthrough observations alongside this record.
 

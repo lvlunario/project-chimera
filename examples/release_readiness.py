@@ -536,6 +536,8 @@ def _build_assessment(
     generated_at = datetime.fromisoformat(generated_at_utc)
     _require(snapshot_at <= generated_at,
              "defect snapshot cannot be later than assessment generation")
+    snapshot_age = generated_at - snapshot_at
+    snapshot_age_seconds = snapshot_age.days * 86_400 + snapshot_age.seconds
     blocked = bool(summary["open_release_blockers"])
     return {
         "candidate_checks": {
@@ -573,6 +575,7 @@ def _build_assessment(
         "defects": {
             "open_count": summary["defect_count"],
             "open_release_blockers": summary["open_release_blockers"],
+            "snapshot_age_at_assessment_seconds": snapshot_age_seconds,
             "snapshot_at_utc": summary["defect_snapshot_at_utc"],
         },
         "evidence_files": summary["evidence_files"],
@@ -598,7 +601,7 @@ def _build_assessment(
             "declared_count": summary["requirement_count"],
             "group_count": summary["requirement_group_count"],
         },
-        "schema_version": 1,
+        "schema_version": 2,
         "scope": (
             "candidate-bound M4 review inputs only; not a live GitHub query, test-result "
             "claim, release declaration, phase closure, tag, deployment or human acceptance"

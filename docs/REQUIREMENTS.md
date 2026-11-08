@@ -65,14 +65,17 @@ phase closure or human acceptance.
 | ID | Requirement | Evidence |
 |---|---|---|
 | READINESS-001 | Cover every requirement identifier declared as a table row in this document exactly once, and reject missing, duplicate or undeclared coverage | `docs/release-readiness-v1.json`; inventory mismatch tests |
-| READINESS-002 | Preserve a dated snapshot of every open GitHub issue titled `Defect:`, including severity, engineering disposition, candidate evidence and explicit release-blocker state | connected GitHub issue search; defect consistency and blocker tests |
+| READINESS-002 | Preserve a dated snapshot of every open GitHub issue titled `Defect:`, including severity, engineering disposition, candidate evidence and explicit release-blocker state; report its exact nonnegative age at assessment | connected GitHub issue search; defect consistency, assessment-age and blocker tests |
 | READINESS-003 | Verify exact required headings, in document order, across the README, manual, approval guide, quality plan, threat model and current operator-acceptance packet | guide identity/heading tests |
 | READINESS-004 | Bind a canonical assessment to the full clean candidate, manifest digest and exact byte/SHA-256 identities of every referenced regular tracked file; refuse unsafe output | `examples/release_readiness.py`; candidate/path/publication negative tests |
 | READINESS-005 | Keep P3/P4/P5 observations, D-004–006, M4/M5 decisions and human acceptance explicitly pending; never translate a complete inventory into approval | manifest release-review fields, assessment wording and CLI regression |
 
 `review_inputs_complete` means that the fixed offline inventory is internally complete for
-the named candidate. The defect snapshot can become stale, so it must be refreshed against
-GitHub before M4 disposition. File identity and heading presence do not prove that tests
+the named candidate. Assessment schema v2 exposes the defect snapshot's exact age in seconds
+at assessment generation and the packet independently recomputes it. This arithmetic does not
+set a freshness threshold, establish trusted time or prove live GitHub state. The snapshot can
+become stale, so it must be refreshed against GitHub before M4 disposition. File identity and
+heading presence do not prove that tests
 passed or that a guide is usable; hosted results and actual human observations remain
 separate evidence.
 

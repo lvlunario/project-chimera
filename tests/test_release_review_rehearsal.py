@@ -22,7 +22,7 @@ from examples import (
 
 class ReleaseReviewRehearsalTests(unittest.TestCase):
     candidate = "a" * 40
-    generated = "2026-11-06T10:58:00Z"
+    generated = "2026-11-08T10:14:26Z"
 
     def _validators(self):
         tracked = release_readiness._tracked_repository_paths()
@@ -341,7 +341,7 @@ class ReleaseReviewRehearsalTests(unittest.TestCase):
                     release_review_rehearsal.prepare_review_rehearsal(
                         root / "bad-time",
                         candidate_commit=self.candidate,
-                        generated_at_utc="2026-11-06T10:58:00+00:00",
+                        generated_at_utc="2026-11-08T10:14:26+00:00",
                     )
                 with self.assertRaisesRegex(
                         release_review_rehearsal.ReviewRehearsalError,

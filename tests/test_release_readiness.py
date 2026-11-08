@@ -90,7 +90,7 @@ class ReleaseReadinessTests(unittest.TestCase):
                 record = release_readiness.assess_release_readiness(
                     output,
                     candidate_commit=self.candidate,
-                    generated_at_utc="2026-11-05T10:25:00Z",
+                    generated_at_utc="2026-11-08T10:12:26Z",
                 )
             self.assertEqual(2, validate_candidate.call_count)
             self.assertEqual("review_inputs_complete", record["status"])
@@ -102,6 +102,11 @@ class ReleaseReadinessTests(unittest.TestCase):
             self.assertEqual(128, record["requirements"]["covered_count"])
             self.assertEqual(3, record["defects"]["open_count"])
             self.assertEqual([], record["defects"]["open_release_blockers"])
+            self.assertEqual(
+                300,
+                record["defects"]["snapshot_age_at_assessment_seconds"],
+            )
+            self.assertEqual(2, record["schema_version"])
             self.assertEqual(
                 release_readiness.hashlib.sha256(
                     self.manifest_content
@@ -221,10 +226,23 @@ class ReleaseReadinessTests(unittest.TestCase):
                 release_readiness.ReleaseReadinessError, "cannot be later"):
             release_readiness._build_assessment(
                 candidate_commit=self.candidate,
-                generated_at_utc="2026-11-05T10:25:00Z",
+                generated_at_utc="2026-11-08T10:12:26Z",
                 manifest_content=self.manifest_content,
                 summary=summary,
             )
+
+    def test_reports_zero_age_for_same_second_snapshot_and_assessment(self):
+        summary = self._validate()
+        record = release_readiness._build_assessment(
+            candidate_commit=self.candidate,
+            generated_at_utc=summary["defect_snapshot_at_utc"],
+            manifest_content=self.manifest_content,
+            summary=summary,
+        )
+        self.assertEqual(
+            0,
+            record["defects"]["snapshot_age_at_assessment_seconds"],
+        )
 
     def test_unresolved_defect_is_retained_and_returns_blocked(self):
         document = deepcopy(self.document)
@@ -235,7 +253,7 @@ class ReleaseReadinessTests(unittest.TestCase):
         summary = self._validate(document)
         record = release_readiness._build_assessment(
             candidate_commit=self.candidate,
-            generated_at_utc="2026-11-05T10:25:00Z",
+            generated_at_utc="2026-11-08T10:12:26Z",
             manifest_content=self.manifest_content,
             summary=summary,
         )
@@ -295,7 +313,7 @@ class ReleaseReadinessTests(unittest.TestCase):
     def test_cli_uses_pass_label_without_claiming_acceptance(self):
         record = release_readiness._build_assessment(
             candidate_commit=self.candidate,
-            generated_at_utc="2026-11-05T10:25:00Z",
+            generated_at_utc="2026-11-08T10:12:26Z",
             manifest_content=self.manifest_content,
             summary=self._validate(),
         )
