@@ -955,13 +955,10 @@ def _validate_threat(record: dict, candidate_commit: str,
 
 
 def _validate_readiness(record: dict, candidate_commit: str,
-                        candidate_files: dict[str, bytes], *,
-                        allow_legacy_schema: bool = False) -> list[str]:
+                        candidate_files: dict[str, bytes]) -> list[str]:
     _object(record, READINESS_FIELDS, "release-readiness record")
     schema_version = record["schema_version"]
-    _require(type(schema_version) is int
-             and (schema_version == 2
-                  or (allow_legacy_schema and schema_version == 1)),
+    _require(type(schema_version) is int and schema_version == 2,
              "release-readiness schema version changed")
     _require(record["record_type"] == "chimera.release-readiness-assessment",
              "release-readiness record type changed")
@@ -985,10 +982,9 @@ def _validate_readiness(record: dict, candidate_commit: str,
              "release-readiness decisions/acceptance must remain pending")
     defects = record["defects"]
     defect_fields = {
-        "open_count", "open_release_blockers", "snapshot_at_utc",
+        "open_count", "open_release_blockers",
+        "snapshot_age_at_assessment_seconds", "snapshot_at_utc",
     }
-    if schema_version == 2:
-        defect_fields.add("snapshot_age_at_assessment_seconds")
     _require(type(defects) is dict and set(defects) == defect_fields
              and type(defects.get("open_release_blockers")) is list,
              "release-readiness defect inventory changed")
@@ -1006,14 +1002,13 @@ def _validate_readiness(record: dict, candidate_commit: str,
              "release-readiness defect snapshot is later than assessment")
     snapshot_age = generated_time - snapshot_time
     expected_snapshot_age = snapshot_age.days * 86_400 + snapshot_age.seconds
-    if schema_version == 2:
-        recorded_snapshot_age = defects["snapshot_age_at_assessment_seconds"]
-        _require(
-            type(recorded_snapshot_age) is int
-            and recorded_snapshot_age >= 0
-            and recorded_snapshot_age == expected_snapshot_age,
-            "release-readiness defect snapshot age is inconsistent",
-        )
+    recorded_snapshot_age = defects["snapshot_age_at_assessment_seconds"]
+    _require(
+        type(recorded_snapshot_age) is int
+        and recorded_snapshot_age >= 0
+        and recorded_snapshot_age == expected_snapshot_age,
+        "release-readiness defect snapshot age is inconsistent",
+    )
     expected = "release_blockers_present" if blockers else "review_inputs_complete"
     _require(record["status"] == expected,
              "release-readiness aggregate status is inconsistent")
@@ -1118,10 +1113,9 @@ def _validate_readiness(record: dict, candidate_commit: str,
     expected_defects = {
         "open_count": len(snapshot["open_defects"]),
         "open_release_blockers": snapshot_blockers,
+        "snapshot_age_at_assessment_seconds": expected_snapshot_age,
         "snapshot_at_utc": snapshot_at,
     }
-    if schema_version == 2:
-        expected_defects["snapshot_age_at_assessment_seconds"] = expected_snapshot_age
     _require(defects == expected_defects,
              "release-readiness defect summary does not match candidate")
 
@@ -1532,12 +1526,7 @@ def _validate_manifest_and_members(manifest: dict,
     blockers = []
     blockers.extend(_validate_performance(performance, candidate))
     blockers.extend(_validate_threat(threat, candidate, candidate_files))
-    blockers.extend(_validate_readiness(
-        readiness,
-        candidate,
-        candidate_files,
-        allow_legacy_schema=True,
-    ))
+    blockers.extend(_validate_readiness(readiness, candidate, candidate_files))
     _require(manifest["release_blockers"] == blockers,
              "packet release-blocker summary is inconsistent")
     expected_status = ("blocked_by_release_controls" if blockers

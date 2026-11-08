@@ -403,10 +403,10 @@ class ReleaseCandidatePacketTests(unittest.TestCase):
                     self.assertFalse(output.exists())
                     path.write_bytes(original)
 
-    def test_readiness_v2_age_is_exact_and_v1_is_inspection_only(self):
+    def test_readiness_v2_age_is_exact_and_v1_is_rejected(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            _, _, readiness_path = self._records(root)
+            performance_path, threat_path, readiness_path = self._records(root)
             record = json.loads(readiness_path.read_text(encoding="utf-8"))
             candidate_files = {
                 relative: (release_candidate_packet.ROOT / relative).read_bytes()
@@ -458,17 +458,26 @@ class ReleaseCandidatePacketTests(unittest.TestCase):
                 release_candidate_packet._validate_readiness(
                     legacy, self.candidate, candidate_files
                 )
-            self.assertEqual(
-                [],
-                release_candidate_packet._validate_readiness(
-                    legacy,
-                    self.candidate,
-                    candidate_files,
-                    allow_legacy_schema=True,
-                ),
-            )
+            readiness_path.write_bytes(release_candidate_packet._pretty(legacy))
+            workspace = self._acceptance_workspace(root)
+            output = root / "legacy-source.zip"
+            with patch.object(
+                    release_candidate_packet, "_validate_candidate_checkout"):
+                with self.assertRaisesRegex(
+                        release_candidate_packet.ReleaseCandidatePacketError,
+                        "schema version changed"):
+                    release_candidate_packet.assemble_packet(
+                        output,
+                        candidate_commit=self.candidate,
+                        acceptance_workspace=workspace,
+                        performance_record=performance_path,
+                        threat_record=threat_path,
+                        readiness_record=readiness_path,
+                        generated_at_utc=self.generated,
+                    )
+            self.assertFalse(output.exists())
 
-    def test_portable_inspection_retains_historical_v1_readiness_support(self):
+    def test_portable_inspection_rejects_coherent_v1_readiness_downgrade(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             packet, _ = self._assemble(root)
@@ -478,12 +487,13 @@ class ReleaseCandidatePacketTests(unittest.TestCase):
             readiness["schema_version"] = 1
             readiness["defects"].pop("snapshot_age_at_assessment_seconds")
             members[readiness_name] = release_candidate_packet._pretty(readiness)
-            historical = root / "historical-v1.zip"
-            self._repack(historical, manifest, members)
+            downgraded = root / "downgraded-v1.zip"
+            self._repack(downgraded, manifest, members)
 
-            inspected = release_candidate_packet.inspect_packet(historical)
-            self.assertEqual("packet_complete_for_m4_review", inspected["status"])
-            self.assertEqual([], inspected["release_blockers"])
+            with self.assertRaisesRegex(
+                    release_candidate_packet.ReleaseCandidatePacketError,
+                    "schema version changed"):
+                release_candidate_packet.inspect_packet(downgraded)
 
     def test_rejects_changed_unexpected_and_symbolic_acceptance_files(self):
         with tempfile.TemporaryDirectory() as directory:
