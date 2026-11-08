@@ -27,7 +27,7 @@ entry point; the implementation has not been merged into `main`.
 | Ongoing changes, test evidence and next steps | [Daily engineering logs](https://github.com/lvlunario/project-chimera/tree/magnum-opus/development/docs/daily) |
 | Requirements and quality approach | [Requirements](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/REQUIREMENTS.md) · [Quality plan](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/QUALITY.md) |
 
-## Progress snapshot — November 7, 2026
+## Progress snapshot — November 8, 2026
 
 The development branch includes:
 
@@ -59,7 +59,8 @@ The development branch includes:
   claiming security or human acceptance.
 - An exact-clean-candidate release-readiness inventory covering every declared requirement,
   the dated open-defect snapshot, required guide headings and pending human decisions without
-  translating inventory completeness into release approval.
+  translating inventory completeness into release approval. Assessment schema v2 exposes the
+  snapshot age at assessment and packet validation rejects coherent schema downgrade.
 - A bounded exact-candidate M4 evidence packet that composes and portably reinspects the
   operator, performance, threat and readiness records while retaining a blank acceptance
   script and pending M4/M5 decisions.
@@ -79,20 +80,21 @@ the [November 1 dashboard-accessibility record](https://github.com/lvlunario/pro
 the [November 2 gate-review record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-02.md),
 the [November 5 acceptance-evidence correction](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-05.md),
 the [November 6 review-rehearsal record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-06.md),
-and the [November 7 milestone and reinspection record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-07.md)
+the [November 7 milestone and reinspection record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-07.md),
+and the [November 8 missed-milestone and readiness record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-08.md)
 record candidate-specific local, independent and hosted results. Do not infer a new
 candidate's status from an earlier successful run.
 
-**Acceptance state — November 7:** P0 scope (D-001–003) is approved by delegation.
+**Acceptance state — November 8:** P0 scope (D-001–003) is approved by delegation.
 P1 and P2 are conditionally accepted for continued development under the
 [delegated decision record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/reviews/2026-09-22-delegated-decisions.md). Leo's personal walkthroughs remain unperformed;
 final product validation remains open. P3/P4/P5 remain in progress; P7 release preparation
 now includes versioned performance, threat-model, readiness-inventory, bounded M4-packet and
 one-command preparation/reinspection controls. The current readiness inventory covers 128
 requirements across 22 groups and three open defect records with no declared release blocker.
-The October 17 M2 exact-candidate disposition is twenty-one days late. M3 is red on its
-November 7 deadline date: the engineering features and review inputs are verified, but no
-Leo walkthrough or P3/P4/P5 disposition is recorded. The November 2 packet is retained as a
+The October 17 M2 exact-candidate disposition is twenty-two days late. M3 missed its November
+7 baseline and is one day late: the engineering features and review inputs are verified, but
+no Leo walkthrough or P3/P4/P5 disposition is recorded. The November 2 packet is retained as a
 runbook, but its pinned candidate is historical; use the latest explicitly published full
 SHA. Synthetic fixtures establish software behavior; authorized measured-data validation,
 production deployment and certification are not claimed.
@@ -107,7 +109,7 @@ All dates below are 2026 delivery targets, subject to the documented scope and r
 | September 19 | M0 baseline; delegated scope decision recorded September 22 |
 | October 3 | M1 baseline; P1 retained as conditionally accepted for progression |
 | October 17 | M2 baseline missed; engineering candidate exists, exact disposition overdue |
-| November 7 | M3 baseline; engineering features verified, walkthrough and phase dispositions pending (red) |
+| November 7 | M3 baseline missed; engineering features verified, walkthrough and phase dispositions pending (red) |
 | November 28 | Release candidate for structured acceptance testing |
 | December 12 | Stabilized prototype, manuals and final acceptance demonstration |
 
