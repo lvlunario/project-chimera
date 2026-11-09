@@ -143,6 +143,28 @@ is internally coherent. The rehearsal does not prove hosted CI, perform the walk
 upload an artifact or grant M4/M5, P3/P4/P5 or human acceptance; it never merges, tags,
 releases or deploys.
 
+## M4 engineering candidate-nomination boundary
+
+The `p7-m4-engineering-nomination-v1` record may be created only from a rehearsal that
+reinspects as `packet_complete_for_m4_review` with no release blocker. It records exact
+receipt and packet byte/SHA-256 identities and independently recomputes the readiness defect
+snapshot age at nomination. Inspection must detect changed rehearsal bytes, changed status,
+candidate drift, altered snapshot age, noncanonical JSON and any attempt to grant phase or
+human authority.
+
+Hosted evidence is a canonical offline snapshot prepared from connected GitHub inspection.
+It must contain exactly one successful development-branch push run and one successful
+pull-request integration run for the nominated source SHA. Each run must list successful
+Python 3.11, Python 3.12 and Chromium jobs. Tests cover wrong run URLs and IDs, failed/missing
+jobs, wrong push/tested SHA, PR source-candidate drift, duplicate runs and malformed or
+noncanonical input. The nomination command content-binds that document but does not query or
+authenticate GitHub; the responsible reviewer still inspects the actual hosted records.
+
+Publication is canonical UTF-8 JSON to a new regular outside-checkout and outside-rehearsal
+path. Portable inspection reads the nomination and rehearsal without changing either. The
+engineering state is only `nominated_for_m4_review`; P3/P4/P5, M4/M5 and human acceptance
+remain pending. Replacing a candidate requires a separately retained superseding record.
+
 ## Defects and risk
 Use GitHub issues: reproduction, expected/actual result, version, environment, severity,
 requirement, owner role, target fix and retest evidence. Blocker = cannot run or trust

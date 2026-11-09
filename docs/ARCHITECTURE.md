@@ -1,5 +1,28 @@
 # Architecture decision 0001: deterministic core first
 
+## Decision 0031: freeze an engineering candidate without granting the gate
+
+November 9, 2026. P7/M4 stabilization increment; no phase, release or acceptance claim.
+
+Create a separate canonical nomination record only after the existing exact-candidate review
+directory reinspects as complete with no release blocker. Bind the candidate to exact receipt
+and packet byte identities, the dated defect snapshot and one connected-GitHub inspection
+snapshot containing both the candidate push and PR-integration matrices. Require Python 3.11,
+Python 3.12 and Chromium success in each matrix. Keep the GitHub snapshot caller-supplied:
+the offline command validates its structure, candidate linkage and content identity but does
+not make an unauthenticated network call or claim that it independently attested GitHub.
+
+Publish the nomination as a new outside-checkout/outside-rehearsal file and provide a
+read-only inspector that recomputes every rehearsal identity and snapshot age. A blocked
+rehearsal cannot be nominated. The record says only `nominated_for_m4_review`, leaves
+P3/P4/P5, M4/M5 and human acceptance pending, and fixes the change policy: a later candidate
+needs a new superseding record rather than an edit to the old one.
+
+Tradeoffs: this adds an explicit chain from hosted evidence to one immutable SHA without
+modifying the already sealed rehearsal. It does not prove CI authorship, trusted time,
+artifact authenticity, operator usability or product readiness. Connected inspection,
+Leo's decision and a fresh defect check at disposition remain separate controls.
+
 ## Decision 0030: make rehearsal reinspection read-only and bounded
 
 November 7, 2026. P7 stabilization increment; no milestone, phase or acceptance claim.

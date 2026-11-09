@@ -1,7 +1,7 @@
 {
   "defect_snapshot": {
     "github_repository": "lvlunario/project-chimera",
-    "observed_at_utc": "2026-11-08T10:07:26Z",
+    "observed_at_utc": "2026-11-09T10:24:30Z",
     "open_defects": [
       {
         "engineering_disposition": "fixed_verified_pending_pr_integration",
@@ -70,6 +70,7 @@
         "### P7 local-prototype threat-model assessment",
         "### P7 release-readiness assessment",
         "### P7 M4 release-candidate evidence packet",
+        "### P7 M4 engineering candidate nomination",
         "## Phase approval instructions"
       ]
     },
@@ -99,6 +100,7 @@
         "## Release performance evidence",
         "## Threat-model evidence",
         "## M4 evidence-packet boundary",
+        "## M4 engineering candidate-nomination boundary",
         "## Defects and risk",
         "## Continuous integration policy",
         "## Operator acceptance-preparation boundary"
@@ -490,6 +492,22 @@
         "REHEARSAL-002",
         "REHEARSAL-003",
         "REHEARSAL-004"
+      ]
+    },
+    {
+      "evidence_paths": [
+        "docs/MANUAL.md",
+        "docs/QUALITY.md",
+        "examples/release_candidate_nomination.py",
+        "tests/test_release_candidate_nomination.py"
+      ],
+      "group_id": "GROUP-023",
+      "requirement_ids": [
+        "NOMINATE-001",
+        "NOMINATE-002",
+        "NOMINATE-003",
+        "NOMINATE-004",
+        "NOMINATE-005"
       ]
     }
   ],

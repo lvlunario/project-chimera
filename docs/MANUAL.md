@@ -1112,6 +1112,50 @@ Teaching note for Leo: think of the ZIP as a sealed review binder, not an approv
 It makes silent substitutions and omissions visible; the decision still comes from the
 actual engineering results and your recorded acceptance response.
 
+### P7 M4 engineering candidate nomination
+
+After the exact candidate's push and PR-integration workflows have completed and been
+inspected through the connected repository integration, preserve those observations in one
+canonical JSON file outside the checkout. The document names the development branch, source
+candidate, inspection time and exactly two runs in this order: `push`, then `pull_request`.
+Each run records its numeric ID/URL, workflow name `test`, tested commit SHA, source candidate
+SHA, successful conclusion and these successful jobs in order: `Chromium dashboard journey`,
+`Python 3.11`, `Python 3.12`. The push tested SHA must equal the candidate; the PR tested SHA
+may be GitHub's generated merge commit but its source candidate must still match.
+
+From a trusted checkout containing the nomination tool, bind that connected snapshot to an
+already published exact-candidate rehearsal. Both output paths stay outside the repository,
+and the nomination must be a sibling or otherwise separate file—not a new member inside the
+sealed rehearsal directory:
+
+```bash
+python -m examples.release_candidate_nomination build \
+  --rehearsal /tmp/chimera-m4-review \
+  --ci-evidence /tmp/chimera-m4-ci-evidence.json \
+  --output /tmp/chimera-m4-candidate-nomination.json
+
+python -m examples.release_candidate_nomination inspect \
+  /tmp/chimera-m4-candidate-nomination.json \
+  --rehearsal /tmp/chimera-m4-review
+```
+
+Expected: `engineering-state: nominated_for_m4_review`, the same full candidate SHA, and
+nomination, receipt and packet SHA-256 values. Both commands finish by retaining P3/P4/P5,
+M4/M5 and human acceptance as pending. The builder refuses a blocked rehearsal, a wrong or
+failed hosted run, missing matrix job, candidate mismatch, stale identity, existing output,
+symbolic link, output inside the checkout/rehearsal or noncanonical input. Inspection writes
+nothing and detects later changes to either record or rehearsal.
+
+The record exposes how old the dated defect snapshot was when nomination occurred, but sets
+no freshness threshold and does not establish trusted time. Refresh connected defect state
+again immediately before M4 disposition. The CI JSON is a caller-supplied inspection
+snapshot: Chimera validates and hashes it offline, but does not query GitHub or prove who
+created it. Keep the actual workflow URLs and inspected logs with the program record.
+
+Teaching note for Leo: nomination is placing an exact sealed binder on the review desk, not
+signing its approval page. The SHA prevents the implementation from moving silently; your
+M4 decision still determines whether it may enter final acceptance testing.
+
 ## Phase approval instructions
 
 Use the [phase approval guide](APPROVALS.md) for P0–P7 verification and validation checklists,

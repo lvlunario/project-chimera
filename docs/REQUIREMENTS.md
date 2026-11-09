@@ -18,6 +18,25 @@ Malformed, unavailable or inconsistent evidence is an error or `not_evaluated`, 
 COM-LINK-001 pass. Synthetic results remain explicitly labeled and do not establish physical
 radio performance.
 
+## M4 engineering candidate nomination v1
+
+This P7 control freezes one exact engineering candidate after the existing rehearsal and
+hosted push/PR-integration evidence have been inspected. It is a durable nomination input,
+not M4 permission, a GitHub attestation or a human decision.
+
+| ID | Requirement | Evidence |
+|---|---|---|
+| NOMINATE-001 | Reinspect one published rehearsal, derive its exact candidate and receipt/packet identities, and refuse any blocker, mismatch or incomplete packet | `examples/release_candidate_nomination.py`; rehearsal-binding and blocked-input tests |
+| NOMINATE-002 | Admit only canonical caller-supplied connected-GitHub evidence containing one successful push run and one successful PR-integration run for the same source candidate, each with successful Python 3.11, Python 3.12 and Chromium jobs | hosted-run schema, job-inventory, conclusion, URL and commit negative tests |
+| NOMINATE-003 | Preserve the readiness record's dated defect snapshot and recompute its exact nonnegative age at nomination without creating a freshness threshold or trusted-time claim | snapshot chronology, type and tamper tests |
+| NOMINATE-004 | Publish canonical UTF-8 JSON only to a new regular outside-checkout/outside-rehearsal path; provide bounded portable inspection that rechecks the linked rehearsal without writing | publication, no-overwrite, symlink, canonical-reopen and read-only inspection tests |
+| NOMINATE-005 | State only `nominated_for_m4_review`, keep P3/P4/P5, M4/M5 and human acceptance pending, and require a later explicit nomination record to supersede the exact SHA | authority-tamper, phase-disposition and CLI wording tests |
+
+The connected GitHub evidence document is an offline inspection snapshot supplied by the
+operator. The command validates and content-binds it but does not call GitHub, prove that the
+snapshot is authentic or make green automation equivalent to acceptance. A nomination must
+be superseded rather than edited when the candidate changes.
+
 ## Exact-candidate review rehearsal v1
 
 This P7 convenience control composes the existing acceptance and release controls into one
