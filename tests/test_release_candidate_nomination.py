@@ -623,7 +623,10 @@ class ReleaseCandidateNominationTests(unittest.TestCase):
                     "inspect", str(output), "--rehearsal", str(review)
                 ])
             self.assertEqual(2, result)
-            self.assertIn("not canonical JSON", stderr.getvalue())
+            self.assertRegex(
+                stderr.getvalue(),
+                r"candidate nomination is (invalid|not canonical) JSON",
+            )
             self.assertNotIn("Traceback", stderr.getvalue())
 
     def test_control_does_not_depend_on_removable_asserts(self):
