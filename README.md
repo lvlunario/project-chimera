@@ -27,7 +27,7 @@ entry point; the implementation has not been merged into `main`.
 | Ongoing changes, test evidence and next steps | [Daily engineering logs](https://github.com/lvlunario/project-chimera/tree/magnum-opus/development/docs/daily) |
 | Requirements and quality approach | [Requirements](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/REQUIREMENTS.md) · [Quality plan](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/QUALITY.md) |
 
-## Progress snapshot — November 9, 2026
+## Progress snapshot — November 10, 2026
 
 The development branch includes:
 
@@ -67,8 +67,10 @@ The development branch includes:
 - A one-command exact-candidate review rehearsal that prepares those existing records and
   packet with fail-closed publication and a canonical receipt, plus bounded read-only
   reinspection of a published directory, without granting acceptance.
-- A strict exact-SHA M4 engineering-nomination record that binds the reinspected rehearsal to
-  connected push/PR-integration evidence while keeping every phase and human decision pending.
+- A strict [exact-SHA M4 engineering nomination](docs/m4-candidate-nomination-v1.json) for
+  candidate `04606a4b87c270fdce37fd3673ec18c74af82a54` that binds the reinspected
+  rehearsal to connected push/PR-integration evidence while keeping every phase and human
+  decision pending.
 - An installable Python package and CI on Python 3.11 and 3.12.
 
 The [October 24 implementation evidence](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-10-24.md),
@@ -83,20 +85,22 @@ the [November 2 gate-review record](https://github.com/lvlunario/project-chimera
 the [November 5 acceptance-evidence correction](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-05.md),
 the [November 6 review-rehearsal record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-06.md),
 the [November 7 milestone and reinspection record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-07.md),
-and the [November 8 missed-milestone and readiness record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-08.md)
+the [November 8 missed-milestone and readiness record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-08.md),
+and the [November 10 exact-candidate nomination record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-10.md)
 record candidate-specific local, independent and hosted results. Do not infer a new
 candidate's status from an earlier successful run.
 
-**Acceptance state — November 9:** P0 scope (D-001–003) is approved by delegation.
+**Acceptance state — November 10:** P0 scope (D-001–003) is approved by delegation.
 P1 and P2 are conditionally accepted for continued development under the
 [delegated decision record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/reviews/2026-09-22-delegated-decisions.md). Leo's personal walkthroughs remain unperformed;
 final product validation remains open. P3/P4/P5 remain in progress; P7 release preparation
 now includes versioned performance, threat-model, readiness-inventory, bounded M4-packet,
 one-command preparation/reinspection and exact-SHA nomination controls. The current readiness
 inventory covers 133 requirements across 23 groups and three open defect records with no
-declared release blocker.
-The October 17 M2 exact-candidate disposition is twenty-three days late. M3 missed its November
-7 baseline and is two days late: the engineering features and review inputs are verified, but
+declared release blocker. Exact candidate `04606a4` is engineering-nominated for M4 review;
+this does not grant M4, M5 or acceptance.
+The October 17 M2 exact-candidate disposition is twenty-four days late. M3 missed its November
+7 baseline and is three days late: the engineering features and review inputs are verified, but
 no Leo walkthrough or P3/P4/P5 disposition is recorded. The November 2 packet is retained as a
 runbook, but its pinned candidate is historical; use the latest explicitly published full
 SHA. Synthetic fixtures establish software behavior; authorized measured-data validation,

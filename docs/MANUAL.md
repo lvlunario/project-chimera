@@ -1156,6 +1156,14 @@ Teaching note for Leo: nomination is placing an exact sealed binder on the revie
 signing its approval page. The SHA prevents the implementation from moving silently; your
 M4 decision still determines whether it may enter final acceptance testing.
 
+The current retained program record is
+[`docs/m4-candidate-nomination-v1.json`](m4-candidate-nomination-v1.json). It names exact
+candidate `04606a4b87c270fdce37fd3673ec18c74af82a54`, its connected push and PR-integration
+runs, the generated merge commit actually tested by the PR run, and the receipt/packet
+identities. It is a durable copy of the outside-checkout output; reinspection still requires
+the corresponding sealed rehearsal directory. The file is engineering evidence, not Leo's
+walkthrough, M4/M5 decision or product acceptance.
+
 ## Phase approval instructions
 
 Use the [phase approval guide](APPROVALS.md) for P0–P7 verification and validation checklists,
