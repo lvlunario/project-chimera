@@ -391,11 +391,11 @@ def _validate_rehearsal_directory(
     _require(
         type(receipt["release_blockers"]) is list
         and all(
-            type(issue_number) is int and issue_number > 0
-            for issue_number in receipt["release_blockers"]
+            type(blocker) is str and 0 < len(blocker) <= 256
+            for blocker in receipt["release_blockers"]
         )
-        and receipt["release_blockers"]
-        == sorted(set(receipt["release_blockers"])),
+        and len(receipt["release_blockers"])
+        == len(set(receipt["release_blockers"])),
         "review rehearsal release blockers are invalid",
     )
 

@@ -1034,8 +1034,10 @@ Expected: component statuses, `packet: packet_complete_for_m4_review`, receipt a
 SHA-256 values, and paths to `review-rehearsal.json` plus
 `chimera-m4-evidence.zip`. The canonical receipt identifies every regular output except
 itself with a sorted relative path, byte count and SHA-256. A coherent release-control blocker
-is retained as `blocked_by_release_controls` and returns 1. Invalid candidate, output or
-publication state returns 2 and no complete final directory. A `.PUBLISHING` marker means
+is retained as a bounded namespaced string (for example
+`performance:operator_run_p95_ms`) under `blocked_by_release_controls` and returns 1. Invalid
+candidate, output or publication state returns 2 and no complete final directory. A
+`.PUBLISHING` marker means
 the directory is incomplete and must not be used. The command never uploads, merges, tags,
 releases or deploys; runner files are not retained by CI.
 
@@ -1156,13 +1158,20 @@ Teaching note for Leo: nomination is placing an exact sealed binder on the revie
 signing its approval page. The SHA prevents the implementation from moving silently; your
 M4 decision still determines whether it may enter final acceptance testing.
 
-The current retained program record is
+The historical retained program record is
 [`docs/m4-candidate-nomination-v1.json`](m4-candidate-nomination-v1.json). It names exact
 candidate `04606a4b87c270fdce37fd3673ec18c74af82a54`, its connected push and PR-integration
 runs, the generated merge commit actually tested by the PR run, and the receipt/packet
 identities. It is a durable copy of the outside-checkout output; reinspection still requires
 the corresponding sealed rehearsal directory. The file is engineering evidence, not Leo's
-walkthrough, M4/M5 decision or product acceptance.
+walkthrough, M4/M5 decision or product acceptance. Branch regression pins the retained file's
+exact SHA-256 plus its receipt, packet and hosted-CI identities and refuses any in-place change
+or authority grant. A legitimate replacement must therefore be a separately named superseding
+record; the regression does not claim that the rehearsal was reinspected. Issue
+[#28](https://github.com/lvlunario/project-chimera/issues/28) found a candidate-bound blocked-
+receipt schema defect after that nomination. The v1 record remains truthful historical evidence,
+but it cannot be presented as the corrected candidate; the replacement requires fresh local and
+hosted evidence plus a separate superseding nomination.
 
 ## Phase approval instructions
 

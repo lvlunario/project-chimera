@@ -54,6 +54,19 @@ class ReleaseCandidateNominationTests(unittest.TestCase):
                 "_tracked_repository_paths",
                 return_value=tracked,
             ),
+            patch.object(
+                release_performance,
+                "_run_workload",
+                return_value={
+                    "operator_run": release_performance._summary([1.0] * 10),
+                    "handoff_round_trip": release_performance._summary(
+                        [1.0] * 10
+                    ),
+                    "dashboard_snapshot": release_performance._summary(
+                        [1.0] * 5
+                    ),
+                },
+            ),
         )
 
     def _ci_document(self, candidate=None):
@@ -158,6 +171,7 @@ class ReleaseCandidateNominationTests(unittest.TestCase):
                 validators[3],
                 validators[4],
                 validators[5],
+                validators[6],
             ):
                 release_review_rehearsal.prepare_review_rehearsal(
                     review,
@@ -228,7 +242,9 @@ class ReleaseCandidateNominationTests(unittest.TestCase):
             blocked = deepcopy(receipt)
             blocked["status"] = "blocked_by_release_controls"
             blocked["packet_status"] = "blocked_by_release_controls"
-            blocked["release_blockers"] = [27]
+            blocked["release_blockers"] = [
+                "performance:operator_run_p95_ms"
+            ]
             with (
                 patch.object(
                     release_review_rehearsal,
@@ -628,6 +644,75 @@ class ReleaseCandidateNominationTests(unittest.TestCase):
                 r"candidate nomination is (invalid|not canonical) JSON",
             )
             self.assertNotIn("Traceback", stderr.getvalue())
+
+    def test_retained_nomination_record_is_pinned_and_authority_free(self):
+        path = (
+            release_candidate_nomination.ROOT
+            / "docs"
+            / "m4-candidate-nomination-v1.json"
+        )
+        record, content = release_candidate_nomination._load_canonical(
+            path,
+            release_candidate_nomination.MAX_JSON_BYTES,
+            "retained candidate nomination",
+        )
+
+        self.assertEqual(
+            "061ded7ead70501da0d748ff333936d54dd095bffc157090508c80fbd8183529",
+            sha256(content).hexdigest(),
+            "the retained nomination must be superseded, never edited in place",
+        )
+        self.assertEqual(
+            "04606a4b87c270fdce37fd3673ec18c74af82a54",
+            record["candidate_commit_sha"],
+        )
+        self.assertEqual(
+            "nominated_for_m4_review", record["engineering_state"]
+        )
+        self.assertEqual("pending", record["m4_decision"])
+        self.assertEqual("pending", record["m5_decision"])
+        self.assertEqual("not_granted", record["human_acceptance"])
+        self.assertEqual(
+            {"p3": "pending", "p4": "pending", "p5": "pending"},
+            record["phase_dispositions"],
+        )
+        self.assertEqual(
+            release_candidate_nomination.CANDIDATE_CHANGE_POLICY,
+            record["candidate_change_policy"],
+        )
+        self.assertEqual(
+            release_candidate_nomination.SCOPE, record["scope"]
+        )
+
+        hosted, evidence_sha = release_candidate_nomination._embedded_ci(
+            record["hosted_ci"]
+        )
+        self.assertEqual(
+            record["candidate_commit_sha"], hosted["candidate_commit_sha"]
+        )
+        self.assertEqual(
+            ["push", "pull_request"],
+            [run["event"] for run in hosted["runs"]],
+        )
+        self.assertEqual(
+            "229c878024a4ff7ed463d19ea4b6abfe1c24d86ac322db1718a89b068450b5ba",
+            evidence_sha,
+        )
+        self.assertEqual(
+            {
+                "byte_count": 6499,
+                "sha256": "d09457933ebe257ec31eeeabd068c7310bfca56f0851949b8543411ac1606e43",
+            },
+            record["rehearsal"]["receipt"],
+        )
+        self.assertEqual(
+            {
+                "byte_count": 495356,
+                "sha256": "a40e9a84a4bd4d8bbc631f61366cdc0a3338075d9514e23f8a08b0a43e2fa774",
+            },
+            record["rehearsal"]["packet"],
+        )
+        self.assertEqual([], record["defect_snapshot"]["open_release_blockers"])
 
     def test_control_does_not_depend_on_removable_asserts(self):
         source = Path(release_candidate_nomination.__file__).read_text(

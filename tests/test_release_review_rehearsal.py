@@ -53,6 +53,19 @@ class ReleaseReviewRehearsalTests(unittest.TestCase):
                 "_tracked_repository_paths",
                 return_value=tracked,
             ),
+            patch.object(
+                release_performance,
+                "_run_workload",
+                return_value={
+                    "operator_run": release_performance._summary([1.0] * 10),
+                    "handoff_round_trip": release_performance._summary(
+                        [1.0] * 10
+                    ),
+                    "dashboard_snapshot": release_performance._summary(
+                        [1.0] * 5
+                    ),
+                },
+            ),
         )
 
     @staticmethod
@@ -75,6 +88,7 @@ class ReleaseReviewRehearsalTests(unittest.TestCase):
                 validators[3],
                 validators[4],
                 validators[5],
+                validators[6],
             ):
                 receipt = release_review_rehearsal.prepare_review_rehearsal(
                     output,
@@ -264,6 +278,69 @@ class ReleaseReviewRehearsalTests(unittest.TestCase):
             self.assertFalse(output.exists())
             self.assertEqual([], list(root.glob(".review.staging-*")))
 
+    def test_failed_performance_publishes_coherent_blocked_directory(self):
+        measurements = {
+            "operator_run": release_performance._summary([3_001.0] * 10),
+            "handoff_round_trip": release_performance._summary([1.0] * 10),
+            "dashboard_snapshot": release_performance._summary([1.0] * 5),
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            review = Path(directory) / "review"
+            validators = self._validators()
+            with (
+                validators[0],
+                validators[1],
+                validators[2],
+                validators[3],
+                validators[4],
+                validators[5],
+                validators[6],
+                patch.object(
+                    release_performance,
+                    "_run_workload",
+                    return_value=measurements,
+                ),
+            ):
+                receipt = release_review_rehearsal.prepare_review_rehearsal(
+                    review,
+                    candidate_commit=self.candidate,
+                    generated_at_utc=self.generated,
+                )
+
+            self.assertEqual(
+                "blocked_by_release_controls", receipt["status"]
+            )
+            self.assertEqual(
+                ["performance:operator_run_p95_ms"],
+                receipt["release_blockers"],
+            )
+            self.assertEqual("pending", receipt["m4_decision"])
+            self.assertEqual("pending", receipt["m5_decision"])
+            self.assertEqual("not_granted", receipt["human_acceptance"])
+            self.assertFalse((review / ".PUBLISHING").exists())
+            self.assertEqual(
+                receipt,
+                release_review_rehearsal.inspect_review_rehearsal(review),
+            )
+            packet = release_candidate_packet.inspect_packet(
+                review / release_review_rehearsal.PACKET_NAME
+            )
+            packet_003 = next(
+                check for check in packet["checks"]
+                if check["id"] == "PACKET-003"
+            )
+            self.assertEqual("blocked", packet_003["status"])
+
+            output = io.StringIO()
+            with redirect_stdout(output):
+                result = release_review_rehearsal.main([
+                    "inspect", str(review),
+                ])
+            self.assertEqual(1, result)
+            self.assertIn(
+                "packet: blocked_by_release_controls", output.getvalue()
+            )
+
     def test_interrupted_publication_retains_incomplete_marker(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -295,6 +372,7 @@ class ReleaseReviewRehearsalTests(unittest.TestCase):
                 validators[3],
                 validators[4],
                 validators[5],
+                validators[6],
                 patch.object(
                     release_review_rehearsal,
                     "_publish_staging",
@@ -401,6 +479,7 @@ class ReleaseReviewRehearsalTests(unittest.TestCase):
                 validators[3],
                 validators[4],
                 validators[5],
+                validators[6],
             ):
                 with self.assertRaisesRegex(
                         operator_acceptance_prep.AcceptancePreparationError,
@@ -476,6 +555,7 @@ class ReleaseReviewRehearsalTests(unittest.TestCase):
                 validators[3],
                 validators[4],
                 validators[5],
+                validators[6],
             ):
                 prepared = (
                     release_review_rehearsal.prepare_review_rehearsal(
@@ -608,6 +688,7 @@ class ReleaseReviewRehearsalTests(unittest.TestCase):
                 validators[3],
                 validators[4],
                 validators[5],
+                validators[6],
             ):
                 release_review_rehearsal.prepare_review_rehearsal(
                     review,

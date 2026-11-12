@@ -138,10 +138,14 @@ the same 0/1 status distinction as preparation for a coherent complete/blocked d
 return 2 without a success summary for malformed or inconsistent content.
 
 A coherent release-control failure remains reviewable with `blocked_by_release_controls` and
-a nonzero exit. `packet_complete_for_m4_review` means only that this machine-prepared directory
-is internally coherent. The rehearsal does not prove hosted CI, perform the walkthrough,
-upload an artifact or grant M4/M5, P3/P4/P5 or human acceptance; it never merges, tags,
-releases or deploys.
+a nonzero exit. Receipt validation preserves the packet's bounded, unique namespaced string
+blockers (for example `performance:operator_run_p95_ms`) and then requires exact agreement with
+the fully validated packet. Deterministic below- and above-threshold regressions protect both
+the complete and blocked paths; the unmocked fixed workload remains a clean-candidate/hosted
+gate. `packet_complete_for_m4_review` means only that this machine-prepared directory is
+internally coherent. The rehearsal does not prove hosted CI, perform the walkthrough, upload
+an artifact or grant M4/M5, P3/P4/P5 or human acceptance; it never merges, tags, releases or
+deploys.
 
 ## M4 engineering candidate-nomination boundary
 
@@ -164,6 +168,10 @@ Publication is canonical UTF-8 JSON to a new regular outside-checkout and outsid
 path. Portable inspection reads the nomination and rehearsal without changing either. The
 engineering state is only `nominated_for_m4_review`; P3/P4/P5, M4/M5 and human acceptance
 remain pending. Replacing a candidate requires a separately retained superseding record.
+Branch regression directly loads the retained canonical copy, validates its embedded hosted-CI
+schema and content identity, pins its nomination/receipt/packet hashes, and requires every
+authority field to remain pending. This detects accidental in-place edits; it does not replace
+portable reinspection against the separately retained rehearsal directory.
 
 ## Defects and risk
 Use GitHub issues: reproduction, expected/actual result, version, environment, severity,
