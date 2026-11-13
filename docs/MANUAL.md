@@ -1158,6 +1158,13 @@ Teaching note for Leo: nomination is placing an exact sealed binder on the revie
 signing its approval page. The SHA prevents the implementation from moving silently; your
 M4 decision still determines whether it may enter final acceptance testing.
 
+The current corrected program record is
+[`docs/m4-candidate-nomination-v2.json`](m4-candidate-nomination-v2.json). It names exact
+candidate `594b03c2a7fcd62548d9eea8b3f7a73f8584555d` and supersedes the candidate named by v1
+without changing v1. Its connected push and PR-integration runs, generated merge commit,
+receipt and packet identities are content-bound in the same way, and every phase and human
+authority remains pending.
+
 The historical retained program record is
 [`docs/m4-candidate-nomination-v1.json`](m4-candidate-nomination-v1.json). It names exact
 candidate `04606a4b87c270fdce37fd3673ec18c74af82a54`, its connected push and PR-integration
@@ -1167,11 +1174,10 @@ the corresponding sealed rehearsal directory. The file is engineering evidence, 
 walkthrough, M4/M5 decision or product acceptance. Branch regression pins the retained file's
 exact SHA-256 plus its receipt, packet and hosted-CI identities and refuses any in-place change
 or authority grant. A legitimate replacement must therefore be a separately named superseding
-record; the regression does not claim that the rehearsal was reinspected. Issue
+record; the regression does not claim that either rehearsal was reinspected. Issue
 [#28](https://github.com/lvlunario/project-chimera/issues/28) found a candidate-bound blocked-
 receipt schema defect after that nomination. The v1 record remains truthful historical evidence,
-but it cannot be presented as the corrected candidate; the replacement requires fresh local and
-hosted evidence plus a separate superseding nomination.
+but it is not the corrected candidate; v2 records the fresh local and hosted successor evidence.
 
 ## Phase approval instructions
 

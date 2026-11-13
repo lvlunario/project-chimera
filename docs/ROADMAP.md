@@ -8,10 +8,10 @@ remain unperformed. Original dates below are unchanged; M0's scope decision was 
 September 22, three days after its September 19 target. Downstream forecasts
 remain October 3/17, November 7/28 and December 12 with no baseline movement.
 
-## Status update — November 12, 2026
+## Status update — November 13, 2026
 
-The October 17 M2 baseline was missed by twenty-six days. M3 November 7 is **missed and red,
-five days late**. The engineering vertical, acceptance-preparation workspace, read-only
+The October 17 M2 baseline was missed by twenty-seven days. M3 November 7 is **missed and red,
+six days late**. The engineering vertical, acceptance-preparation workspace, read-only
 dashboard and evidence controls are implemented and verified, but no Leo walkthrough,
 manual-device/screen-reader observation or separate P3/P4/P5 disposition is recorded. This is
 a schedule slip, not a change to the original baseline. Recovery remains: freeze feature scope,
@@ -36,17 +36,17 @@ over-specific Python 3.11 test assertion, while the product control still failed
 Superseding `04606a4` corrected the cross-version assertion and passed both matrices. On
 November 12, issue #28 then exposed a candidate-bound mismatch between string packet blockers
 and integer-only rehearsal receipt validation. The control failed closed, but a coherent blocked
-directory could not be retained. The bounded correction and deterministic negative-path
-regression require a fresh exact candidate and separately retained superseding nomination.
+directory could not be retained. Corrected candidate `594b03c` added the bounded contract and
+deterministic negative-path regression, passed both hosted matrices, completed a clean detached
+rehearsal/reinspection, and is separately retained in the v2 superseding nomination.
 
-M4 November 28 remains amber but at risk until the replacement candidate passes rehearsal and
-hosted evidence; M5 December 12 remains amber if feature scope stays frozen and November 29–
-December 12 remains reserved for stabilization and acceptance. Candidate-bound changes require
-a new candidate rehearsal, hosted evidence and superseding nomination. Automation still cannot
-substitute for human acceptance.
-The retained nomination is now also pinned by a branch regression that validates its canonical
-bytes, hosted-CI content identity, receipt/packet hashes and pending authority. This is a
-stabilization guard around the existing nominee, not a new product candidate or gate decision.
+M4 November 28 and M5 December 12 remain amber with the corrected nominee verified, provided
+feature scope stays frozen and November 29–December 12 remains reserved for stabilization and
+acceptance. Candidate-bound changes require a new candidate rehearsal, hosted evidence and
+superseding nomination. Automation still cannot substitute for human acceptance.
+Both retained nomination records are pinned by branch regression that validates canonical
+bytes, hosted-CI content identity, receipt/packet hashes and pending authority. This is an
+integrity guard, not a human gate decision.
 
 ## Operational problem and proposed scope
 An integration engineer needs to verify a communications test run, identify failing

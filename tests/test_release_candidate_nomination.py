@@ -645,11 +645,20 @@ class ReleaseCandidateNominationTests(unittest.TestCase):
             )
             self.assertNotIn("Traceback", stderr.getvalue())
 
-    def test_retained_nomination_record_is_pinned_and_authority_free(self):
+    def _assert_retained_nomination(
+        self,
+        *,
+        name,
+        nomination_sha,
+        candidate_sha,
+        expected_evidence_sha,
+        receipt,
+        packet,
+    ):
         path = (
             release_candidate_nomination.ROOT
             / "docs"
-            / "m4-candidate-nomination-v1.json"
+            / name
         )
         record, content = release_candidate_nomination._load_canonical(
             path,
@@ -658,14 +667,11 @@ class ReleaseCandidateNominationTests(unittest.TestCase):
         )
 
         self.assertEqual(
-            "061ded7ead70501da0d748ff333936d54dd095bffc157090508c80fbd8183529",
+            nomination_sha,
             sha256(content).hexdigest(),
             "the retained nomination must be superseded, never edited in place",
         )
-        self.assertEqual(
-            "04606a4b87c270fdce37fd3673ec18c74af82a54",
-            record["candidate_commit_sha"],
-        )
+        self.assertEqual(candidate_sha, record["candidate_commit_sha"])
         self.assertEqual(
             "nominated_for_m4_review", record["engineering_state"]
         )
@@ -695,24 +701,50 @@ class ReleaseCandidateNominationTests(unittest.TestCase):
             [run["event"] for run in hosted["runs"]],
         )
         self.assertEqual(
-            "229c878024a4ff7ed463d19ea4b6abfe1c24d86ac322db1718a89b068450b5ba",
+            expected_evidence_sha,
             evidence_sha,
         )
-        self.assertEqual(
-            {
+        self.assertEqual(receipt, record["rehearsal"]["receipt"])
+        self.assertEqual(packet, record["rehearsal"]["packet"])
+        self.assertEqual([], record["defect_snapshot"]["open_release_blockers"])
+
+    def test_retained_nomination_records_are_pinned_and_authority_free(self):
+        self._assert_retained_nomination(
+            name="m4-candidate-nomination-v1.json",
+            nomination_sha=(
+                "061ded7ead70501da0d748ff333936d54dd095bffc157090508c80fbd8183529"
+            ),
+            candidate_sha="04606a4b87c270fdce37fd3673ec18c74af82a54",
+            expected_evidence_sha=(
+                "229c878024a4ff7ed463d19ea4b6abfe1c24d86ac322db1718a89b068450b5ba"
+            ),
+            receipt={
                 "byte_count": 6499,
                 "sha256": "d09457933ebe257ec31eeeabd068c7310bfca56f0851949b8543411ac1606e43",
             },
-            record["rehearsal"]["receipt"],
-        )
-        self.assertEqual(
-            {
+            packet={
                 "byte_count": 495356,
                 "sha256": "a40e9a84a4bd4d8bbc631f61366cdc0a3338075d9514e23f8a08b0a43e2fa774",
             },
-            record["rehearsal"]["packet"],
         )
-        self.assertEqual([], record["defect_snapshot"]["open_release_blockers"])
+        self._assert_retained_nomination(
+            name="m4-candidate-nomination-v2.json",
+            nomination_sha=(
+                "0d4ed3702e09939d5cce996cd1c0e2b4e105fda179274b91265de21252ecf3f4"
+            ),
+            candidate_sha="594b03c2a7fcd62548d9eea8b3f7a73f8584555d",
+            expected_evidence_sha=(
+                "cee2248612063efd724b32b7716324be8f270aec81dad63a8baa9e4d9b6aede4"
+            ),
+            receipt={
+                "byte_count": 6499,
+                "sha256": "5538da435e66445b27314525ed2f0b306fa6f16ef9ba2adf521a60b0d20db7ff",
+            },
+            packet={
+                "byte_count": 498309,
+                "sha256": "c9d8ebf40c249f19ccedd270c7de0ca357a794b3ed5a28553f4832b8bdf745da",
+            },
+        )
 
     def test_control_does_not_depend_on_removable_asserts(self):
         source = Path(release_candidate_nomination.__file__).read_text(
