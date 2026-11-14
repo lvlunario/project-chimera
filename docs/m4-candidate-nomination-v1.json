@@ -1,0 +1,101 @@
+{
+  "candidate_change_policy": "retain this exact commit until an explicit later nomination record supersedes it",
+  "candidate_commit_sha": "04606a4b87c270fdce37fd3673ec18c74af82a54",
+  "defect_snapshot": {
+    "open_count": 3,
+    "open_release_blockers": [],
+    "snapshot_age_at_nomination_seconds": 88344,
+    "snapshot_at_utc": "2026-11-09T10:24:30Z"
+  },
+  "engineering_state": "nominated_for_m4_review",
+  "generated_at_utc": "2026-11-10T10:56:54Z",
+  "hosted_ci": {
+    "branch": "magnum-opus/development",
+    "candidate_commit_sha": "04606a4b87c270fdce37fd3673ec18c74af82a54",
+    "evidence_sha256": "229c878024a4ff7ed463d19ea4b6abfe1c24d86ac322db1718a89b068450b5ba",
+    "inspected_at_utc": "2026-11-10T10:56:30Z",
+    "record_type": "chimera.github-actions-candidate-evidence",
+    "repository": "lvlunario/project-chimera",
+    "runs": [
+      {
+        "conclusion": "success",
+        "event": "push",
+        "jobs": [
+          {
+            "conclusion": "success",
+            "name": "Chromium dashboard journey"
+          },
+          {
+            "conclusion": "success",
+            "name": "Python 3.11"
+          },
+          {
+            "conclusion": "success",
+            "name": "Python 3.12"
+          }
+        ],
+        "run_id": 42602816452,
+        "run_url": "https://github.com/lvlunario/project-chimera/actions/runs/42602816452",
+        "source_candidate_commit_sha": "04606a4b87c270fdce37fd3673ec18c74af82a54",
+        "tested_commit_sha": "04606a4b87c270fdce37fd3673ec18c74af82a54",
+        "workflow_name": "test"
+      },
+      {
+        "conclusion": "success",
+        "event": "pull_request",
+        "jobs": [
+          {
+            "conclusion": "success",
+            "name": "Chromium dashboard journey"
+          },
+          {
+            "conclusion": "success",
+            "name": "Python 3.11"
+          },
+          {
+            "conclusion": "success",
+            "name": "Python 3.12"
+          }
+        ],
+        "run_id": 42602825660,
+        "run_url": "https://github.com/lvlunario/project-chimera/actions/runs/42602825660",
+        "source_candidate_commit_sha": "04606a4b87c270fdce37fd3673ec18c74af82a54",
+        "tested_commit_sha": "daf8bf3560b4a6b7bc4e1de8eba6e5df67e5e171",
+        "workflow_name": "test"
+      }
+    ],
+    "schema_version": 1,
+    "verification_boundary": "caller-supplied connected GitHub inspection snapshot; validated and content-bound offline, not queried or authenticated by this command"
+  },
+  "human_acceptance": "not_granted",
+  "m4_decision": "pending",
+  "m5_decision": "pending",
+  "nomination_id": "p7-m4-engineering-nomination-v1",
+  "phase_dispositions": {
+    "p3": "pending",
+    "p4": "pending",
+    "p5": "pending"
+  },
+  "record_type": "chimera.m4-candidate-nomination",
+  "rehearsal": {
+    "component_statuses": {
+      "operator_acceptance": "passed",
+      "performance": "passed",
+      "release_readiness": "review_inputs_complete",
+      "threat_model": "model_complete"
+    },
+    "generated_at_utc": "2026-11-10T10:56:18Z",
+    "packet": {
+      "byte_count": 495356,
+      "sha256": "a40e9a84a4bd4d8bbc631f61366cdc0a3338075d9514e23f8a08b0a43e2fa774"
+    },
+    "packet_status": "packet_complete_for_m4_review",
+    "receipt": {
+      "byte_count": 6499,
+      "sha256": "d09457933ebe257ec31eeeabd068c7310bfca56f0851949b8543411ac1606e43"
+    },
+    "release_blockers": []
+  },
+  "schema_version": 1,
+  "scope": "exact-SHA engineering nomination for M4 review only; not live GitHub verification, a human walkthrough, phase disposition, M4/M5 decision, release, merge, tag or deployment"
+}
