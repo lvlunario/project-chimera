@@ -1039,7 +1039,8 @@ is retained as a bounded namespaced string (for example
 candidate, output or publication state returns 2 and no complete final directory. A
 `.PUBLISHING` marker means
 the directory is incomplete and must not be used. The command never uploads, merges, tags,
-releases or deploys; runner files are not retained by CI.
+releases or deploys. CI also builds and inspects the portable archive described below, but it
+does not upload or retain either the rehearsal directory or archive.
 
 Reinspect an already published directory without consulting the candidate checkout or
 changing the directory:
@@ -1054,6 +1055,35 @@ means the directory is coherent and complete for review; exit 1 preserves a cohe
 blocker; exit 2 rejects an incomplete, malformed, added, removed, changed, reindexed or
 packet-divergent directory. The inspector derives the candidate from the receipt. It does not
 prove who produced the directory, authenticate its source or grant a phase decision.
+
+### P7 portable review-rehearsal archive
+
+After a rehearsal directory passes the inspector, export its exact regular files into one
+deterministic stored ZIP outside both the checkout and rehearsal directory:
+
+```bash
+python -m examples.release_review_archive \
+  build --rehearsal /tmp/chimera-m4-review \
+  --output /tmp/chimera-m4-review.zip
+python -m examples.release_review_archive \
+  inspect /tmp/chimera-m4-review.zip
+```
+
+Repeated export of the same directory produces identical bytes. The archive contains exactly
+the canonical receipt and every receipt-indexed artifact in sorted POSIX-path order, with
+fixed ZIP metadata and no compression. Inspection rejects missing, added, duplicate,
+compressed, encrypted, renamed, traversing, prefixed or changed members; it extracts nothing
+with `ZipFile.extract` and stages only validated regular files in a private temporary
+directory before reusing the full rehearsal inspector. Exit 0 means a coherent complete
+rehearsal, exit 1 preserves a coherent release-control blocker, and exit 2 means the archive
+is invalid. All authority remains pending.
+
+Move the finished archive to an authorized managed persistent location if it must survive the
+local workspace. The repository and GitHub Actions workflow deliberately provide no upload,
+retention, authentication or provenance service. This control therefore cannot recover the
+already-lost v2 rehearsal directory, and it does not make `594b03c` a nomination for later
+branch bytes. A changed candidate still needs fresh rehearsal, hosted evidence and a separate
+superseding nomination.
 
 The expanded component procedure below remains useful for troubleshooting or separately
 retaining a blocked source record. Prepare every input from the same clean commit into new

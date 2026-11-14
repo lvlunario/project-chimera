@@ -147,6 +147,29 @@ internally coherent. The rehearsal does not prove hosted CI, perform the walkthr
 an artifact or grant M4/M5, P3/P4/P5 or human acceptance; it never merges, tags, releases or
 deploys.
 
+## Portable review-rehearsal archive boundary
+
+`examples.release_review_archive` exports one fully inspected rehearsal directory as a
+deterministic, uncompressed ZIP. The member allowlist comes only from the canonical receipt:
+the receipt itself plus every indexed regular artifact, in sorted POSIX-path order. Fixed
+timestamps, permissions, creator identity and empty extra/comment fields make repeat export
+byte-identical. Publication uses a new outside-checkout and outside-rehearsal path with held
+parent-directory identity, exclusive final linking and file/parent `fsync` before success.
+
+Inspection is bounded by member, path-depth and total-byte limits. It rejects unsafe names,
+prefix collisions, duplicates, directories, compression, encryption, unexpected ZIP flags or
+metadata, missing/extra members and byte/SHA-256 drift. It never calls `ZipFile.extract`;
+validated members are copied into a private temporary directory and the complete rehearsal
+inspector is reused. Normal and optimized-Python tests cover complete, coherently blocked,
+tampered and publication-race paths. Exit 0/1 retains the rehearsal's complete/blocked
+distinction; exit 2 grants no success summary.
+
+This is a local transport control, not hosted storage. CI builds and inspects an archive in
+runner-temporary storage but does not upload or retain it. The archive authenticates neither
+producer nor source, grants no phase/human authority, and cannot recreate the lost v2
+rehearsal. Any candidate change still requires a fresh exact-candidate rehearsal, hosted CI
+evidence and separate superseding nomination.
+
 ## M4 engineering candidate-nomination boundary
 
 The `p7-m4-engineering-nomination-v1` record may be created only from a rehearsal that

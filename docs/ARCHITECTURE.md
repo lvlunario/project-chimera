@@ -1,5 +1,31 @@
 # Architecture decision 0001: deterministic core first
 
+## Decision 0032: separate portable rehearsal retention from hosted publication
+
+November 14, 2026. P7/M4 stabilization increment; no phase, release or acceptance claim.
+
+Package one already validated review-rehearsal directory as a deterministic stored ZIP with
+fixed member order, timestamp and regular-file mode. Admit exactly the canonical rehearsal
+receipt plus the artifacts that receipt indexes. Before publication, revalidate the source
+directory; after publication, reopen the archive through bounded reads, stage only validated
+safe names in a private temporary directory, and reuse the full rehearsal inspector. Reject
+duplicates, compression, encryption, comments, metadata drift, traversal, file/path-prefix
+collisions, missing/extra/changed members, existing outputs, symlink ancestry and output under
+the checkout or source rehearsal. Publish through a held parent-directory descriptor and an
+exclusive hard link so a pathname swap cannot redirect the archive.
+
+Keep archive creation local. CI builds and reinspects it to prove the transport contract, but
+does not upload or retain runner files. Persistent placement is an explicit program/operator
+action, separate from machine validation. The archive retains a coherent release-control
+blocker and the same pending P3/P4/P5, M4/M5 and human state; it never turns transport into
+authority.
+
+Tradeoffs: this prevents future review directories from depending on a live directory tree
+and makes repeated exports byte-identical. It cannot recover the already removed v2 rehearsal,
+authenticate who produced an archive, establish trusted time or make ephemeral CI storage
+durable. A candidate containing this change still needs fresh hosted evidence, rehearsal and
+an explicit superseding nomination before it can replace `594b03c` as the M4 nominee.
+
 ## Decision 0031: freeze an engineering candidate without granting the gate
 
 November 9, 2026. P7/M4 stabilization increment; no phase, release or acceptance claim.

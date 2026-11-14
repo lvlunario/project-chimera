@@ -70,6 +70,7 @@
         "### P7 local-prototype threat-model assessment",
         "### P7 release-readiness assessment",
         "### P7 M4 release-candidate evidence packet",
+        "### P7 portable review-rehearsal archive",
         "### P7 M4 engineering candidate nomination",
         "## Phase approval instructions"
       ]
@@ -100,6 +101,7 @@
         "## Release performance evidence",
         "## Threat-model evidence",
         "## M4 evidence-packet boundary",
+        "## Portable review-rehearsal archive boundary",
         "## M4 engineering candidate-nomination boundary",
         "## Defects and risk",
         "## Continuous integration policy",
@@ -483,7 +485,9 @@
         ".github/workflows/test.yml",
         "docs/MANUAL.md",
         "docs/QUALITY.md",
+        "examples/release_review_archive.py",
         "examples/release_review_rehearsal.py",
+        "tests/test_release_review_archive.py",
         "tests/test_release_review_rehearsal.py"
       ],
       "group_id": "GROUP-022",
@@ -491,7 +495,8 @@
         "REHEARSAL-001",
         "REHEARSAL-002",
         "REHEARSAL-003",
-        "REHEARSAL-004"
+        "REHEARSAL-004",
+        "REHEARSAL-005"
       ]
     },
     {

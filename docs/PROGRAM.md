@@ -21,7 +21,7 @@ The 100-developer framing expresses ambition, not actual staffing or throughput.
 | P4 | Verification evidence | Requirement mapping, reproducible JSON/HTML reports, missing-evidence detection | In progress; canonical reports, deterministic handoff, missing-evidence control and exact-candidate preparation implemented; overdue gate disposition pending |
 | P5 | Operator product | API and accessible dashboard; end-to-end acceptance tests | In progress; API/dashboard, investigation views, handoff download, first-focus bypass/contextual run names, automated Chromium controls and operator worksheet implemented; manual-device, screen-reader and operator acceptance pending |
 | P6 | AI assistance | Provider adapter, bounded permissions, evaluation dataset and measured baseline comparison | Planned |
-| P7 | Release | Reproducible deployment, performance results, threat model, demo and operator guide | In progress; performance, threat-model, readiness, M4 packet/rehearsal and exact-SHA engineering nomination controls implemented; corrected candidate `594b03c` nominated after issue #28 verification; M4/M5 and human decisions pending |
+| P7 | Release | Reproducible deployment, performance results, threat model, demo and operator guide | In progress; performance, threat-model, readiness, M4 packet/rehearsal, portable rehearsal archive and exact-SHA engineering nomination controls implemented; corrected candidate `594b03c` remains the last nominee while archive hardening is verified; M4/M5 and human decisions pending |
 
 Prototype delivery target: December 12, 2026 (Asia/Manila). See [dated roadmap](ROADMAP.md).
 This supersedes the original undated plan. Dates are delivery targets; passing evidence and
@@ -45,8 +45,8 @@ AI assistance cannot decide that missing evidence is a passing verification.
 - Avoid paid infrastructure and live hardware operations until separately authorized.
 
 ## Next tasks
-Current direction, November 13: the October 17 M2 exact-candidate disposition is twenty-seven
-days late. M3 missed its November 7 baseline and is six days late because no Leo walkthrough,
+Current direction, November 14: the October 17 M2 exact-candidate disposition is twenty-eight
+days late. M3 missed its November 7 baseline and is seven days late because no Leo walkthrough,
 manual-device/screen-reader observation or separate P3/P4/P5 disposition is recorded. This is
 a schedule slip, not an engineering blocker and not implied acceptance. The
 [November 2 weekly review](reviews/2026-11-02.md) remains the 25–30 minute runbook, but its
@@ -92,8 +92,8 @@ embedded hosted-CI identities, exact receipt/packet hashes, change policies and 
 authority. This prevents an in-place evidence edit from passing branch CI; it does not
 reinspect or recreate either separately sealed rehearsal.
 
-The current readiness inventory covers 133 declared requirements across 23 groups, six guides
-with 51 required headings, three open fixed/verified defect issues and zero declared release
+The current readiness inventory covers 134 declared requirements across 23 groups, six guides
+with 53 required headings, three open fixed/verified defect issues and zero declared release
 blockers in its dated November 9 snapshot. That snapshot was 261,109 seconds old at v2
 nomination; the age is arithmetic evidence, not trusted time or a freshness decision. The live
 [issue #28 record](https://github.com/lvlunario/project-chimera/issues/28) was updated at

@@ -31,7 +31,9 @@ class ReleaseCandidateNominationTests(unittest.TestCase):
         tracked = release_readiness._tracked_repository_paths()
         tracked.update({
             "examples/release_candidate_nomination.py",
+            "examples/release_review_archive.py",
             "tests/test_release_candidate_nomination.py",
+            "tests/test_release_review_archive.py",
         })
         return (
             patch.object(

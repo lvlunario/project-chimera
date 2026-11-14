@@ -59,6 +59,17 @@ jobs:
               "$RUNNER_TEMP/chimera-m4-review/chimera-m4-evidence.zip" \
               || status=$?
           fi
+          if [ -f "$RUNNER_TEMP/chimera-m4-review/review-rehearsal.json" ]; then
+            python -m examples.release_review_archive build \
+              --rehearsal "$RUNNER_TEMP/chimera-m4-review" \
+              --output "$RUNNER_TEMP/chimera-m4-review.zip" \
+              || status=$?
+          fi
+          if [ -f "$RUNNER_TEMP/chimera-m4-review.zip" ]; then
+            python -m examples.release_review_archive inspect \
+              "$RUNNER_TEMP/chimera-m4-review.zip" \
+              || status=$?
+          fi
           exit "$status"
 
       - name: Verify isolated wheel install
