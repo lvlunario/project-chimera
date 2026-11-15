@@ -546,7 +546,10 @@ def _unlink_if_identity(
             dir_fd=parent_descriptor,
             follow_symlinks=False,
         )
-        if _file_identity(metadata) == expected_identity:
+        if (
+            stat.S_ISREG(metadata.st_mode)
+            and _file_identity(metadata) == expected_identity
+        ):
             os.unlink(name, dir_fd=parent_descriptor)
             os.fsync(parent_descriptor)
     except OSError:
@@ -573,23 +576,21 @@ def _temporary_file(parent_descriptor: int, target_name: str) -> tuple[int, str]
 
 def _write_archive(
     parent_descriptor: int, target_name: str, content: bytes
-) -> tuple[int, int]:
+) -> tuple[tuple[int, int], int]:
     temporary: str | None = None
     publication_identity: tuple[int, int] | None = None
+    descriptor: int | None = None
+    retain_descriptor = False
     try:
         descriptor, temporary = _temporary_file(
             parent_descriptor, target_name
         )
-        with os.fdopen(descriptor, "wb") as stream:
+        with os.fdopen(os.dup(descriptor), "wb") as stream:
             stream.write(content)
             stream.flush()
             os.fsync(stream.fileno())
         publication_identity = _file_identity(
-            os.stat(
-                temporary,
-                dir_fd=parent_descriptor,
-                follow_symlinks=False,
-            )
+            os.fstat(descriptor)
         )
         os.link(
             temporary,
@@ -599,7 +600,8 @@ def _write_archive(
             follow_symlinks=False,
         )
         os.fsync(parent_descriptor)
-        return publication_identity
+        retain_descriptor = True
+        return publication_identity, descriptor
     except FileExistsError as exc:
         raise ReviewArchiveError(
             "review archive output appeared during publication"
@@ -613,6 +615,8 @@ def _write_archive(
             "cannot publish review archive output"
         ) from exc
     finally:
+        if descriptor is not None and not retain_descriptor:
+            os.close(descriptor)
         if temporary is not None:
             try:
                 os.unlink(temporary, dir_fd=parent_descriptor)
@@ -751,8 +755,9 @@ def create_review_archive(
         output, rehearsal_root
     )
     publication_identity: tuple[int, int] | None = None
+    publication_descriptor: int | None = None
     try:
-        publication_identity = _write_archive(
+        publication_identity, publication_descriptor = _write_archive(
             parent_descriptor, target.name, content
         )
         saved = _read_at(
@@ -783,6 +788,8 @@ def create_review_archive(
             )
         raise
     finally:
+        if publication_descriptor is not None:
+            os.close(publication_descriptor)
         os.close(parent_descriptor)
 
 
