@@ -27,7 +27,7 @@ entry point; the implementation has not been merged into `main`.
 | Ongoing changes, test evidence and next steps | [Daily engineering logs](https://github.com/lvlunario/project-chimera/tree/magnum-opus/development/docs/daily) |
 | Requirements and quality approach | [Requirements](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/REQUIREMENTS.md) · [Quality plan](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/QUALITY.md) |
 
-## Progress snapshot — November 14, 2026
+## Progress snapshot — November 15, 2026
 
 The development branch includes:
 
@@ -93,11 +93,13 @@ the [November 6 review-rehearsal record](https://github.com/lvlunario/project-ch
 the [November 7 milestone and reinspection record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-07.md),
 the [November 8 missed-milestone and readiness record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-08.md),
 the [November 10 exact-candidate nomination record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-10.md),
-and the [November 12 retained-evidence stabilization record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-12.md)
+the [November 12 retained-evidence stabilization record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-12.md),
+the [November 13 corrected-nomination record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-13.md),
+and the [November 15 archive-portability correction](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-15.md)
 record candidate-specific local, independent and hosted results. Do not infer a new
 candidate's status from an earlier successful run.
 
-**Acceptance state — November 14:** P0 scope (D-001–003) is approved by delegation.
+**Acceptance state — November 15:** P0 scope (D-001–003) is approved by delegation.
 P1 and P2 are conditionally accepted for continued development under the
 [delegated decision record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/reviews/2026-09-22-delegated-decisions.md). Leo's personal walkthroughs remain unperformed;
 final product validation remains open. P3/P4/P5 remain in progress; P7 release preparation
@@ -105,9 +107,11 @@ now includes versioned performance, threat-model, readiness-inventory, bounded M
 one-command preparation/reinspection and exact-SHA nomination controls. The current readiness
 inventory covers 134 requirements across 23 groups. Exact candidate `04606a4` remains truthful
 historical nomination evidence; corrected candidate `594b03c` passed fresh rehearsal and both
-hosted matrices and is the current engineering nominee. No M4, M5 or acceptance is granted.
-The October 17 M2 exact-candidate disposition is twenty-eight days late. M3 missed its November
-7 baseline and is seven days late: the engineering features and review inputs are verified, but
+hosted matrices and remains the last engineering nominee. The later archive branch head passed
+its hosted matrices and CI rehearsals but has no separately retained rehearsal/archive or v3
+nomination. No M4, M5 or acceptance is granted. The October 17 M2 exact-candidate disposition
+is twenty-nine days late. M3 missed its November 7 baseline and is eight days late: the
+engineering features and review inputs are verified, but
 no Leo walkthrough or P3/P4/P5 disposition is recorded. The November 2 packet is retained as a
 runbook, but its pinned candidate is historical; use the latest explicitly published full
 SHA. Synthetic fixtures establish software behavior; authorized measured-data validation,

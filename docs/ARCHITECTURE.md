@@ -12,7 +12,9 @@ safe names in a private temporary directory, and reuse the full rehearsal inspec
 duplicates, compression, encryption, comments, metadata drift, traversal, file/path-prefix
 collisions, missing/extra/changed members, existing outputs, symlink ancestry and output under
 the checkout or source rehearsal. Publish through a held parent-directory descriptor and an
-exclusive hard link so a pathname swap cannot redirect the archive.
+exclusive hard link so a pathname swap cannot redirect the archive. Retain an open descriptor
+for the published inode through final byte revalidation and cleanup; cleanup requires the same
+regular-file identity, so rapid inode reuse cannot misidentify an unrelated replacement.
 
 Keep archive creation local. CI builds and reinspects it to prove the transport contract, but
 does not upload or retain runner files. Persistent placement is an explicit program/operator

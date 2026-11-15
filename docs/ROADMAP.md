@@ -8,10 +8,10 @@ remain unperformed. Original dates below are unchanged; M0's scope decision was 
 September 22, three days after its September 19 target. Downstream forecasts
 remain October 3/17, November 7/28 and December 12 with no baseline movement.
 
-## Status update — November 14, 2026
+## Status update — November 15, 2026
 
-The October 17 M2 baseline was missed by twenty-eight days. M3 November 7 is **missed and red,
-seven days late**. The engineering vertical, acceptance-preparation workspace, read-only
+The October 17 M2 baseline was missed by twenty-nine days. M3 November 7 is **missed and red,
+eight days late**. The engineering vertical, acceptance-preparation workspace, read-only
 dashboard and evidence controls are implemented and verified, but no Leo walkthrough,
 manual-device/screen-reader observation or separate P3/P4/P5 disposition is recorded. This is
 a schedule slip, not a change to the original baseline. Recovery remains: freeze feature scope,
@@ -44,8 +44,17 @@ November 14 stabilization adds a deterministic local archive and portable inspec
 validated rehearsal. The archive retains the exact receipt-indexed bytes and fail-closed status
 without turning CI into storage: Actions builds and inspects it in runner-temporary space but
 does not upload or retain it. This cannot recover the already-lost v2 rehearsal. Candidate
-`594b03c` therefore remains the last nominee; the archive-changing branch head needs fresh
-rehearsal, hosted matrices and a separate v3 nomination before it can replace that record.
+`594b03c` therefore remains the last nominee; the archive-changing branch head needs a
+separately retained rehearsal/archive, matching hosted matrices and a separate v3 nomination
+before it can replace that record.
+
+The November 15 correction addressed one portability defect exposed by November 14 hosted
+integration. A GitHub Linux runner reused the removed archive inode for an adversarial FIFO
+replacement, so identity-only cleanup could remove the unrelated entry. The corrected publisher
+holds the original file descriptor through final validation and permits cleanup only for the
+same regular file. Both corrected hosted matrices are green across Python 3.11, Python 3.12 and
+Chromium. This closes the engineering portability defect without changing the candidate rule:
+`594b03c` remains the last nominee and no gate or human decision is inferred.
 
 M4 November 28 and M5 December 12 remain amber with the corrected nominee verified, provided
 feature scope stays frozen and November 29–December 12 remains reserved for stabilization and

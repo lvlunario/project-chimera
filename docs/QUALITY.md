@@ -154,7 +154,9 @@ deterministic, uncompressed ZIP. The member allowlist comes only from the canoni
 the receipt itself plus every indexed regular artifact, in sorted POSIX-path order. Fixed
 timestamps, permissions, creator identity and empty extra/comment fields make repeat export
 byte-identical. Publication uses a new outside-checkout and outside-rehearsal path with held
-parent-directory identity, exclusive final linking and file/parent `fsync` before success.
+parent-directory identity, exclusive final linking and file/parent `fsync` before success. The
+published inode stays open through final validation; error cleanup unlinks only a matching
+regular file, preventing inode reuse from deleting an unrelated path replacement.
 
 Inspection is bounded by member, path-depth and total-byte limits. It rejects unsafe names,
 prefix collisions, duplicates, directories, compression, encryption, unexpected ZIP flags or
