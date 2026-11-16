@@ -1,5 +1,27 @@
 # Architecture decision 0001: deterministic core first
 
+## Decision 0033: retain one nominated synthetic archive without creating a storage service
+
+November 16, 2026. P7/M4 stabilization increment; no phase, release or acceptance claim.
+
+Regenerate the full rehearsal from exact clean candidate
+`9edce78f8fc2b2033eefe78421c475a8cbc62ce0`, export its already validated directory with the
+deterministic archive control, and retain that one 767,529-byte artifact under a
+candidate-qualified repository path. Publish a separate v3 nomination that binds the same
+candidate to successful connected push/PR-integration matrices. Make branch regression pin
+the archive SHA-256, portably inspect it, and require exact agreement with the nomination's
+receipt/packet identities and pending P3/P4/P5, M4/M5 and human authority.
+
+Keep the archive immutable and synthetic-only. Do not turn GitHub Actions into artifact
+storage, add a general evidence repository, treat repository history as producer
+authentication, or infer acceptance from retention. A future candidate must produce a new
+candidate-qualified archive and a separately named nomination; neither may rewrite v3.
+
+Tradeoffs: a reviewer can now re-run the full archive inspector after the original rehearsal
+directory is gone, closing the prior durability gap for the current nominee. Repository size
+grows by about 0.77 MB and the retained bytes still prove only internal deterministic
+agreement—not authorship, trusted time, physical-radio behavior, operator usability or M4.
+
 ## Decision 0032: separate portable rehearsal retention from hosted publication
 
 November 14, 2026. P7/M4 stabilization increment; no phase, release or acceptance claim.
@@ -25,8 +47,8 @@ authority.
 Tradeoffs: this prevents future review directories from depending on a live directory tree
 and makes repeated exports byte-identical. It cannot recover the already removed v2 rehearsal,
 authenticate who produced an archive, establish trusted time or make ephemeral CI storage
-durable. A candidate containing this change still needs fresh hosted evidence, rehearsal and
-an explicit superseding nomination before it can replace `594b03c` as the M4 nominee.
+durable. Decision 0033 records the explicit fresh hosted evidence, rehearsal, retained archive
+and superseding nomination that replaced `594b03c` without rewriting it.
 
 ## Decision 0031: freeze an engineering candidate without granting the gate
 

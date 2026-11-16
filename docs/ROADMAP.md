@@ -8,10 +8,10 @@ remain unperformed. Original dates below are unchanged; M0's scope decision was 
 September 22, three days after its September 19 target. Downstream forecasts
 remain October 3/17, November 7/28 and December 12 with no baseline movement.
 
-## Status update — November 15, 2026
+## Status update — November 16, 2026
 
-The October 17 M2 baseline was missed by twenty-nine days. M3 November 7 is **missed and red,
-eight days late**. The engineering vertical, acceptance-preparation workspace, read-only
+The October 17 M2 baseline was missed by thirty days. M3 November 7 is **missed and red,
+nine days late**. The engineering vertical, acceptance-preparation workspace, read-only
 dashboard and evidence controls are implemented and verified, but no Leo walkthrough,
 manual-device/screen-reader observation or separate P3/P4/P5 disposition is recorded. This is
 a schedule slip, not a change to the original baseline. Recovery remains: freeze feature scope,
@@ -43,8 +43,8 @@ rehearsal/reinspection, and is separately retained in the v2 superseding nominat
 November 14 stabilization adds a deterministic local archive and portable inspector for one
 validated rehearsal. The archive retains the exact receipt-indexed bytes and fail-closed status
 without turning CI into storage: Actions builds and inspects it in runner-temporary space but
-does not upload or retain it. This cannot recover the already-lost v2 rehearsal. Candidate
-`594b03c` therefore remains the last nominee; the archive-changing branch head needs a
+does not upload or retain it. This cannot recover the already-lost v2 rehearsal. At that point
+candidate `594b03c` remained the last nominee; the archive-changing branch head needed a
 separately retained rehearsal/archive, matching hosted matrices and a separate v3 nomination
 before it can replace that record.
 
@@ -53,16 +53,27 @@ integration. A GitHub Linux runner reused the removed archive inode for an adver
 replacement, so identity-only cleanup could remove the unrelated entry. The corrected publisher
 holds the original file descriptor through final validation and permits cleanup only for the
 same regular file. Both corrected hosted matrices are green across Python 3.11, Python 3.12 and
-Chromium. This closes the engineering portability defect without changing the candidate rule:
-`594b03c` remains the last nominee and no gate or human decision is inferred.
+Chromium. This closed the engineering portability defect without changing the candidate rule;
+at that point `594b03c` remained the last nominee and no gate or human decision was inferred.
 
-M4 November 28 and M5 December 12 remain amber with the corrected nominee verified, provided
-feature scope stays frozen and November 29–December 12 remains reserved for stabilization and
-acceptance. Candidate-bound changes require a new candidate rehearsal, hosted evidence and
-superseding nomination. Automation still cannot substitute for human acceptance.
-Both retained nomination records are pinned by branch regression that validates canonical
-bytes, hosted-CI content identity, receipt/packet hashes and pending authority. This is an
-integrity guard, not a human gate decision.
+On November 16, the program regenerated the full rehearsal from exact clean candidate
+`9edce78f8fc2b2033eefe78421c475a8cbc62ce0`, whose push and PR-integration matrices had
+already passed Python 3.11, Python 3.12, clean install, archive controls and Chromium. The
+rehearsal and deterministic archive reinspected as complete with no declared release blocker.
+The repository now retains the 767,529-byte archive (SHA-256 `638bbb07…c2cc`) and a separate
+v3 nomination that binds the same candidate, connected hosted runs, receipt and packet.
+Branch regression portably reinspects that archive and keeps P3/P4/P5, M4/M5 and human
+acceptance pending. This supersedes v2 as engineering evidence; it is not M4 permission.
+
+M4 November 28 and M5 December 12 remain amber with the current nominee's local, portable and
+hosted evidence retained, provided feature scope stays frozen and November 29–December 12
+remains reserved for stabilization and acceptance. Candidate-bound changes require a new
+candidate rehearsal, hosted evidence, retained archive and superseding nomination. Automation
+still cannot substitute for human acceptance.
+All three retained nomination records are pinned by branch regression that validates canonical
+bytes, hosted-CI content identity, receipt/packet hashes and pending authority. The v3 control
+also portably reinspects its separately retained deterministic archive. This is an integrity
+guard, not a human gate decision.
 
 ## Operational problem and proposed scope
 An integration engineer needs to verify a communications test run, identify failing

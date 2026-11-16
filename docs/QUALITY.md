@@ -167,10 +167,13 @@ tampered and publication-race paths. Exit 0/1 retains the rehearsal's complete/b
 distinction; exit 2 grants no success summary.
 
 This is a local transport control, not hosted storage. CI builds and inspects an archive in
-runner-temporary storage but does not upload or retain it. The archive authenticates neither
-producer nor source, grants no phase/human authority, and cannot recreate the lost v2
-rehearsal. Any candidate change still requires a fresh exact-candidate rehearsal, hosted CI
-evidence and separate superseding nomination.
+runner-temporary storage but does not upload or retain it. The program explicitly retains one
+vetted synthetic-candidate copy at `docs/evidence/chimera-m4-review-9edce78.zip`; regression
+pins its 767,529-byte/SHA-256 identity, invokes the portable inspector, and cross-checks its
+candidate, receipt, packet and pending authority against the v3 nomination. The archive
+authenticates neither producer nor source, grants no phase/human authority, and cannot recreate
+the lost v2 rehearsal. Any candidate change still requires a fresh exact-candidate rehearsal,
+hosted CI evidence, retained archive and separate superseding nomination.
 
 ## M4 engineering candidate-nomination boundary
 
@@ -193,10 +196,12 @@ Publication is canonical UTF-8 JSON to a new regular outside-checkout and outsid
 path. Portable inspection reads the nomination and rehearsal without changing either. The
 engineering state is only `nominated_for_m4_review`; P3/P4/P5, M4/M5 and human acceptance
 remain pending. Replacing a candidate requires a separately retained superseding record.
-Branch regression directly loads the retained canonical copy, validates its embedded hosted-CI
-schema and content identity, pins its nomination/receipt/packet hashes, and requires every
-authority field to remain pending. This detects accidental in-place edits; it does not replace
-portable reinspection against the separately retained rehearsal directory.
+Branch regression directly loads every retained canonical copy, validates its embedded
+hosted-CI schema and content identity, pins its nomination/receipt/packet hashes, and requires
+every authority field to remain pending. For v3, a separate regression also portably inspects
+the retained archive and requires its exact bytes and candidate/receipt/packet identities to
+match. This detects accidental in-place edits; it does not authenticate the producer or grant
+the pending gate.
 
 ## Defects and risk
 Use GitHub issues: reproduction, expected/actual result, version, environment, severity,

@@ -21,7 +21,7 @@ The 100-developer framing expresses ambition, not actual staffing or throughput.
 | P4 | Verification evidence | Requirement mapping, reproducible JSON/HTML reports, missing-evidence detection | In progress; canonical reports, deterministic handoff, missing-evidence control and exact-candidate preparation implemented; overdue gate disposition pending |
 | P5 | Operator product | API and accessible dashboard; end-to-end acceptance tests | In progress; API/dashboard, investigation views, handoff download, first-focus bypass/contextual run names, automated Chromium controls and operator worksheet implemented; manual-device, screen-reader and operator acceptance pending |
 | P6 | AI assistance | Provider adapter, bounded permissions, evaluation dataset and measured baseline comparison | Planned |
-| P7 | Release | Reproducible deployment, performance results, threat model, demo and operator guide | In progress; performance, threat-model, readiness, M4 packet/rehearsal, portable rehearsal archive and exact-SHA engineering nomination controls implemented; archive portability correction is hosted-verified and corrected candidate `594b03c` remains the last nominee; M4/M5 and human decisions pending |
+| P7 | Release | Reproducible deployment, performance results, threat model, demo and operator guide | In progress; performance, threat-model, readiness, M4 packet/rehearsal, portable rehearsal archive and exact-SHA engineering nomination controls implemented; candidate `9edce78` has retained v3 nomination/archive evidence; M4/M5 and human decisions pending |
 
 Prototype delivery target: December 12, 2026 (Asia/Manila). See [dated roadmap](ROADMAP.md).
 This supersedes the original undated plan. Dates are delivery targets; passing evidence and
@@ -45,8 +45,8 @@ AI assistance cannot decide that missing evidence is a passing verification.
 - Avoid paid infrastructure and live hardware operations until separately authorized.
 
 ## Next tasks
-Current direction, November 15: the October 17 M2 exact-candidate disposition is twenty-nine
-days late. M3 missed its November 7 baseline and is eight days late because no Leo walkthrough,
+Current direction, November 16: the October 17 M2 exact-candidate disposition is thirty
+days late. M3 missed its November 7 baseline and is nine days late because no Leo walkthrough,
 manual-device/screen-reader observation or separate P3/P4/P5 disposition is recorded. This is
 a schedule slip, not an engineering blocker and not implied acceptance. The
 [November 2 weekly review](reviews/2026-11-02.md) remains the 25–30 minute runbook, but its
@@ -87,7 +87,7 @@ performance workload and no release blocker. The separately retained
 [v2 nomination](m4-candidate-nomination-v2.json) content-binds those results. Its state remains
 only `nominated_for_m4_review`; it does not grant P3/P4/P5, M4/M5 or human acceptance.
 
-November 14–15 archive stabilization is deliberately newer than that nomination. Implementation
+November 14–15 archive stabilization was deliberately newer than that nomination. Implementation
 [`2b8c40c`](https://github.com/lvlunario/project-chimera/commit/2b8c40cbc88c8ba07e644f209562e873b3e3881d)
 added deterministic portable rehearsal retention. Its first PR matrix
 ([43586424963](https://github.com/lvlunario/project-chimera/actions/runs/43586424963))
@@ -98,28 +98,44 @@ keeps the published inode open through revalidation and cleanup and passed both
 [push matrix 43704108066](https://github.com/lvlunario/project-chimera/actions/runs/43704108066)
 and [PR-integration matrix 43704111295](https://github.com/lvlunario/project-chimera/actions/runs/43704111295),
 with 348 tests on each Python job, clean-install/archive controls and 2/2 Chromium journeys.
-This verifies the transport correction; it does not supersede `594b03c`. A fresh rehearsal,
-durably retained rehearsal/archive and separately retained v3 nomination are still required;
-hosted evidence must match the selected SHA and be rerun only if that candidate changes.
+This verified the transport correction but did not itself supersede `594b03c`.
 
-Stabilization directly regression-checks both retained nomination records' canonical bytes,
-embedded hosted-CI identities, exact receipt/packet hashes, change policies and still-pending
-authority. This prevents an in-place evidence edit from passing branch CI; it does not
-reinspect or recreate either separately sealed rehearsal.
+On November 16, exact candidate
+[`9edce78`](https://github.com/lvlunario/project-chimera/commit/9edce78f8fc2b2033eefe78421c475a8cbc62ce0)
+was regenerated from a clean detached checkout after its successful
+[push matrix 43704861279](https://github.com/lvlunario/project-chimera/actions/runs/43704861279)
+and [PR-integration matrix 43704864823](https://github.com/lvlunario/project-chimera/actions/runs/43704864823).
+The rehearsal produced receipt `46b35d0…0605`, packet `c2f7b5d…e2d` and a deterministic
+767,529-byte archive with SHA-256 `638bbb07…c2cc`; all controls were complete with no declared
+release blocker. The separately retained [v3 nomination](m4-candidate-nomination-v3.json) and
+[portable archive](evidence/chimera-m4-review-9edce78.zip), tracked in
+[issue #30](https://github.com/lvlunario/project-chimera/issues/30), supersede v2 as engineering
+evidence without granting P3/P4/P5, M4/M5 or human acceptance. A later candidate change still
+requires new matching hosted evidence, rehearsal, archive and nomination.
 
-The current readiness inventory covers 134 declared requirements across 23 groups, six guides
+Stabilization directly regression-checks all three retained nomination records' canonical
+bytes, embedded hosted-CI identities, exact receipt/packet hashes, change policies and
+still-pending authority. For v3 it also portably reinspects the separately retained archive
+and cross-checks the candidate, receipt and packet. This prevents an in-place evidence edit
+from passing branch CI; it does not authenticate the producer or decide the gate.
+
+The current readiness inventory covers 135 declared requirements across 23 groups, six guides
 with 53 required headings, three open fixed/verified defect issues and zero declared release
-blockers in its dated November 9 snapshot. That snapshot was 261,109 seconds old at v2
+blockers in its dated November 9 snapshot. This 135-requirement inventory belongs to the later
+program/evidence head that adds NOMINATE-006; nominee `9edce78` and its immutable retained
+archive truthfully embed the preceding 134/134 readiness inventory, and the evidence head is
+not itself a new nominee. That snapshot was 261,109 seconds old at v2
 nomination; the age is arithmetic evidence, not trusted time or a freshness decision. The live
 [issue #28 record](https://github.com/lvlunario/project-chimera/issues/28) was updated at
 `2026-11-12T10:58:19Z` with its fixed/verified evidence and is no longer treated as a release
-blocker; the dated snapshot remains explicit rather than silently rewritten. Refresh all defects
+blocker; the dated snapshot remains explicit rather than silently rewritten. The v3 nomination
+records the same dated snapshot as 607,866 seconds old; refresh all defects
 again at M4 disposition. Performance, threat-model, readiness, bounded packet and one-command
 rehearsal controls remain synthetic/local-prototype evidence; they do not prove physical-radio
 behavior, producer identity, security certification or operator acceptance.
 
-M4 November 28 and M5 December 12 remain amber now that the corrected nominee passed local and
-hosted gates. Recovery keeps feature scope frozen and November 29–December 12 reserved for
+M4 November 28 and M5 December 12 remain amber now that the current nominee has retained local,
+portable and hosted evidence. Recovery keeps feature scope frozen and November 29–December 12 reserved for
 stabilization and acceptance. Next: support the existing worksheet, record Leo's actual
 observations and separate phase decisions, correct any critical defect, refresh live defects at
 disposition, and then record M4 explicitly. Do not replace the nominee silently; any later

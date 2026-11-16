@@ -503,6 +503,8 @@
       "evidence_paths": [
         "docs/MANUAL.md",
         "docs/QUALITY.md",
+        "docs/evidence/chimera-m4-review-9edce78.zip",
+        "docs/m4-candidate-nomination-v3.json",
         "examples/release_candidate_nomination.py",
         "tests/test_release_candidate_nomination.py"
       ],
@@ -512,7 +514,8 @@
         "NOMINATE-002",
         "NOMINATE-003",
         "NOMINATE-004",
-        "NOMINATE-005"
+        "NOMINATE-005",
+        "NOMINATE-006"
       ]
     }
   ],

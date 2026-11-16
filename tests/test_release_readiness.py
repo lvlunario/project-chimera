@@ -24,6 +24,8 @@ class ReleaseReadinessTests(unittest.TestCase):
         )
         cls.tracked = release_readiness._tracked_repository_paths()
         cls.tracked.update({
+            "docs/evidence/chimera-m4-review-9edce78.zip",
+            "docs/m4-candidate-nomination-v3.json",
             "docs/release-readiness-v1.json",
             "examples/release_candidate_nomination.py",
             "examples/release_candidate_packet.py",
@@ -47,7 +49,7 @@ class ReleaseReadinessTests(unittest.TestCase):
 
     def test_checked_in_manifest_covers_current_review_inputs(self):
         summary = self._validate()
-        self.assertEqual(134, summary["requirement_count"])
+        self.assertEqual(135, summary["requirement_count"])
         self.assertEqual(23, summary["requirement_group_count"])
         self.assertEqual(3, summary["defect_count"])
         self.assertEqual([], summary["open_release_blockers"])
@@ -61,6 +63,10 @@ class ReleaseReadinessTests(unittest.TestCase):
         evidence_paths = {item["path"] for item in summary["evidence_files"]}
         self.assertIn("docs/REQUIREMENTS.md", evidence_paths)
         self.assertIn("docs/release-readiness-v1.json", evidence_paths)
+        self.assertIn(
+            "docs/evidence/chimera-m4-review-9edce78.zip", evidence_paths
+        )
+        self.assertIn("docs/m4-candidate-nomination-v3.json", evidence_paths)
         defects = {
             item["issue_number"]: item
             for item in self.document["defect_snapshot"]["open_defects"]
@@ -102,8 +108,8 @@ class ReleaseReadinessTests(unittest.TestCase):
             self.assertEqual("pending", record["m4_decision"])
             self.assertEqual("pending", record["m5_decision"])
             self.assertEqual("not_granted", record["human_acceptance"])
-            self.assertEqual(134, record["requirements"]["declared_count"])
-            self.assertEqual(134, record["requirements"]["covered_count"])
+            self.assertEqual(135, record["requirements"]["declared_count"])
+            self.assertEqual(135, record["requirements"]["covered_count"])
             self.assertEqual(3, record["defects"]["open_count"])
             self.assertEqual([], record["defects"]["open_release_blockers"])
             self.assertEqual(

@@ -1079,11 +1079,28 @@ rehearsal, exit 1 preserves a coherent release-control blocker, and exit 2 means
 is invalid. All authority remains pending.
 
 Move the finished archive to an authorized managed persistent location if it must survive the
-local workspace. The repository and GitHub Actions workflow deliberately provide no upload,
-retention, authentication or provenance service. This control therefore cannot recover the
-already-lost v2 rehearsal directory, and it does not make `594b03c` a nomination for later
-branch bytes. A changed candidate still needs fresh rehearsal, hosted evidence and a separate
-superseding nomination.
+local workspace. GitHub Actions deliberately provides no upload, retention, authentication or
+provenance service. For the current synthetic candidate only, the program has explicitly
+retained one vetted archive at
+[`docs/evidence/chimera-m4-review-9edce78.zip`](evidence/chimera-m4-review-9edce78.zip).
+Its exact size and SHA-256 are pinned by regression, and the portable inspector cross-checks
+its candidate, receipt, packet and still-pending authority against the separately retained v3
+nomination. This bounded repository artifact is not a general evidence store and cannot recover
+the already-lost v2 rehearsal directory. A changed candidate still needs fresh rehearsal,
+hosted evidence, retained archive and a separate superseding nomination.
+
+Reinspect the retained copy without Git or the source rehearsal directory:
+
+```bash
+python -m examples.release_review_archive inspect \
+  docs/evidence/chimera-m4-review-9edce78.zip
+```
+
+Expected: candidate `9edce78f8fc2b2033eefe78421c475a8cbc62ce0`, archive SHA-256
+`638bbb07…c2cc`, `packet_complete_for_m4_review`, and pending P3/P4/P5, M4/M5 and
+human authority. Its embedded candidate readiness record remains 134/134 requirements. The
+later evidence head adds NOMINATE-006 and validates 135/135; that does not change the immutable
+archive or nominate the evidence head.
 
 The expanded component procedure below remains useful for troubleshooting or separately
 retaining a blocked source record. Prepare every input from the same clean commit into new
@@ -1189,11 +1206,18 @@ signing its approval page. The SHA prevents the implementation from moving silen
 M4 decision still determines whether it may enter final acceptance testing.
 
 The current corrected program record is
+[`docs/m4-candidate-nomination-v3.json`](m4-candidate-nomination-v3.json). It names exact
+candidate `9edce78f8fc2b2033eefe78421c475a8cbc62ce0`, binds successful connected push run
+`43704861279` and PR-integration run `43704864823`, and matches the separately retained
+archive's receipt `46b35d0…0605` and packet `c2f7b5d…e2d`. The archive itself is 767,529
+bytes with SHA-256 `638bbb07…c2cc`. Every phase and human authority remains pending.
+
+The corrected but now superseded v2 program record is
 [`docs/m4-candidate-nomination-v2.json`](m4-candidate-nomination-v2.json). It names exact
-candidate `594b03c2a7fcd62548d9eea8b3f7a73f8584555d` and supersedes the candidate named by v1
-without changing v1. Its connected push and PR-integration runs, generated merge commit,
-receipt and packet identities are content-bound in the same way, and every phase and human
-authority remains pending.
+candidate `594b03c2a7fcd62548d9eea8b3f7a73f8584555d` and superseded v1 without changing it.
+Its connected push and PR-integration runs, generated merge commit, receipt and packet
+identities remain truthful historical evidence; its separately sealed rehearsal directory
+was not retained.
 
 The historical retained program record is
 [`docs/m4-candidate-nomination-v1.json`](m4-candidate-nomination-v1.json). It names exact
@@ -1204,10 +1228,12 @@ the corresponding sealed rehearsal directory. The file is engineering evidence, 
 walkthrough, M4/M5 decision or product acceptance. Branch regression pins the retained file's
 exact SHA-256 plus its receipt, packet and hosted-CI identities and refuses any in-place change
 or authority grant. A legitimate replacement must therefore be a separately named superseding
-record; the regression does not claim that either rehearsal was reinspected. Issue
+record. For v1/v2, regression does not claim that either rehearsal was reinspected; for v3 it
+portably reinspects the separately retained deterministic archive. Issue
 [#28](https://github.com/lvlunario/project-chimera/issues/28) found a candidate-bound blocked-
 receipt schema defect after that nomination. The v1 record remains truthful historical evidence,
-but it is not the corrected candidate; v2 records the fresh local and hosted successor evidence.
+but it is not the corrected candidate; v2 and then v3 record fresh local and hosted successor
+evidence without rewriting history.
 
 ## Phase approval instructions
 

@@ -16,6 +16,7 @@ from examples import (
     release_candidate_packet,
     release_performance,
     release_readiness,
+    release_review_archive,
     release_review_rehearsal,
     release_threat_model,
 )
@@ -30,6 +31,8 @@ class ReleaseCandidateNominationTests(unittest.TestCase):
     def _validators(self):
         tracked = release_readiness._tracked_repository_paths()
         tracked.update({
+            "docs/evidence/chimera-m4-review-9edce78.zip",
+            "docs/m4-candidate-nomination-v3.json",
             "examples/release_candidate_nomination.py",
             "examples/release_review_archive.py",
             "tests/test_release_candidate_nomination.py",
@@ -747,6 +750,56 @@ class ReleaseCandidateNominationTests(unittest.TestCase):
                 "sha256": "c9d8ebf40c249f19ccedd270c7de0ca357a794b3ed5a28553f4832b8bdf745da",
             },
         )
+        self._assert_retained_nomination(
+            name="m4-candidate-nomination-v3.json",
+            nomination_sha=(
+                "17ac2dc96e89d3e59a48d4286cd4c9d34d743437337c2f811e232a260b8bc13b"
+            ),
+            candidate_sha="9edce78f8fc2b2033eefe78421c475a8cbc62ce0",
+            expected_evidence_sha=(
+                "b048d61fc43b4a077a2a99b7b538a1e5489ed2ab9577dff37aa51d38ac5d287f"
+            ),
+            receipt={
+                "byte_count": 6499,
+                "sha256": "46b35d0b53745925d68d20effd3b25f33de1a07f762c1037ca3f3b54986f0605",
+            },
+            packet={
+                "byte_count": 503793,
+                "sha256": "c2f7b5dd7abae74a45408ba081f5e96cfb41de6b2aae58ab5b4c040009d04e2d",
+            },
+        )
+
+    def test_retained_v3_archive_is_portable_and_matches_nomination(self):
+        archive = (
+            release_candidate_nomination.ROOT
+            / "docs"
+            / "evidence"
+            / "chimera-m4-review-9edce78.zip"
+        )
+        nomination, _ = release_candidate_nomination._load_canonical(
+            release_candidate_nomination.ROOT
+            / "docs"
+            / "m4-candidate-nomination-v3.json",
+            release_candidate_nomination.MAX_JSON_BYTES,
+            "retained candidate nomination",
+        )
+        summary = release_review_archive.inspect_review_archive(archive)
+
+        self.assertEqual(767529, archive.stat().st_size)
+        self.assertEqual(
+            "638bbb07c2547abf309e31210ba8693d5573d99f9d000487eb7778121f51c2cc",
+            sha256(archive.read_bytes()).hexdigest(),
+        )
+        self.assertEqual(
+            nomination["candidate_commit_sha"], summary["candidate_commit_sha"]
+        )
+        self.assertEqual(nomination["rehearsal"]["receipt"], summary["receipt"])
+        self.assertEqual(nomination["rehearsal"]["packet"], summary["packet"])
+        self.assertEqual("packet_complete_for_m4_review", summary["status"])
+        self.assertEqual([], summary["release_blockers"])
+        self.assertEqual("pending", summary["m4_decision"])
+        self.assertEqual("pending", summary["m5_decision"])
+        self.assertEqual("not_granted", summary["human_acceptance"])
 
     def test_control_does_not_depend_on_removable_asserts(self):
         source = Path(release_candidate_nomination.__file__).read_text(
