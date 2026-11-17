@@ -1098,9 +1098,31 @@ python -m examples.release_review_archive inspect \
 
 Expected: candidate `9edce78f8fc2b2033eefe78421c475a8cbc62ce0`, archive SHA-256
 `638bbb07…c2cc`, `packet_complete_for_m4_review`, and pending P3/P4/P5, M4/M5 and
-human authority. Its embedded candidate readiness record remains 134/134 requirements. The
-later evidence head adds NOMINATE-006 and validates 135/135; that does not change the immutable
-archive or nominate the evidence head.
+human authority.
+
+To verify that the separately retained nomination still describes that archive, use the
+combined read-only inspector:
+
+```bash
+python -m examples.release_candidate_nomination inspect-archive \
+  docs/m4-candidate-nomination-v3.json \
+  --archive docs/evidence/chimera-m4-review-9edce78.zip
+```
+
+This first performs the archive's bounded deterministic-ZIP and full rehearsal checks. It
+then validates the canonical nomination and embedded hosted-CI snapshot, and requires exact
+agreement on the candidate, receipt, packet, component/rehearsal fields, dated defect snapshot
+and computed snapshot age. It also rechecks chronology and every pending-authority field. Exit
+0 is engineering-evidence agreement only; exit 2 reports a malformed input or any divergence
+without a success summary. The command writes neither input and does not need the removed
+source rehearsal directory.
+
+Expected: `nominated_for_m4_review`, candidate `9edce78…62ce0`, nomination SHA-256
+`17ac2dc9…c13b`, the matching receipt/packet SHA-256 values, the resolved input paths and the
+explicit pending-authority statement. The combined command validates archive status and bytes
+internally but does not repeat the archive-only summary. Its embedded candidate readiness
+record remains 134/134 requirements. The later evidence head adds NOMINATE-006–007 and
+validates 136/136; that does not change the immutable archive or nominate the evidence head.
 
 The expanded component procedure below remains useful for troubleshooting or separately
 retaining a blocked source record. Prepare every input from the same clean commit into new

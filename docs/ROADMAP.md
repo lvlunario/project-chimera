@@ -8,10 +8,10 @@ remain unperformed. Original dates below are unchanged; M0's scope decision was 
 September 22, three days after its September 19 target. Downstream forecasts
 remain October 3/17, November 7/28 and December 12 with no baseline movement.
 
-## Status update — November 16, 2026
+## Status update — November 17, 2026
 
-The October 17 M2 baseline was missed by thirty days. M3 November 7 is **missed and red,
-nine days late**. The engineering vertical, acceptance-preparation workspace, read-only
+The October 17 M2 baseline was missed by thirty-one days. M3 November 7 is **missed and red,
+ten days late**. The engineering vertical, acceptance-preparation workspace, read-only
 dashboard and evidence controls are implemented and verified, but no Leo walkthrough,
 manual-device/screen-reader observation or separate P3/P4/P5 disposition is recorded. This is
 a schedule slip, not a change to the original baseline. Recovery remains: freeze feature scope,
@@ -65,6 +65,13 @@ v3 nomination that binds the same candidate, connected hosted runs, receipt and 
 Branch regression portably reinspects that archive and keeps P3/P4/P5, M4/M5 and human
 acceptance pending. This supersedes v2 as engineering evidence; it is not M4 permission.
 
+November 17 stabilization exposes the branch-only archive/nomination cross-check as a
+read-only portable command. It validates the retained archive first, then requires v3's
+candidate, receipt/packet and complete rehearsal identities, dated defect snapshot/age,
+hosted-CI evidence and pending authority to agree without the source rehearsal directory.
+This improves inspection of the existing nominee; it neither refreshes the dated connected
+defect snapshot nor selects a new candidate or grants M4.
+
 M4 November 28 and M5 December 12 remain amber with the current nominee's local, portable and
 hosted evidence retained, provided feature scope stays frozen and November 29–December 12
 remains reserved for stabilization and acceptance. Candidate-bound changes require a new
@@ -72,8 +79,9 @@ candidate rehearsal, hosted evidence, retained archive and superseding nominatio
 still cannot substitute for human acceptance.
 All three retained nomination records are pinned by branch regression that validates canonical
 bytes, hosted-CI content identity, receipt/packet hashes and pending authority. The v3 control
-also portably reinspects its separately retained deterministic archive. This is an integrity
-guard, not a human gate decision.
+also portably reinspects its separately retained deterministic archive, and the combined
+operator command checks both retained inputs together. This is an integrity guard, not a
+human gate decision.
 
 ## Operational problem and proposed scope
 An integration engineer needs to verify a communications test run, identify failing

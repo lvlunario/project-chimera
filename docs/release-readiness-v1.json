@@ -154,6 +154,7 @@
   "requirement_groups": [
     {
       "evidence_paths": [
+        ".github/workflows/test.yml",
         "docs/MANUAL.md",
         "docs/reviews/2026-10-24-p345-operator-acceptance.md",
         "docs/reviews/2026-11-02.md",
@@ -501,6 +502,7 @@
     },
     {
       "evidence_paths": [
+        ".github/workflows/test.yml",
         "docs/MANUAL.md",
         "docs/QUALITY.md",
         "docs/evidence/chimera-m4-review-9edce78.zip",
@@ -515,7 +517,8 @@
         "NOMINATE-003",
         "NOMINATE-004",
         "NOMINATE-005",
-        "NOMINATE-006"
+        "NOMINATE-006",
+        "NOMINATE-007"
       ]
     }
   ],

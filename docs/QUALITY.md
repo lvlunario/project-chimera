@@ -196,6 +196,11 @@ Publication is canonical UTF-8 JSON to a new regular outside-checkout and outsid
 path. Portable inspection reads the nomination and rehearsal without changing either. The
 engineering state is only `nominated_for_m4_review`; P3/P4/P5, M4/M5 and human acceptance
 remain pending. Replacing a candidate requires a separately retained superseding record.
+The `inspect-archive` path removes the operational dependency on the source rehearsal
+directory: it first reuses the bounded archive inspector, then requires the canonical
+nomination to match the archive's candidate, complete rehearsal fields, receipt/packet
+identities, defect snapshot and recomputed nomination age. Candidate drift, malformed archive,
+chronology drift or authority changes fail closed and produce no success summary.
 Branch regression directly loads every retained canonical copy, validates its embedded
 hosted-CI schema and content identity, pins its nomination/receipt/packet hashes, and requires
 every authority field to remain pending. For v3, a separate regression also portably inspects

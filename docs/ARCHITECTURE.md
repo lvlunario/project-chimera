@@ -1,5 +1,28 @@
 # Architecture decision 0001: deterministic core first
 
+## Decision 0034: bind the retained nomination to the archive at inspection time
+
+November 17, 2026. P7/M4 stabilization increment; no candidate, phase, release or acceptance
+claim.
+
+Add a read-only `inspect-archive` path to the existing candidate-nomination control. Reuse the
+portable archive's bounded ZIP and full rehearsal validation, then compare the canonical
+nomination with the archive-derived candidate, receipt/packet identities, component state,
+dated defect snapshot and recomputed snapshot age. Revalidate the embedded hosted-CI document,
+chronology, pending phase decisions and absent human authority. Require no original rehearsal
+directory and write neither input.
+
+Keep archive transport and nomination authority separate: the archive inspector establishes
+internal rehearsal coherence; the nomination inspector establishes that the catalog record
+still describes those exact retained bytes. Either malformed input or any disagreement fails
+closed. This does not authenticate the producer, create trusted time, refresh connected
+defects, select a new candidate or decide M4.
+
+Tradeoffs: one portable command now checks the retained binder and its catalog card together,
+instead of leaving their cross-check only inside branch tests. It intentionally depends on
+Chimera's repository tools and the immutable v3 inputs; a future candidate still needs a new
+archive and superseding nomination.
+
 ## Decision 0033: retain one nominated synthetic archive without creating a storage service
 
 November 16, 2026. P7/M4 stabilization increment; no phase, release or acceptance claim.

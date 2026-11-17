@@ -203,6 +203,36 @@ class ReleaseReviewArchiveTests(unittest.TestCase):
             self.assertEqual("pending", summary["m4_decision"])
             self.assertEqual("pending", summary["m5_decision"])
             self.assertEqual("not_granted", summary["human_acceptance"])
+            self.assertIs(
+                type(summary["defect_snapshot"]["open_count"]), int
+            )
+
+            members = release_review_archive._read_members(first_bytes)
+            receipt_document = release_review_rehearsal._decode_json(
+                members[release_review_rehearsal.RECEIPT_NAME],
+                "test receipt",
+            )
+            for invalid_count in (3.0, True):
+                with self.subTest(invalid_count=invalid_count):
+                    changed_members = deepcopy(members)
+                    readiness = json.loads(
+                        changed_members[
+                            "sources/release-readiness.json"
+                        ].decode("utf-8")
+                    )
+                    readiness["defects"]["open_count"] = invalid_count
+                    changed_members["sources/release-readiness.json"] = (
+                        release_readiness._canonical(readiness)
+                    )
+                    with self.assertRaisesRegex(
+                        release_review_archive.ReviewArchiveError,
+                        "open defect count is invalid",
+                    ):
+                        release_review_archive._summary(
+                            first_bytes,
+                            changed_members,
+                            receipt_document,
+                        )
 
             with zipfile.ZipFile(first, "r") as archive:
                 infos = archive.infolist()

@@ -650,6 +650,156 @@ class ReleaseCandidateNominationTests(unittest.TestCase):
             )
             self.assertNotIn("Traceback", stderr.getvalue())
 
+    def test_portably_inspects_nomination_with_archive_only(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            review = root / "review"
+            other_review = root / "other-review"
+            validators = self._validators()
+            with (
+                validators[0],
+                validators[1],
+                validators[2],
+                validators[3],
+                validators[4],
+                validators[5],
+                validators[6],
+            ):
+                release_review_rehearsal.prepare_review_rehearsal(
+                    review,
+                    candidate_commit=self.candidate,
+                    generated_at_utc=self.rehearsal_generated,
+                )
+                release_review_rehearsal.prepare_review_rehearsal(
+                    other_review,
+                    candidate_commit="c" * 40,
+                    generated_at_utc=self.rehearsal_generated,
+                )
+
+            archive = root / "review.zip"
+            other_archive = root / "other-review.zip"
+            release_review_archive.create_review_archive(review, archive)
+            release_review_archive.create_review_archive(
+                other_review, other_archive
+            )
+            ci_path = root / "ci.json"
+            nomination_path = root / "nomination.json"
+            self._write_ci(ci_path)
+            record = release_candidate_nomination.nominate_candidate(
+                nomination_path,
+                rehearsal_directory=review,
+                ci_evidence=ci_path,
+                generated_at_utc=self.nominated,
+            )
+
+            self.assertEqual(
+                record,
+                release_candidate_nomination.inspect_archived_candidate_nomination(
+                    nomination_path, review_archive=archive
+                ),
+            )
+            summary = release_review_archive.inspect_review_archive(archive)
+            for invalid_count in (3.0, True):
+                with self.subTest(invalid_count=invalid_count):
+                    changed_summary = deepcopy(summary)
+                    changed_summary["defect_snapshot"][
+                        "open_count"
+                    ] = invalid_count
+                    with self.assertRaisesRegex(
+                        release_candidate_nomination.CandidateNominationError,
+                        "open defect count is invalid",
+                    ):
+                        release_candidate_nomination._validate_archived_nomination(
+                            record,
+                            archive_summary=changed_summary,
+                        )
+            before = self._tree_bytes(root)
+            stdout = io.StringIO()
+            with redirect_stdout(stdout):
+                result = release_candidate_nomination.main([
+                    "inspect-archive",
+                    str(nomination_path),
+                    "--archive",
+                    str(archive),
+                ])
+            self.assertEqual(0, result)
+            self.assertIn("review-archive:", stdout.getvalue())
+            self.assertIn(
+                "engineering-state: nominated_for_m4_review",
+                stdout.getvalue(),
+            )
+            self.assertEqual(before, self._tree_bytes(root))
+
+            with self.assertRaisesRegex(
+                release_candidate_nomination.CandidateNominationError,
+                "archive candidate changed",
+            ):
+                release_candidate_nomination.inspect_archived_candidate_nomination(
+                    nomination_path, review_archive=other_archive
+                )
+
+            changed = deepcopy(record)
+            changed["rehearsal"]["generated_at_utc"] = (
+                "2026-11-09T10:30:59Z"
+            )
+            nomination_path.write_bytes(
+                release_candidate_nomination._canonical(changed)
+            )
+            with self.assertRaisesRegex(
+                release_candidate_nomination.CandidateNominationError,
+                "archive rehearsal evidence changed",
+            ):
+                release_candidate_nomination.inspect_archived_candidate_nomination(
+                    nomination_path, review_archive=archive
+                )
+
+            changed = deepcopy(record)
+            changed["defect_snapshot"][
+                "snapshot_age_at_nomination_seconds"
+            ] += 1
+            nomination_path.write_bytes(
+                release_candidate_nomination._canonical(changed)
+            )
+            with self.assertRaisesRegex(
+                release_candidate_nomination.CandidateNominationError,
+                "archive defect snapshot changed",
+            ):
+                release_candidate_nomination.inspect_archived_candidate_nomination(
+                    nomination_path, review_archive=archive
+                )
+
+            changed = deepcopy(record)
+            changed["m4_decision"] = "approved"
+            nomination_path.write_bytes(
+                release_candidate_nomination._canonical(changed)
+            )
+            with self.assertRaisesRegex(
+                release_candidate_nomination.CandidateNominationError,
+                "cannot record acceptance",
+            ):
+                release_candidate_nomination.inspect_archived_candidate_nomination(
+                    nomination_path, review_archive=archive
+                )
+
+            nomination_path.write_bytes(
+                release_candidate_nomination._canonical(record)
+            )
+            invalid_archive = root / "invalid.zip"
+            invalid_archive.write_bytes(b"not a ZIP\n")
+            stderr = io.StringIO()
+            with redirect_stderr(stderr):
+                result = release_candidate_nomination.main([
+                    "inspect-archive",
+                    str(nomination_path),
+                    "--archive",
+                    str(invalid_archive),
+                ])
+            self.assertEqual(2, result)
+            self.assertNotIn("Traceback", stderr.getvalue())
+            self.assertNotIn(
+                "human acceptance remain pending", stderr.getvalue()
+            )
+
     def _assert_retained_nomination(
         self,
         *,
@@ -784,6 +934,14 @@ class ReleaseCandidateNominationTests(unittest.TestCase):
             "retained candidate nomination",
         )
         summary = release_review_archive.inspect_review_archive(archive)
+        archived = (
+            release_candidate_nomination.inspect_archived_candidate_nomination(
+                release_candidate_nomination.ROOT
+                / "docs"
+                / "m4-candidate-nomination-v3.json",
+                review_archive=archive,
+            )
+        )
 
         self.assertEqual(767529, archive.stat().st_size)
         self.assertEqual(
@@ -800,6 +958,7 @@ class ReleaseCandidateNominationTests(unittest.TestCase):
         self.assertEqual("pending", summary["m4_decision"])
         self.assertEqual("pending", summary["m5_decision"])
         self.assertEqual("not_granted", summary["human_acceptance"])
+        self.assertEqual(nomination, archived)
 
     def test_control_does_not_depend_on_removable_asserts(self):
         source = Path(release_candidate_nomination.__file__).read_text(

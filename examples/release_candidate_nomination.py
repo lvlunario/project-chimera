@@ -1,8 +1,9 @@
 """Bind one exact Chimera M4 engineering candidate to reviewed evidence.
 
 The offline command consumes a published review rehearsal and a canonical snapshot
-of connected GitHub Actions inspection.  It validates and binds those inputs; it
-does not query GitHub, authenticate the snapshot, grant M4, or record human review.
+of connected GitHub Actions inspection. Inspection may later bind the canonical
+nomination to either that directory or its deterministic portable archive. It does
+not query GitHub, authenticate the snapshot, grant M4, or record human review.
 """
 from __future__ import annotations
 
@@ -17,7 +18,7 @@ import secrets
 import stat
 import sys
 
-from examples import release_review_rehearsal
+from examples import release_review_archive, release_review_rehearsal
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -612,12 +613,9 @@ def _expected_rehearsal(rehearsal: Path, receipt: dict) -> dict:
     }
 
 
-def _validate_nomination(
-    record: dict,
-    *,
-    rehearsal: Path,
-    expected_content: bytes | None = None,
-) -> dict:
+def _validate_nomination_record(
+    record: dict, *, expected_content: bytes | None = None
+) -> tuple[str, str, dict, dict, dict]:
     _object(record, _NOMINATION_FIELDS, "candidate nomination")
     _require(
         type(record["schema_version"]) is int
@@ -657,16 +655,14 @@ def _validate_nomination(
         ci["candidate_commit_sha"] == candidate,
         "candidate nomination hosted CI candidate changed",
     )
-    receipt = release_review_rehearsal.inspect_review_rehearsal(rehearsal)
-    _require(
-        receipt["candidate_commit_sha"] == candidate,
-        "candidate nomination rehearsal candidate changed",
+    rehearsal_record = _object(
+        record["rehearsal"],
+        _REHEARSAL_FIELDS,
+        "candidate nomination rehearsal",
     )
-    expected_rehearsal = _expected_rehearsal(rehearsal, receipt)
-    _object(record["rehearsal"], _REHEARSAL_FIELDS, "candidate nomination rehearsal")
     for label in ("receipt", "packet"):
         identity = _object(
-            record["rehearsal"][label],
+            rehearsal_record[label],
             _IDENTITY_FIELDS,
             f"candidate nomination rehearsal {label}",
         )
@@ -677,18 +673,6 @@ def _validate_nomination(
             and _SHA256.fullmatch(identity["sha256"]) is not None,
             f"candidate nomination rehearsal {label} identity is invalid",
         )
-    _require(
-        record["rehearsal"] == expected_rehearsal,
-        "candidate nomination rehearsal evidence changed",
-    )
-
-    snapshot = _readiness_snapshot(rehearsal)
-    expected_snapshot = {
-        **snapshot,
-        "snapshot_age_at_nomination_seconds": _seconds_between(
-            snapshot["snapshot_at_utc"], generated, "defect snapshot"
-        ),
-    }
     nomination_snapshot = _object(
         record["defect_snapshot"], _DEFECT_FIELDS, "candidate defect snapshot"
     )
@@ -706,8 +690,46 @@ def _validate_nomination(
     )
     _require(
         type(nomination_snapshot["snapshot_age_at_nomination_seconds"]) is int
-        and nomination_snapshot["snapshot_age_at_nomination_seconds"] >= 0
-        and nomination_snapshot == expected_snapshot,
+        and nomination_snapshot["snapshot_age_at_nomination_seconds"] >= 0,
+        "candidate nomination defect snapshot age is invalid",
+    )
+    if expected_content is not None:
+        _require(
+            _canonical(record) == expected_content,
+            "candidate nomination is not canonical JSON",
+        )
+    return candidate, generated, ci, rehearsal_record, nomination_snapshot
+
+
+def _validate_nomination(
+    record: dict,
+    *,
+    rehearsal: Path,
+    expected_content: bytes | None = None,
+) -> dict:
+    candidate, generated, ci, rehearsal_record, nomination_snapshot = (
+        _validate_nomination_record(record, expected_content=expected_content)
+    )
+    receipt = release_review_rehearsal.inspect_review_rehearsal(rehearsal)
+    _require(
+        receipt["candidate_commit_sha"] == candidate,
+        "candidate nomination rehearsal candidate changed",
+    )
+    expected_rehearsal = _expected_rehearsal(rehearsal, receipt)
+    _require(
+        rehearsal_record == expected_rehearsal,
+        "candidate nomination rehearsal evidence changed",
+    )
+
+    snapshot = _readiness_snapshot(rehearsal)
+    expected_snapshot = {
+        **snapshot,
+        "snapshot_age_at_nomination_seconds": _seconds_between(
+            snapshot["snapshot_at_utc"], generated, "defect snapshot"
+        ),
+    }
+    _require(
+        nomination_snapshot == expected_snapshot,
         "candidate nomination defect snapshot changed",
     )
     _seconds_between(
@@ -716,11 +738,72 @@ def _validate_nomination(
     _seconds_between(
         ci["inspected_at_utc"], generated, "hosted CI nomination"
     )
-    if expected_content is not None:
-        _require(
-            _canonical(record) == expected_content,
-            "candidate nomination is not canonical JSON",
-        )
+    return record
+
+
+def _validate_archived_nomination(
+    record: dict,
+    *,
+    archive_summary: dict,
+    expected_content: bytes | None = None,
+) -> dict:
+    candidate, generated, ci, rehearsal_record, nomination_snapshot = (
+        _validate_nomination_record(record, expected_content=expected_content)
+    )
+    _require(
+        archive_summary["candidate_commit_sha"] == candidate,
+        "candidate nomination archive candidate changed",
+    )
+    _require(
+        archive_summary["status"] == "packet_complete_for_m4_review"
+        and archive_summary["release_blockers"] == []
+        and archive_summary["m4_decision"] == "pending"
+        and archive_summary["m5_decision"] == "pending"
+        and archive_summary["human_acceptance"] == "not_granted",
+        "blocked review archive cannot be engineering-nominated",
+    )
+    _require(
+        rehearsal_record == archive_summary["rehearsal"],
+        "candidate nomination archive rehearsal evidence changed",
+    )
+    snapshot = _object(
+        archive_summary["defect_snapshot"],
+        {"open_count", "open_release_blockers", "snapshot_at_utc"},
+        "candidate nomination archive defect snapshot",
+    )
+    _require(
+        type(snapshot["open_count"]) is int and snapshot["open_count"] >= 0,
+        "candidate nomination archive open defect count is invalid",
+    )
+    blockers = snapshot["open_release_blockers"]
+    _require(
+        type(blockers) is list
+        and all(type(item) is int and item > 0 for item in blockers)
+        and blockers == sorted(set(blockers)),
+        "candidate nomination archive blocker inventory is invalid",
+    )
+    _utc_timestamp(
+        snapshot["snapshot_at_utc"],
+        "candidate nomination archive snapshot_at_utc",
+    )
+    expected_snapshot = {
+        **snapshot,
+        "snapshot_age_at_nomination_seconds": _seconds_between(
+            snapshot["snapshot_at_utc"], generated, "defect snapshot"
+        ),
+    }
+    _require(
+        nomination_snapshot == expected_snapshot,
+        "candidate nomination archive defect snapshot changed",
+    )
+    _seconds_between(
+        rehearsal_record["generated_at_utc"],
+        generated,
+        "rehearsal nomination",
+    )
+    _seconds_between(
+        ci["inspected_at_utc"], generated, "hosted CI nomination"
+    )
     return record
 
 
@@ -821,6 +904,21 @@ def inspect_candidate_nomination(
     )
 
 
+def inspect_archived_candidate_nomination(
+    nomination: str | Path, *, review_archive: str | Path
+) -> dict:
+    """Reinspect a nomination against its portable rehearsal archive."""
+    summary = release_review_archive.inspect_review_archive(review_archive)
+    record, content = _load_canonical(
+        Path(nomination), MAX_JSON_BYTES, "candidate nomination"
+    )
+    return _validate_archived_nomination(
+        record,
+        archive_summary=summary,
+        expected_content=content,
+    )
+
+
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="build or inspect an exact-SHA M4 engineering nomination"
@@ -833,6 +931,9 @@ def _parser() -> argparse.ArgumentParser:
     inspect = subparsers.add_parser("inspect")
     inspect.add_argument("nomination", type=Path)
     inspect.add_argument("--rehearsal", required=True, type=Path)
+    inspect_archive = subparsers.add_parser("inspect-archive")
+    inspect_archive.add_argument("nomination", type=Path)
+    inspect_archive.add_argument("--archive", required=True, type=Path)
     return parser
 
 
@@ -846,15 +947,22 @@ def main(argv: list[str] | None = None) -> int:
                 ci_evidence=args.ci_evidence,
             )
             nomination_path = args.output
-        else:
+        elif args.command == "inspect":
             record = inspect_candidate_nomination(
                 args.nomination,
                 rehearsal_directory=args.rehearsal,
             )
             nomination_path = args.nomination
+        else:
+            record = inspect_archived_candidate_nomination(
+                args.nomination,
+                review_archive=args.archive,
+            )
+            nomination_path = args.nomination
         saved = _canonical(record)
     except (
         CandidateNominationError,
+        release_review_archive.ReviewArchiveError,
         release_review_rehearsal.ReviewRehearsalError,
         OSError,
     ) as exc:
@@ -863,6 +971,8 @@ def main(argv: list[str] | None = None) -> int:
     print(f"engineering-state: {record['engineering_state']}")
     print(f"candidate-commit: {record['candidate_commit_sha']}")
     print(f"nomination-record: {nomination_path.resolve(strict=False)}")
+    if args.command == "inspect-archive":
+        print(f"review-archive: {args.archive.resolve(strict=False)}")
     print(f"nomination-sha256: {sha256(saved).hexdigest()}")
     print(f"receipt-sha256: {record['rehearsal']['receipt']['sha256']}")
     print(f"packet-sha256: {record['rehearsal']['packet']['sha256']}")

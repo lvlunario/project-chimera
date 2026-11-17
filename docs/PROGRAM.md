@@ -45,8 +45,8 @@ AI assistance cannot decide that missing evidence is a passing verification.
 - Avoid paid infrastructure and live hardware operations until separately authorized.
 
 ## Next tasks
-Current direction, November 16: the October 17 M2 exact-candidate disposition is thirty
-days late. M3 missed its November 7 baseline and is nine days late because no Leo walkthrough,
+Current direction, November 17: the October 17 M2 exact-candidate disposition is thirty-one
+days late. M3 missed its November 7 baseline and is ten days late because no Leo walkthrough,
 manual-device/screen-reader observation or separate P3/P4/P5 disposition is recorded. This is
 a schedule slip, not an engineering blocker and not implied acceptance. The
 [November 2 weekly review](reviews/2026-11-02.md) remains the 25–30 minute runbook, but its
@@ -119,10 +119,18 @@ still-pending authority. For v3 it also portably reinspects the separately retai
 and cross-checks the candidate, receipt and packet. This prevents an in-place evidence edit
 from passing branch CI; it does not authenticate the producer or decide the gate.
 
-The current readiness inventory covers 135 declared requirements across 23 groups, six guides
+November 17 stabilization, tracked in
+[issue #31](https://github.com/lvlunario/project-chimera/issues/31), exposes that v3
+cross-check as a read-only operator command. `inspect-archive` needs neither the removed
+source rehearsal directory nor Git state: it reuses the bounded archive inspector and then
+requires the canonical nomination's candidate, full rehearsal identities, dated defect
+snapshot/age, hosted-CI evidence and pending authority to agree. This is portable integrity
+inspection of the existing nominee, not a new nomination or gate decision.
+
+The current readiness inventory covers 136 declared requirements across 23 groups, six guides
 with 53 required headings, three open fixed/verified defect issues and zero declared release
-blockers in its dated November 9 snapshot. This 135-requirement inventory belongs to the later
-program/evidence head that adds NOMINATE-006; nominee `9edce78` and its immutable retained
+blockers in its dated November 9 snapshot. This 136-requirement inventory belongs to the later
+program/evidence head that adds NOMINATE-006–007; nominee `9edce78` and its immutable retained
 archive truthfully embed the preceding 134/134 readiness inventory, and the evidence head is
 not itself a new nominee. That snapshot was 261,109 seconds old at v2
 nomination; the age is arithmetic evidence, not trusted time or a freshness decision. The live

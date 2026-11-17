@@ -102,19 +102,21 @@ and the [November 16 retained v3 evidence record](https://github.com/lvlunario/p
 record candidate-specific local, independent and hosted results. Do not infer a new
 candidate's status from an earlier successful run.
 
-**Acceptance state — November 16:** P0 scope (D-001–003) is approved by delegation.
+**Acceptance state — November 17:** P0 scope (D-001–003) is approved by delegation.
 P1 and P2 are conditionally accepted for continued development under the
 [delegated decision record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/reviews/2026-09-22-delegated-decisions.md). Leo's personal walkthroughs remain unperformed;
 final product validation remains open. P3/P4/P5 remain in progress; P7 release preparation
 now includes versioned performance, threat-model, readiness-inventory, bounded M4-packet,
-one-command preparation/reinspection and exact-SHA nomination controls. The current readiness
-inventory covers 135 requirements across 23 groups on the later evidence head. Nominee
+one-command preparation/reinspection and exact-SHA nomination controls. A combined read-only
+inspector now checks the retained v3 nomination directly against its deterministic archive
+without the removed source directory. The current readiness inventory covers 136 requirements
+across 23 groups on the later evidence head. Nominee
 `9edce78` and its retained archive truthfully embed the prior 134/134 inventory; the evidence
-head adds NOMINATE-006 and is not a new nominee. Exact candidates `04606a4` and `594b03c`
+head adds NOMINATE-006–007 and is not a new nominee. Exact candidates `04606a4` and `594b03c`
 remain truthful historical nomination evidence; current candidate `9edce78` passed its hosted
 matrices, fresh detached rehearsal and portable archive inspection and is separately retained
 in v3. No M4, M5 or acceptance is granted. The October 17 M2 exact-candidate disposition
-is thirty days late. M3 missed its November 7 baseline and is nine days late: the
+is thirty-one days late. M3 missed its November 7 baseline and is ten days late: the
 engineering features and review inputs are verified, but
 no Leo walkthrough or P3/P4/P5 disposition is recorded. The November 2 packet is retained as a
 runbook, but its pinned candidate is historical; use the latest explicitly published full

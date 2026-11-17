@@ -7,6 +7,7 @@ or deploy.
 from __future__ import annotations
 
 import argparse
+from datetime import datetime, timezone
 from hashlib import sha256
 import io
 import os
@@ -62,6 +63,22 @@ def _safe_name(value: object, label: str) -> str:
         and all(part not in ("", ".", "..") for part in path.parts)
         and len(path.parts) <= release_review_rehearsal.MAX_DEPTH,
         f"{label} is unsafe",
+    )
+    return value
+
+
+def _utc_timestamp(value: object, label: str) -> str:
+    _require(type(value) is str, f"{label} must be canonical UTC timestamp text")
+    try:
+        parsed = datetime.fromisoformat(value)
+    except (TypeError, ValueError) as exc:
+        raise ReviewArchiveError(
+            f"{label} must be canonical UTC timestamp text"
+        ) from exc
+    canonical = parsed.isoformat(timespec="seconds").replace("+00:00", "Z")
+    _require(
+        parsed.tzinfo == timezone.utc and value == canonical,
+        f"{label} must be canonical UTC timestamp text",
     )
     return value
 
@@ -345,23 +362,74 @@ def _read_members(content: bytes) -> dict[str, bytes]:
 def _summary(content: bytes, members: dict[str, bytes], receipt: dict) -> dict:
     receipt_content = members[release_review_rehearsal.RECEIPT_NAME]
     packet_content = members[release_review_rehearsal.PACKET_NAME]
+    readiness_content = members["sources/release-readiness.json"]
+    readiness = release_review_rehearsal._decode_json(
+        readiness_content, "review archive release-readiness record"
+    )
+    defects = readiness.get("defects")
+    _require(
+        type(defects) is dict
+        and set(defects)
+        == {
+            "open_count",
+            "open_release_blockers",
+            "snapshot_age_at_assessment_seconds",
+            "snapshot_at_utc",
+        },
+        "review archive release-readiness defect inventory changed",
+    )
+    _require(
+        type(defects["open_count"]) is int and defects["open_count"] >= 0,
+        "review archive release-readiness open defect count is invalid",
+    )
+    blockers = defects["open_release_blockers"]
+    _require(
+        type(blockers) is list
+        and all(type(item) is int and item > 0 for item in blockers)
+        and blockers == sorted(set(blockers)),
+        "review archive release-readiness blocker inventory is invalid",
+    )
+    _require(
+        type(defects["snapshot_age_at_assessment_seconds"]) is int
+        and defects["snapshot_age_at_assessment_seconds"] >= 0,
+        "review archive release-readiness snapshot age is invalid",
+    )
+    snapshot_at = _utc_timestamp(
+        defects["snapshot_at_utc"],
+        "review archive release-readiness snapshot_at_utc",
+    )
+    defect_snapshot = {
+        "open_count": defects["open_count"],
+        "open_release_blockers": blockers,
+        "snapshot_at_utc": snapshot_at,
+    }
+    rehearsal = {
+        "component_statuses": receipt["component_statuses"],
+        "generated_at_utc": receipt["generated_at_utc"],
+        "packet": {
+            "byte_count": len(packet_content),
+            "sha256": sha256(packet_content).hexdigest(),
+        },
+        "packet_status": receipt["packet_status"],
+        "receipt": {
+            "byte_count": len(receipt_content),
+            "sha256": sha256(receipt_content).hexdigest(),
+        },
+        "release_blockers": receipt["release_blockers"],
+    }
     return {
         "archive": {
             "byte_count": len(content),
             "sha256": sha256(content).hexdigest(),
         },
         "candidate_commit_sha": receipt["candidate_commit_sha"],
+        "defect_snapshot": defect_snapshot,
         "human_acceptance": receipt["human_acceptance"],
         "m4_decision": receipt["m4_decision"],
         "m5_decision": receipt["m5_decision"],
-        "packet": {
-            "byte_count": len(packet_content),
-            "sha256": sha256(packet_content).hexdigest(),
-        },
-        "receipt": {
-            "byte_count": len(receipt_content),
-            "sha256": sha256(receipt_content).hexdigest(),
-        },
+        "packet": rehearsal["packet"],
+        "receipt": rehearsal["receipt"],
+        "rehearsal": rehearsal,
         "release_blockers": receipt["release_blockers"],
         "status": receipt["status"],
     }
