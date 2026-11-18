@@ -22,7 +22,7 @@ from examples import (
 
 class ReleaseReviewRehearsalTests(unittest.TestCase):
     candidate = "a" * 40
-    generated = "2026-11-09T10:31:30Z"
+    generated = "2026-11-18T10:52:00Z"
 
     def _validators(self):
         tracked = release_readiness._tracked_repository_paths()

@@ -38,6 +38,7 @@ _EXPECTED_OPEN_DEFECTS = {
         "Defect: operator worksheet implies unsupported cross-platform "
         "screen-reader setup"
     ),
+    28: "Defect: release rehearsal rejects coherent string blocker identifiers",
 }
 _EXPECTED_GUIDE_PATHS = (
     "README.md",
@@ -339,8 +340,11 @@ def _validate_manifest(
     _require(snapshot["github_repository"] == "lvlunario/project-chimera",
              "defect snapshot repository changed")
     _timestamp_text(snapshot["observed_at_utc"], "defect_snapshot.observed_at_utc")
-    _require(snapshot["source"] == "connected GitHub issue search",
-             "defect snapshot source changed")
+    _require(
+        snapshot["source"]
+        == "connected GitHub open-issue listing filtered by title prefix",
+        "defect snapshot source changed",
+    )
     defects = snapshot["open_defects"]
     _require(type(defects) is list, "defect_snapshot.open_defects must be a list")
     defect_numbers: list[int] = []

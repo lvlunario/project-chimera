@@ -127,18 +127,18 @@ requires the canonical nomination's candidate, full rehearsal identities, dated 
 snapshot/age, hosted-CI evidence and pending authority to agree. This is portable integrity
 inspection of the existing nominee, not a new nomination or gate decision.
 
-The current readiness inventory covers 136 declared requirements across 23 groups, six guides
-with 53 required headings, three open fixed/verified defect issues and zero declared release
-blockers in its dated November 9 snapshot. This 136-requirement inventory belongs to the later
+The current evidence-head readiness inventory covers 136 declared requirements across 23 groups,
+six guides with 53 required headings, four open fixed/verified defect issues and zero declared
+release blockers in its dated November 18 snapshot. The connected open-issue listing at
+`2026-11-18T10:50:57Z` returned #4, #14, #25 and #28 after #28's title was normalized to the
+machine-checked `Defect:` prefix. This 136-requirement inventory belongs to the later
 program/evidence head that adds NOMINATE-006–007; nominee `9edce78` and its immutable retained
-archive truthfully embed the preceding 134/134 readiness inventory, and the evidence head is
-not itself a new nominee. That snapshot was 261,109 seconds old at v2
-nomination; the age is arithmetic evidence, not trusted time or a freshness decision. The live
-[issue #28 record](https://github.com/lvlunario/project-chimera/issues/28) was updated at
-`2026-11-12T10:58:19Z` with its fixed/verified evidence and is no longer treated as a release
-blocker; the dated snapshot remains explicit rather than silently rewritten. The v3 nomination
-records the same dated snapshot as 607,866 seconds old; refresh all defects
-again at M4 disposition. Performance, threat-model, readiness, bounded packet and one-command
+archive truthfully embed the preceding 134/134 readiness inventory and the three-defect
+November 9 snapshot. The evidence head is not itself a new nominee and does not silently rewrite
+that archive. The older snapshot was 261,109 seconds old at v2 nomination and 607,866 seconds
+old at v3 nomination; age is arithmetic evidence, not trusted time or a freshness decision.
+Refresh all defects again at the actual M4 disposition. Performance, threat-model, readiness,
+bounded packet and one-command
 rehearsal controls remain synthetic/local-prototype evidence; they do not prove physical-radio
 behavior, producer identity, security certification or operator acceptance.
 

@@ -993,17 +993,21 @@ python -m examples.release_readiness \
 Expected for the current inventory: five `PASS READINESS-*` lines and
 `status: review_inputs_complete`. The record includes the manifest digest, every referenced
 file's byte count/SHA-256, the declared/covered requirement counts, guide and heading counts,
-three open defects with their fixed/verified engineering dispositions, zero current release
+four open defects with their fixed/verified engineering dispositions, zero current release
 blockers, the exact age in seconds of the dated defect snapshot at assessment generation,
 and the still-pending human evidence. An unresolved defect is retained in the
 record, changes READINESS-002 to `blocked`, and exits 1. Invalid input or unsafe output exits
 2. The command never replaces an output and checks the clean commit before assessment and
 again before publication.
 
-The defect list is a dated offline snapshot of GitHub, not a live issue query. Assessment
-schema v2 makes its age machine-visible and the M4 packet rechecks the arithmetic, but that
-number is not a freshness threshold or trusted timestamp. Refresh the snapshot before M4
-disposition. Likewise, a tracked test file or present manual heading is an index to
+The current evidence-head list is a dated offline snapshot of GitHub's open-issue listing at
+`2026-11-18T10:50:57Z`, filtered by the machine-checked `Defect:` title prefix. It includes
+#4, #14, #25 and the corrected release-rehearsal defect #28. The retained v3 nominee and its
+archive remain immutable and still embed the earlier three-defect November 9 snapshot; this
+refresh neither rewrites nor supersedes that nomination. Assessment schema v2 makes snapshot
+age machine-visible and the M4 packet rechecks the arithmetic, but that number is not a
+freshness threshold or trusted timestamp. Refresh again before the actual M4 disposition.
+Likewise, a tracked test file or present manual heading is an index to
 evidence—not proof that the test passed or the guide worked for an operator. Use the hosted
 CI logs and actual walkthrough observations alongside this record.
 

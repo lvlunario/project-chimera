@@ -1,7 +1,7 @@
 {
   "defect_snapshot": {
     "github_repository": "lvlunario/project-chimera",
-    "observed_at_utc": "2026-11-09T10:24:30Z",
+    "observed_at_utc": "2026-11-18T10:50:57Z",
     "open_defects": [
       {
         "engineering_disposition": "fixed_verified_pending_pr_integration",
@@ -39,9 +39,21 @@
         "release_blocker": false,
         "severity": "major",
         "title": "Defect: operator worksheet implies unsupported cross-platform screen-reader setup"
+      },
+      {
+        "engineering_disposition": "fixed_verified_pending_pr_integration",
+        "evidence_paths": [
+          "examples/release_review_rehearsal.py",
+          "tests/test_release_review_rehearsal.py"
+        ],
+        "github_state": "open",
+        "issue_number": 28,
+        "release_blocker": false,
+        "severity": "major",
+        "title": "Defect: release rehearsal rejects coherent string blocker identifiers"
       }
     ],
-    "source": "connected GitHub issue search"
+    "source": "connected GitHub open-issue listing filtered by title prefix"
   },
   "guide_checks": [
     {

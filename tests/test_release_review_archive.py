@@ -25,7 +25,7 @@ from examples import (
 
 class ReleaseReviewArchiveTests(unittest.TestCase):
     candidate = "a" * 40
-    generated = "2026-11-14T10:15:00Z"
+    generated = "2026-11-18T10:52:00Z"
 
     def _validators(self, *, blocked=False):
         tracked = release_readiness._tracked_repository_paths()

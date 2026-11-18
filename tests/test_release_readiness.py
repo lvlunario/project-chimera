@@ -51,7 +51,7 @@ class ReleaseReadinessTests(unittest.TestCase):
         summary = self._validate()
         self.assertEqual(136, summary["requirement_count"])
         self.assertEqual(23, summary["requirement_group_count"])
-        self.assertEqual(3, summary["defect_count"])
+        self.assertEqual(4, summary["defect_count"])
         self.assertEqual([], summary["open_release_blockers"])
         self.assertEqual(6, summary["guide_count"])
         self.assertEqual(53, summary["guide_heading_count"])
@@ -81,6 +81,15 @@ class ReleaseReadinessTests(unittest.TestCase):
             defects[25]["evidence_paths"],
         )
         self.assertEqual(
+            "fixed_verified_pending_pr_integration",
+            defects[28]["engineering_disposition"],
+        )
+        self.assertFalse(defects[28]["release_blocker"])
+        self.assertIn(
+            "tests/test_release_review_rehearsal.py",
+            defects[28]["evidence_paths"],
+        )
+        self.assertEqual(
             list(release_readiness._PENDING_HUMAN_EVIDENCE),
             summary["pending_human_evidence"],
         )
@@ -100,7 +109,7 @@ class ReleaseReadinessTests(unittest.TestCase):
                 record = release_readiness.assess_release_readiness(
                     output,
                     candidate_commit=self.candidate,
-                    generated_at_utc="2026-11-09T10:29:30Z",
+                    generated_at_utc="2026-11-18T10:55:57Z",
                 )
             self.assertEqual(2, validate_candidate.call_count)
             self.assertEqual("review_inputs_complete", record["status"])
@@ -110,7 +119,7 @@ class ReleaseReadinessTests(unittest.TestCase):
             self.assertEqual("not_granted", record["human_acceptance"])
             self.assertEqual(136, record["requirements"]["declared_count"])
             self.assertEqual(136, record["requirements"]["covered_count"])
-            self.assertEqual(3, record["defects"]["open_count"])
+            self.assertEqual(4, record["defects"]["open_count"])
             self.assertEqual([], record["defects"]["open_release_blockers"])
             self.assertEqual(
                 300,
@@ -236,7 +245,7 @@ class ReleaseReadinessTests(unittest.TestCase):
                 release_readiness.ReleaseReadinessError, "cannot be later"):
             release_readiness._build_assessment(
                 candidate_commit=self.candidate,
-                generated_at_utc="2026-11-09T10:29:30Z",
+                generated_at_utc="2026-11-18T10:55:57Z",
                 manifest_content=self.manifest_content,
                 summary=summary,
             )
@@ -263,7 +272,7 @@ class ReleaseReadinessTests(unittest.TestCase):
         summary = self._validate(document)
         record = release_readiness._build_assessment(
             candidate_commit=self.candidate,
-            generated_at_utc="2026-11-09T10:29:30Z",
+            generated_at_utc="2026-11-18T10:55:57Z",
             manifest_content=self.manifest_content,
             summary=summary,
         )
@@ -323,7 +332,7 @@ class ReleaseReadinessTests(unittest.TestCase):
     def test_cli_uses_pass_label_without_claiming_acceptance(self):
         record = release_readiness._build_assessment(
             candidate_commit=self.candidate,
-            generated_at_utc="2026-11-09T10:29:30Z",
+            generated_at_utc="2026-11-18T10:55:57Z",
             manifest_content=self.manifest_content,
             summary=self._validate(),
         )
