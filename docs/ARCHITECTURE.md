@@ -1,5 +1,26 @@
 # Architecture decision 0001: deterministic core first
 
+## Decision 0035: supersede candidate evidence without rewriting retained history
+
+November 19, 2026. P7/M4 stabilization increment; no phase, release or acceptance claim.
+
+Regenerate the complete rehearsal from exact clean candidate
+`b6b6878a3c4fdc700683508a19b5a5bc2e178671`, which has successful connected push and
+PR-integration matrices. Retain its deterministic archive under a candidate-qualified path
+and publish a separate v4 nomination that binds the same SHA, hosted runs, receipt, packet and
+dated four-defect snapshot. Regression-pin both new byte identities and portably compare the
+archive with the nomination while keeping every v1–v3 record immutable.
+
+Keep the program head distinct from the nominated candidate: NOMINATE-008 documents the
+supersession rule after the v4 candidate, so the later 137-requirement head is not silently
+treated as the 136-requirement nominee. P3/P4/P5, M4/M5, merge, release, deployment and human
+acceptance remain pending.
+
+Tradeoffs: reviewers get current defect inventory and current hosted evidence in one durable
+pair without destroying the audit trail. Repository size grows by about 0.78 MB, and the
+record still proves internal engineering agreement—not authorship, trusted time, operator
+usability, physical-radio behavior or gate approval.
+
 ## Decision 0034: bind the retained nomination to the archive at inspection time
 
 November 17, 2026. P7/M4 stabilization increment; no candidate, phase, release or acceptance

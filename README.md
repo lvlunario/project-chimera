@@ -70,12 +70,13 @@ The development branch includes:
 - A deterministic local archive for one validated rehearsal, with byte-identical repeat
   export and portable bounded inspection. CI validates but does not upload runner artifacts;
   the program explicitly retains the current nominee's vetted synthetic archive at
-  [docs/evidence/chimera-m4-review-9edce78.zip](docs/evidence/chimera-m4-review-9edce78.zip).
+  [docs/evidence/chimera-m4-review-b6b6878.zip](docs/evidence/chimera-m4-review-b6b6878.zip).
 - Versioned exact-SHA M4 engineering nominations: historical
-  [v1](docs/m4-candidate-nomination-v1.json) and [v2](docs/m4-candidate-nomination-v2.json)
-  remain immutable, while candidate `9edce78f8fc2b2033eefe78421c475a8cbc62ce0` is retained in
-  superseding [v3](docs/m4-candidate-nomination-v3.json). All keep every phase and human
-  decision pending; branch regression pins them and portably reinspects the v3 archive.
+  [v1](docs/m4-candidate-nomination-v1.json), [v2](docs/m4-candidate-nomination-v2.json) and
+  [v3](docs/m4-candidate-nomination-v3.json) remain immutable, while exact tested candidate
+  `b6b6878a3c4fdc700683508a19b5a5bc2e178671` is retained in superseding
+  [v4](docs/m4-candidate-nomination-v4.json). All keep every phase and human decision pending;
+  branch regression pins every record and portably reinspects both retained archives.
 - A bounded fix for [issue #28](https://github.com/lvlunario/project-chimera/issues/28) that
   preserves namespaced string blockers in a coherent failed rehearsal; the corrected exact
   candidate passed fresh local and hosted evidence before its separate superseding nomination.
@@ -99,25 +100,26 @@ the [November 12 retained-evidence stabilization record](https://github.com/lvlu
 the [November 13 corrected-nomination record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-13.md),
 the [November 15 archive-portability correction](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-15.md),
 the [November 16 retained v3 evidence record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-16.md),
-and the [November 17 portable nomination/archive inspection record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-17.md)
+the [November 17 portable nomination/archive inspection record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-17.md),
+and the [November 18 defect-refresh record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-18.md)
 record candidate-specific local, independent and hosted results. Do not infer a new
 candidate's status from an earlier successful run.
 
-**Acceptance state — November 17:** P0 scope (D-001–003) is approved by delegation.
+**Acceptance state — November 19:** P0 scope (D-001–003) is approved by delegation.
 P1 and P2 are conditionally accepted for continued development under the
 [delegated decision record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/reviews/2026-09-22-delegated-decisions.md). Leo's personal walkthroughs remain unperformed;
 final product validation remains open. P3/P4/P5 remain in progress; P7 release preparation
 now includes versioned performance, threat-model, readiness-inventory, bounded M4-packet,
 one-command preparation/reinspection and exact-SHA nomination controls. A combined read-only
-inspector now checks the retained v3 nomination directly against its deterministic archive
-without the removed source directory. The current readiness inventory covers 136 requirements
-across 23 groups on the later evidence head. Nominee
-`9edce78` and its retained archive truthfully embed the prior 134/134 inventory; the evidence
-head adds NOMINATE-006–007 and is not a new nominee. Exact candidates `04606a4` and `594b03c`
-remain truthful historical nomination evidence; current candidate `9edce78` passed its hosted
-matrices, fresh detached rehearsal and portable archive inspection and is separately retained
-in v3. No M4, M5 or acceptance is granted. The October 17 M2 exact-candidate disposition
-is thirty-one days late. M3 missed its November 7 baseline and is ten days late: the
+inspector checks each retained nomination/archive pair without its removed source directory.
+The current program-head readiness inventory covers 137 requirements across 23 groups.
+Nominee `b6b6878` and its retained v4 archive truthfully embed the preceding 136/136 inventory,
+the dated four-defect November 18 snapshot and zero declared release blockers; the program
+head adds NOMINATE-008 and is not a new nominee. Exact candidates `04606a4`, `594b03c` and
+`9edce78` remain truthful historical nomination evidence. Current candidate `b6b6878` passed
+its hosted matrices, fresh detached rehearsal and portable archive inspection and is
+separately retained in v4. No M4, M5 or acceptance is granted. The October 17 M2 exact-candidate
+disposition is thirty-three days late. M3 missed its November 7 baseline and is twelve days late: the
 engineering features and review inputs are verified, but
 no Leo walkthrough or P3/P4/P5 disposition is recorded. The November 2 packet is retained as a
 runbook, but its pinned candidate is historical; use the latest explicitly published full

@@ -21,7 +21,7 @@ The 100-developer framing expresses ambition, not actual staffing or throughput.
 | P4 | Verification evidence | Requirement mapping, reproducible JSON/HTML reports, missing-evidence detection | In progress; canonical reports, deterministic handoff, missing-evidence control and exact-candidate preparation implemented; overdue gate disposition pending |
 | P5 | Operator product | API and accessible dashboard; end-to-end acceptance tests | In progress; API/dashboard, investigation views, handoff download, first-focus bypass/contextual run names, automated Chromium controls and operator worksheet implemented; manual-device, screen-reader and operator acceptance pending |
 | P6 | AI assistance | Provider adapter, bounded permissions, evaluation dataset and measured baseline comparison | Planned |
-| P7 | Release | Reproducible deployment, performance results, threat model, demo and operator guide | In progress; performance, threat-model, readiness, M4 packet/rehearsal, portable rehearsal archive and exact-SHA engineering nomination controls implemented; candidate `9edce78` has retained v3 nomination/archive evidence; M4/M5 and human decisions pending |
+| P7 | Release | Reproducible deployment, performance results, threat model, demo and operator guide | In progress; performance, threat-model, readiness, M4 packet/rehearsal, portable rehearsal archive and exact-SHA engineering nomination controls implemented; candidate `b6b6878` has retained v4 nomination/archive evidence; M4/M5 and human decisions pending |
 
 Prototype delivery target: December 12, 2026 (Asia/Manila). See [dated roadmap](ROADMAP.md).
 This supersedes the original undated plan. Dates are delivery targets; passing evidence and
@@ -45,8 +45,8 @@ AI assistance cannot decide that missing evidence is a passing verification.
 - Avoid paid infrastructure and live hardware operations until separately authorized.
 
 ## Next tasks
-Current direction, November 17: the October 17 M2 exact-candidate disposition is thirty-one
-days late. M3 missed its November 7 baseline and is ten days late because no Leo walkthrough,
+Current direction, November 19: the October 17 M2 exact-candidate disposition is thirty-three
+days late. M3 missed its November 7 baseline and is twelve days late because no Leo walkthrough,
 manual-device/screen-reader observation or separate P3/P4/P5 disposition is recorded. This is
 a schedule slip, not an engineering blocker and not implied acceptance. The
 [November 2 weekly review](reviews/2026-11-02.md) remains the 25–30 minute runbook, but its
@@ -113,10 +113,10 @@ release blocker. The separately retained [v3 nomination](m4-candidate-nomination
 evidence without granting P3/P4/P5, M4/M5 or human acceptance. A later candidate change still
 requires new matching hosted evidence, rehearsal, archive and nomination.
 
-Stabilization directly regression-checks all three retained nomination records' canonical
+Stabilization directly regression-checks all four retained nomination records' canonical
 bytes, embedded hosted-CI identities, exact receipt/packet hashes, change policies and
-still-pending authority. For v3 it also portably reinspects the separately retained archive
-and cross-checks the candidate, receipt and packet. This prevents an in-place evidence edit
+still-pending authority. For v3 and v4 it also portably reinspects each separately retained
+archive and cross-checks the candidate, receipt and packet. This prevents an in-place evidence edit
 from passing branch CI; it does not authenticate the producer or decide the gate.
 
 November 17 stabilization, tracked in
@@ -127,16 +127,27 @@ requires the canonical nomination's candidate, full rehearsal identities, dated 
 snapshot/age, hosted-CI evidence and pending authority to agree. This is portable integrity
 inspection of the existing nominee, not a new nomination or gate decision.
 
-The current evidence-head readiness inventory covers 136 declared requirements across 23 groups,
+On November 19, exact tested candidate
+[`b6b6878`](https://github.com/lvlunario/project-chimera/commit/b6b6878a3c4fdc700683508a19b5a5bc2e178671)
+was regenerated from a clean detached checkout after successful
+[push matrix 44291039769](https://github.com/lvlunario/project-chimera/actions/runs/44291039769)
+and [PR-integration matrix 44291051452](https://github.com/lvlunario/project-chimera/actions/runs/44291051452).
+The rehearsal produced receipt `d3ebb94…e80fd`, packet `28618c4…c1f3b` and a deterministic
+774,686-byte archive with SHA-256 `9122615…1646`; all controls were complete with no declared
+release blocker. The separately retained [v4 nomination](m4-candidate-nomination-v4.json) and
+[portable archive](evidence/chimera-m4-review-b6b6878.zip), tracked in
+[issue #32](https://github.com/lvlunario/project-chimera/issues/32), supersede v3 as engineering
+evidence without changing it or granting P3/P4/P5, M4/M5 or human acceptance.
+
+The current program-head readiness inventory covers 137 declared requirements across 23 groups,
 six guides with 53 required headings, four open fixed/verified defect issues and zero declared
 release blockers in its dated November 18 snapshot. The connected open-issue listing at
 `2026-11-18T10:50:57Z` returned #4, #14, #25 and #28 after #28's title was normalized to the
-machine-checked `Defect:` prefix. This 136-requirement inventory belongs to the later
-program/evidence head that adds NOMINATE-006–007; nominee `9edce78` and its immutable retained
-archive truthfully embed the preceding 134/134 readiness inventory and the three-defect
-November 9 snapshot. The evidence head is not itself a new nominee and does not silently rewrite
-that archive. The older snapshot was 261,109 seconds old at v2 nomination and 607,866 seconds
-old at v3 nomination; age is arithmetic evidence, not trusted time or a freshness decision.
+machine-checked `Defect:` prefix. Nominee `b6b6878` and its immutable v4 archive truthfully
+embed the preceding 136/136 readiness inventory and that four-defect snapshot; the later
+program head adds NOMINATE-008 and is not itself a new nominee. Historical v3 remains unchanged
+with its 134/134 inventory and three-defect November 9 snapshot. The v4 snapshot was 84,625
+seconds old at nomination; age is arithmetic evidence, not trusted time or a freshness decision.
 Refresh all defects again at the actual M4 disposition. Performance, threat-model, readiness,
 bounded packet and one-command
 rehearsal controls remain synthetic/local-prototype evidence; they do not prove physical-radio

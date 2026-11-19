@@ -31,7 +31,9 @@ class ReleaseCandidateNominationTests(unittest.TestCase):
     def _validators(self):
         tracked = release_readiness._tracked_repository_paths()
         tracked.update({
+            "docs/evidence/chimera-m4-review-b6b6878.zip",
             "docs/evidence/chimera-m4-review-9edce78.zip",
+            "docs/m4-candidate-nomination-v4.json",
             "docs/m4-candidate-nomination-v3.json",
             "examples/release_candidate_nomination.py",
             "examples/release_review_archive.py",
@@ -809,6 +811,7 @@ class ReleaseCandidateNominationTests(unittest.TestCase):
         expected_evidence_sha,
         receipt,
         packet,
+        expected_open_count,
     ):
         path = (
             release_candidate_nomination.ROOT
@@ -861,6 +864,9 @@ class ReleaseCandidateNominationTests(unittest.TestCase):
         )
         self.assertEqual(receipt, record["rehearsal"]["receipt"])
         self.assertEqual(packet, record["rehearsal"]["packet"])
+        self.assertEqual(
+            expected_open_count, record["defect_snapshot"]["open_count"]
+        )
         self.assertEqual([], record["defect_snapshot"]["open_release_blockers"])
 
     def test_retained_nomination_records_are_pinned_and_authority_free(self):
@@ -881,6 +887,7 @@ class ReleaseCandidateNominationTests(unittest.TestCase):
                 "byte_count": 495356,
                 "sha256": "a40e9a84a4bd4d8bbc631f61366cdc0a3338075d9514e23f8a08b0a43e2fa774",
             },
+            expected_open_count=3,
         )
         self._assert_retained_nomination(
             name="m4-candidate-nomination-v2.json",
@@ -899,6 +906,7 @@ class ReleaseCandidateNominationTests(unittest.TestCase):
                 "byte_count": 498309,
                 "sha256": "c9d8ebf40c249f19ccedd270c7de0ca357a794b3ed5a28553f4832b8bdf745da",
             },
+            expected_open_count=3,
         )
         self._assert_retained_nomination(
             name="m4-candidate-nomination-v3.json",
@@ -917,19 +925,41 @@ class ReleaseCandidateNominationTests(unittest.TestCase):
                 "byte_count": 503793,
                 "sha256": "c2f7b5dd7abae74a45408ba081f5e96cfb41de6b2aae58ab5b4c040009d04e2d",
             },
+            expected_open_count=3,
+        )
+        self._assert_retained_nomination(
+            name="m4-candidate-nomination-v4.json",
+            nomination_sha=(
+                "2e3adb3db89ceeb41a50b89583080886ed2ad4363ea4102621e31fb336c517a9"
+            ),
+            candidate_sha="b6b6878a3c4fdc700683508a19b5a5bc2e178671",
+            expected_evidence_sha=(
+                "e05e73184a771e59628372609ea3bfc6a1a9693ebc50d60d578fcb675072ccd9"
+            ),
+            receipt={
+                "byte_count": 6499,
+                "sha256": "d3ebb942a33e74d19f57e9101173040b7eece25ec54c98a322c984a0743e80fd",
+            },
+            packet={
+                "byte_count": 510590,
+                "sha256": "28618c40e5ad432c2b0301c8a5d3d8ec412734f2075756dc1fc81d0d1efc1f3b",
+            },
+            expected_open_count=4,
         )
 
-    def test_retained_v3_archive_is_portable_and_matches_nomination(self):
+    def _assert_retained_archive(
+        self, *, archive_name, nomination_name, byte_count, archive_sha
+    ):
         archive = (
             release_candidate_nomination.ROOT
             / "docs"
             / "evidence"
-            / "chimera-m4-review-9edce78.zip"
+            / archive_name
         )
         nomination, _ = release_candidate_nomination._load_canonical(
             release_candidate_nomination.ROOT
             / "docs"
-            / "m4-candidate-nomination-v3.json",
+            / nomination_name,
             release_candidate_nomination.MAX_JSON_BYTES,
             "retained candidate nomination",
         )
@@ -938,16 +968,13 @@ class ReleaseCandidateNominationTests(unittest.TestCase):
             release_candidate_nomination.inspect_archived_candidate_nomination(
                 release_candidate_nomination.ROOT
                 / "docs"
-                / "m4-candidate-nomination-v3.json",
+                / nomination_name,
                 review_archive=archive,
             )
         )
 
-        self.assertEqual(767529, archive.stat().st_size)
-        self.assertEqual(
-            "638bbb07c2547abf309e31210ba8693d5573d99f9d000487eb7778121f51c2cc",
-            sha256(archive.read_bytes()).hexdigest(),
-        )
+        self.assertEqual(byte_count, archive.stat().st_size)
+        self.assertEqual(archive_sha, sha256(archive.read_bytes()).hexdigest())
         self.assertEqual(
             nomination["candidate_commit_sha"], summary["candidate_commit_sha"]
         )
@@ -959,6 +986,24 @@ class ReleaseCandidateNominationTests(unittest.TestCase):
         self.assertEqual("pending", summary["m5_decision"])
         self.assertEqual("not_granted", summary["human_acceptance"])
         self.assertEqual(nomination, archived)
+
+    def test_retained_archives_are_portable_and_match_nominations(self):
+        self._assert_retained_archive(
+            archive_name="chimera-m4-review-9edce78.zip",
+            nomination_name="m4-candidate-nomination-v3.json",
+            byte_count=767529,
+            archive_sha=(
+                "638bbb07c2547abf309e31210ba8693d5573d99f9d000487eb7778121f51c2cc"
+            ),
+        )
+        self._assert_retained_archive(
+            archive_name="chimera-m4-review-b6b6878.zip",
+            nomination_name="m4-candidate-nomination-v4.json",
+            byte_count=774686,
+            archive_sha=(
+                "9122615ca805bd735a2ae54a96412daebd4d642459f050763c5a5bf0798e1646"
+            ),
+        )
 
     def test_control_does_not_depend_on_removable_asserts(self):
         source = Path(release_candidate_nomination.__file__).read_text(

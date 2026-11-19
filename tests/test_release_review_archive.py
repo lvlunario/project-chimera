@@ -30,7 +30,9 @@ class ReleaseReviewArchiveTests(unittest.TestCase):
     def _validators(self, *, blocked=False):
         tracked = release_readiness._tracked_repository_paths()
         tracked.update({
+            "docs/evidence/chimera-m4-review-b6b6878.zip",
             "docs/evidence/chimera-m4-review-9edce78.zip",
+            "docs/m4-candidate-nomination-v4.json",
             "docs/m4-candidate-nomination-v3.json",
             "examples/release_candidate_nomination.py",
             "examples/release_review_archive.py",

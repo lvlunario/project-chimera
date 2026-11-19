@@ -518,7 +518,9 @@
         "docs/MANUAL.md",
         "docs/QUALITY.md",
         "docs/evidence/chimera-m4-review-9edce78.zip",
+        "docs/evidence/chimera-m4-review-b6b6878.zip",
         "docs/m4-candidate-nomination-v3.json",
+        "docs/m4-candidate-nomination-v4.json",
         "examples/release_candidate_nomination.py",
         "tests/test_release_candidate_nomination.py"
       ],
@@ -530,7 +532,8 @@
         "NOMINATE-004",
         "NOMINATE-005",
         "NOMINATE-006",
-        "NOMINATE-007"
+        "NOMINATE-007",
+        "NOMINATE-008"
       ]
     }
   ],
