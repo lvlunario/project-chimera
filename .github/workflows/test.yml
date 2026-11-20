@@ -72,11 +72,8 @@ jobs:
           fi
           exit "$status"
 
-      - name: Inspect retained M4 nomination and archive
-        run: |
-          python -m examples.release_candidate_nomination inspect-archive \
-            docs/m4-candidate-nomination-v4.json \
-            --archive docs/evidence/chimera-m4-review-b6b6878.zip
+      - name: Inspect retained M4 nominee lineage
+        run: python -B -m examples.release_candidate_nomination inspect-retained
 
       - name: Verify isolated wheel install
         run: scripts/verify_clean_install.sh

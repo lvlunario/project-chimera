@@ -1,5 +1,26 @@
 # Architecture decision 0001: deterministic core first
 
+## Decision 0036: select the current nominee by validating retained lineage
+
+November 20, 2026. P7/M4 stabilization increment; no candidate, phase, release or acceptance
+claim.
+
+Expose one repository-owned `inspect-retained` command that portably validates the v3 and v4
+nomination/archive pairs before reporting either. Require unique candidate commits, strictly
+increasing nomination times and consecutive retained versions, then identify the final
+validated pair as the current engineering nominee. Run that same command in both supported
+Python CI jobs so a historical pair cannot silently disappear from the release handoff.
+
+Keep v1–v4 and both retained archives byte-for-byte immutable. The command selects among
+existing engineering evidence; it does not nominate the later program head, refresh GitHub
+defects, authenticate a producer, grant P3/P4/P5 or decide M4/M5. Any validation failure emits
+no current-nominee success statement.
+
+Tradeoffs: Leo gets one unambiguous preflight command instead of manually choosing between
+individually valid historical binders. The repository tool deliberately owns the short
+retained-pair catalog, so a future candidate requires an explicit code/test/documentation
+update in addition to its new archive and nomination.
+
 ## Decision 0035: supersede candidate evidence without rewriting retained history
 
 November 19, 2026. P7/M4 stabilization increment; no phase, release or acceptance claim.

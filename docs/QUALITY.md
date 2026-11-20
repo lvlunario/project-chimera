@@ -209,6 +209,15 @@ inspects each retained archive and requires its exact bytes and candidate/receip
 identities to match. This detects accidental in-place edits; it does not authenticate the
 producer or grant the pending gate.
 
+The repository-owned `inspect-retained` path runs those portable v3/v4 cross-checks as one
+read-only-over-evidence lineage operation before printing any success summary. It additionally
+rejects a missing v3/v4 endpoint, repeated candidate, reversed/equal nomination chronology or
+a skipped retained version, and marks only the final validated pair as the current engineering
+nominee. Tests require failure
+to suppress the current-nominee and pending-authority success wording. CI uses this path on
+Python 3.11 and 3.12; it remains selection among retained evidence, not a new nomination or
+acceptance decision.
+
 ## Defects and risk
 Use GitHub issues: reproduction, expected/actual result, version, environment, severity,
 requirement, owner role, target fix and retest evidence. Blocker = cannot run or trust

@@ -107,6 +107,21 @@ CANDIDATE_CHANGE_POLICY = (
     "retain this exact commit until an explicit later nomination record "
     "supersedes it"
 )
+_FIRST_RETAINED_ARCHIVED_VERSION = 3
+_CURRENT_RETAINED_ARCHIVED_VERSION = 4
+_CURRENT_RETAINED_CANDIDATE = "b6b6878a3c4fdc700683508a19b5a5bc2e178671"
+_RETAINED_ARCHIVED_PAIRS = (
+    (
+        3,
+        ROOT / "docs" / "m4-candidate-nomination-v3.json",
+        ROOT / "docs" / "evidence" / "chimera-m4-review-9edce78.zip",
+    ),
+    (
+        4,
+        ROOT / "docs" / "m4-candidate-nomination-v4.json",
+        ROOT / "docs" / "evidence" / "chimera-m4-review-b6b6878.zip",
+    ),
+)
 
 
 class CandidateNominationError(RuntimeError):
@@ -919,6 +934,58 @@ def inspect_archived_candidate_nomination(
     )
 
 
+def inspect_retained_candidate_lineage() -> list[dict]:
+    """Validate retained archive pairs and identify the current nominee."""
+    _require(
+        bool(_RETAINED_ARCHIVED_PAIRS),
+        "retained candidate lineage is empty",
+    )
+    lineage = []
+    seen_candidates: set[str] = set()
+    previous_version = _FIRST_RETAINED_ARCHIVED_VERSION - 1
+    previous_generated: datetime | None = None
+    for version, nomination, archive in _RETAINED_ARCHIVED_PAIRS:
+        _require(
+            type(version) is int
+            and version == previous_version + 1,
+            "retained candidate versions are not strictly consecutive",
+        )
+        record = inspect_archived_candidate_nomination(
+            nomination, review_archive=archive
+        )
+        candidate = record["candidate_commit_sha"]
+        _require(
+            candidate not in seen_candidates,
+            "retained candidate lineage repeats a candidate commit",
+        )
+        generated_text = _utc_timestamp(
+            record["generated_at_utc"],
+            f"retained v{version} generated_at_utc",
+        )
+        generated = datetime.fromisoformat(generated_text)
+        _require(
+            previous_generated is None or generated > previous_generated,
+            "retained candidate lineage is not chronological",
+        )
+        lineage.append({
+            "archive": archive,
+            "candidate_commit_sha": candidate,
+            "nomination": nomination,
+            "record": record,
+            "version": version,
+        })
+        seen_candidates.add(candidate)
+        previous_generated = generated
+        previous_version = version
+    current = lineage[-1]
+    _require(
+        current["version"] == _CURRENT_RETAINED_ARCHIVED_VERSION
+        and current["candidate_commit_sha"] == _CURRENT_RETAINED_CANDIDATE,
+        "retained candidate lineage does not end at the expected current nominee",
+    )
+    return lineage
+
+
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="build or inspect an exact-SHA M4 engineering nomination"
@@ -934,6 +1001,7 @@ def _parser() -> argparse.ArgumentParser:
     inspect_archive = subparsers.add_parser("inspect-archive")
     inspect_archive.add_argument("nomination", type=Path)
     inspect_archive.add_argument("--archive", required=True, type=Path)
+    subparsers.add_parser("inspect-retained")
     return parser
 
 
@@ -953,12 +1021,40 @@ def main(argv: list[str] | None = None) -> int:
                 rehearsal_directory=args.rehearsal,
             )
             nomination_path = args.nomination
-        else:
+        elif args.command == "inspect-archive":
             record = inspect_archived_candidate_nomination(
                 args.nomination,
                 review_archive=args.archive,
             )
             nomination_path = args.nomination
+        else:
+            lineage = inspect_retained_candidate_lineage()
+            current = lineage[-1]
+            current_nomination = current["nomination"].resolve(strict=False)
+            current_archive = current["archive"].resolve(strict=False)
+            lines = []
+            for item in lineage[:-1]:
+                lines.append(
+                    f"superseded-engineering-nominee-v{item['version']}: "
+                    f"{item['candidate_commit_sha']}"
+                )
+            lines.append(f"retained-archived-nominations: {len(lineage)}")
+            lines.append(
+                f"current-engineering-nominee-v{current['version']}: "
+                f"{current['candidate_commit_sha']}"
+            )
+            lines.append(
+                f"current-nomination-record: {current_nomination}"
+            )
+            lines.append(
+                f"current-review-archive: {current_archive}"
+            )
+            lines.append(
+                "Engineering lineage inspection only; P3/P4/P5, M4/M5 and "
+                "human acceptance remain pending"
+            )
+            print("\n".join(lines))
+            return 0
         saved = _canonical(record)
     except (
         CandidateNominationError,

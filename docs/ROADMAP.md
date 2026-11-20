@@ -8,10 +8,10 @@ remain unperformed. Original dates below are unchanged; M0's scope decision was 
 September 22, three days after its September 19 target. Downstream forecasts
 remain October 3/17, November 7/28 and December 12 with no baseline movement.
 
-## Status update — November 19, 2026
+## Status update — November 20, 2026
 
-The October 17 M2 baseline was missed by thirty-three days. M3 November 7 is **missed and red,
-twelve days late**. The engineering vertical, acceptance-preparation workspace, read-only
+The October 17 M2 baseline was missed by thirty-four days. M3 November 7 is **missed and red,
+thirteen days late**. The engineering vertical, acceptance-preparation workspace, read-only
 dashboard and evidence controls are implemented and verified, but no Leo walkthrough,
 manual-device/screen-reader observation or separate P3/P4/P5 disposition is recorded. This is
 a schedule slip, not a change to the original baseline. Recovery remains: freeze feature scope,
@@ -86,6 +86,12 @@ declared release blocker. A separate v4 nomination binds the candidate, connecte
 generated PR merge commit, receipt `d3ebb94…e80fd`, packet `28618c4…c1f3b`, archive SHA-256
 `9122615…1646` and dated four-defect snapshot. v1–v3 remain immutable; no gate or human
 authority changed.
+
+November 20 stabilization adds one read-only `inspect-retained` preflight across the retained
+v3/v4 archive pairs. It validates both complete pairs, rejects duplicate candidates, skipped
+versions or nonchronological nominations, and identifies v4 only after every check succeeds.
+This resolves stale-binder selection risk without changing either archive, nominating the later
+program head, refreshing defects or deciding M4.
 
 M4 November 28 and M5 December 12 remain amber with the current nominee's local, portable and
 hosted evidence retained, provided feature scope stays frozen and November 29–December 12

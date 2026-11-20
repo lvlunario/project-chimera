@@ -1004,7 +1004,7 @@ The current program-head list is a dated offline snapshot of GitHub's open-issue
 `2026-11-18T10:50:57Z`, filtered by the machine-checked `Defect:` title prefix. It includes
 #4, #14, #25 and the corrected release-rehearsal defect #28. Exact candidate `b6b6878` embeds
 that 136/136 inventory and four-defect snapshot in its separately retained v4 nomination and
-archive. The later program head adds NOMINATE-008 and validates 137/137; it is not a new
+archive. The later program head adds NOMINATE-008/009 and validates 138/138; it is not a new
 candidate. Historical v3 remains immutable with its earlier three-defect November 9 snapshot.
 Assessment schema v2 makes snapshot age machine-visible and the M4 packet rechecks the
 arithmetic, but that number is not a
@@ -1107,8 +1107,23 @@ Expected: candidate `b6b6878a3c4fdc700683508a19b5a5bc2e178671`, archive SHA-256
 `9122615…1646`, `packet_complete_for_m4_review`, and pending P3/P4/P5, M4/M5 and
 human authority.
 
-To verify that the separately retained nomination still describes that archive, use the
-combined read-only inspector:
+Before review, validate every retained archive pair and select the current engineering
+nominee with one read-only command:
+
+```bash
+python -B -m examples.release_candidate_nomination inspect-retained
+```
+
+Expected: v3 is reported as superseded, v4 candidate `b6b6878…178671` is reported as the
+current engineering nominee, both resolved v4 paths are shown, and P3/P4/P5, M4/M5 and human
+acceptance remain pending. The command validates both pairs completely before printing any
+lineage summary, requires both the v3 origin and explicit v4/current-candidate tail, rejects
+nonconsecutive version numbers, duplicate candidates or non-increasing nomination timestamps,
+and writes no retained input or persistent output. `-B` suppresses incidental Python
+bytecode caches. Exit 2 suppresses the current-nominee success statement.
+
+To troubleshoot one pair or validate a supplied pair outside the repository catalog, use the
+single-pair read-only inspector:
 
 ```bash
 python -m examples.release_candidate_nomination inspect-archive \
@@ -1126,10 +1141,10 @@ source rehearsal directory.
 
 Expected: `nominated_for_m4_review`, candidate `b6b6878…178671`, nomination SHA-256
 `2e3adb3d…517a9`, the matching receipt/packet SHA-256 values, the resolved input paths and the
-explicit pending-authority statement. The combined command validates archive status and bytes
+explicit pending-authority statement. The single-pair command validates archive status and bytes
 internally but does not repeat the archive-only summary. Its embedded candidate readiness
-record remains 136/136 requirements. The later program head adds NOMINATE-008 and validates
-137/137; that does not change the immutable archive or nominate the program head.
+record remains 136/136 requirements. The later program head adds NOMINATE-008/009 and validates
+138/138; that does not change the immutable archive or nominate the program head.
 
 The expanded component procedure below remains useful for troubleshooting or separately
 retaining a blocked source record. Prepare every input from the same clean commit into new

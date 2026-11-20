@@ -802,6 +802,187 @@ class ReleaseCandidateNominationTests(unittest.TestCase):
                 "human acceptance remain pending", stderr.getvalue()
             )
 
+    def test_inspects_retained_lineage_and_identifies_current_nominee(self):
+        retained = [
+            path
+            for _, nomination, archive in (
+                release_candidate_nomination._RETAINED_ARCHIVED_PAIRS
+            )
+            for path in (nomination, archive)
+        ]
+        before = {
+            path: (path.stat().st_size, sha256(path.read_bytes()).hexdigest())
+            for path in retained
+        }
+        stdout = io.StringIO()
+        with redirect_stdout(stdout):
+            result = release_candidate_nomination.main(["inspect-retained"])
+
+        rendered = stdout.getvalue()
+        self.assertEqual(0, result)
+        self.assertIn("retained-archived-nominations: 2", rendered)
+        self.assertIn(
+            "superseded-engineering-nominee-v3: "
+            "9edce78f8fc2b2033eefe78421c475a8cbc62ce0",
+            rendered,
+        )
+        self.assertIn(
+            "current-engineering-nominee-v4: "
+            "b6b6878a3c4fdc700683508a19b5a5bc2e178671",
+            rendered,
+        )
+        self.assertIn("human acceptance remain pending", rendered)
+        self.assertEqual(
+            before,
+            {
+                path: (path.stat().st_size, sha256(path.read_bytes()).hexdigest())
+                for path in retained
+            },
+        )
+
+        duplicate = {
+            "candidate_commit_sha": "a" * 40,
+            "generated_at_utc": "2026-11-16T00:00:00Z",
+        }
+        with (
+            patch.object(
+                release_candidate_nomination,
+                "inspect_archived_candidate_nomination",
+                side_effect=[duplicate, duplicate],
+            ),
+            self.assertRaisesRegex(
+                release_candidate_nomination.CandidateNominationError,
+                "repeats a candidate commit",
+            ),
+        ):
+            release_candidate_nomination.inspect_retained_candidate_lineage()
+
+        missing_historical = (
+            (4, Path("nomination-v4.json"), Path("archive-v4.zip")),
+        )
+        with (
+            patch.object(
+                release_candidate_nomination,
+                "_RETAINED_ARCHIVED_PAIRS",
+                missing_historical,
+            ),
+            patch.object(
+                release_candidate_nomination,
+                "inspect_archived_candidate_nomination",
+                return_value=duplicate,
+            ),
+            self.assertRaisesRegex(
+                release_candidate_nomination.CandidateNominationError,
+                "not strictly consecutive",
+            ),
+        ):
+            release_candidate_nomination.inspect_retained_candidate_lineage()
+
+        missing_current = (
+            (3, Path("nomination-v3.json"), Path("archive-v3.zip")),
+        )
+        with (
+            patch.object(
+                release_candidate_nomination,
+                "_RETAINED_ARCHIVED_PAIRS",
+                missing_current,
+            ),
+            patch.object(
+                release_candidate_nomination,
+                "inspect_archived_candidate_nomination",
+                return_value=duplicate,
+            ),
+            self.assertRaisesRegex(
+                release_candidate_nomination.CandidateNominationError,
+                "does not end at the expected current nominee",
+            ),
+        ):
+            release_candidate_nomination.inspect_retained_candidate_lineage()
+
+        later = {
+            "candidate_commit_sha": "b" * 40,
+            "generated_at_utc": "2026-11-15T23:59:59Z",
+        }
+        with (
+            patch.object(
+                release_candidate_nomination,
+                "inspect_archived_candidate_nomination",
+                side_effect=[duplicate, later],
+            ),
+            self.assertRaisesRegex(
+                release_candidate_nomination.CandidateNominationError,
+                "not chronological",
+            ),
+        ):
+            release_candidate_nomination.inspect_retained_candidate_lineage()
+
+        next_record = {
+            "candidate_commit_sha": "b" * 40,
+            "generated_at_utc": "2026-11-17T00:00:00Z",
+        }
+        skipped = (
+            (3, Path("nomination-v3.json"), Path("archive-v3.zip")),
+            (5, Path("nomination-v5.json"), Path("archive-v5.zip")),
+        )
+        with (
+            patch.object(
+                release_candidate_nomination,
+                "_RETAINED_ARCHIVED_PAIRS",
+                skipped,
+            ),
+            patch.object(
+                release_candidate_nomination,
+                "inspect_archived_candidate_nomination",
+                side_effect=[duplicate, next_record],
+            ),
+            self.assertRaisesRegex(
+                release_candidate_nomination.CandidateNominationError,
+                "not strictly consecutive",
+            ),
+        ):
+            release_candidate_nomination.inspect_retained_candidate_lineage()
+
+        stdout = io.StringIO()
+        stderr = io.StringIO()
+        with (
+            patch.object(
+                release_candidate_nomination,
+                "inspect_archived_candidate_nomination",
+                side_effect=release_candidate_nomination.CandidateNominationError(
+                    "injected lineage failure"
+                ),
+            ),
+            redirect_stdout(stdout),
+            redirect_stderr(stderr),
+        ):
+            result = release_candidate_nomination.main(["inspect-retained"])
+        self.assertEqual(2, result)
+        self.assertIn("injected lineage failure", stderr.getvalue())
+        self.assertNotIn("current-engineering-nominee", stdout.getvalue())
+        self.assertNotIn("human acceptance remain pending", stdout.getvalue())
+
+        lineage = release_candidate_nomination.inspect_retained_candidate_lineage()
+        stdout = io.StringIO()
+        stderr = io.StringIO()
+        with (
+            patch.object(
+                release_candidate_nomination,
+                "inspect_retained_candidate_lineage",
+                return_value=lineage,
+            ),
+            patch.object(
+                Path,
+                "resolve",
+                side_effect=OSError("injected resolve failure"),
+            ),
+            redirect_stdout(stdout),
+            redirect_stderr(stderr),
+        ):
+            result = release_candidate_nomination.main(["inspect-retained"])
+        self.assertEqual(2, result)
+        self.assertIn("injected resolve failure", stderr.getvalue())
+        self.assertEqual("", stdout.getvalue())
+
     def _assert_retained_nomination(
         self,
         *,

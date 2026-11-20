@@ -45,8 +45,8 @@ AI assistance cannot decide that missing evidence is a passing verification.
 - Avoid paid infrastructure and live hardware operations until separately authorized.
 
 ## Next tasks
-Current direction, November 19: the October 17 M2 exact-candidate disposition is thirty-three
-days late. M3 missed its November 7 baseline and is twelve days late because no Leo walkthrough,
+Current direction, November 20: the October 17 M2 exact-candidate disposition is thirty-four
+days late. M3 missed its November 7 baseline and is thirteen days late because no Leo walkthrough,
 manual-device/screen-reader observation or separate P3/P4/P5 disposition is recorded. This is
 a schedule slip, not an engineering blocker and not implied acceptance. The
 [November 2 weekly review](reviews/2026-11-02.md) remains the 25–30 minute runbook, but its
@@ -139,13 +139,14 @@ release blocker. The separately retained [v4 nomination](m4-candidate-nomination
 [issue #32](https://github.com/lvlunario/project-chimera/issues/32), supersede v3 as engineering
 evidence without changing it or granting P3/P4/P5, M4/M5 or human acceptance.
 
-The current program-head readiness inventory covers 137 declared requirements across 23 groups,
+The current program-head readiness inventory covers 138 declared requirements across 23 groups,
 six guides with 53 required headings, four open fixed/verified defect issues and zero declared
 release blockers in its dated November 18 snapshot. The connected open-issue listing at
 `2026-11-18T10:50:57Z` returned #4, #14, #25 and #28 after #28's title was normalized to the
 machine-checked `Defect:` prefix. Nominee `b6b6878` and its immutable v4 archive truthfully
 embed the preceding 136/136 readiness inventory and that four-defect snapshot; the later
-program head adds NOMINATE-008 and is not itself a new nominee. Historical v3 remains unchanged
+program head adds NOMINATE-008/009 and is not itself a new nominee. Its read-only lineage
+command validates both retained archive pairs before identifying v4 as current. Historical v3 remains unchanged
 with its 134/134 inventory and three-defect November 9 snapshot. The v4 snapshot was 84,625
 seconds old at nomination; age is arithmetic evidence, not trusted time or a freshness decision.
 Refresh all defects again at the actual M4 disposition. Performance, threat-model, readiness,
