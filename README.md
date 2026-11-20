@@ -102,7 +102,8 @@ the [November 15 archive-portability correction](https://github.com/lvlunario/pr
 the [November 16 retained v3 evidence record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-16.md),
 the [November 17 portable nomination/archive inspection record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-17.md),
 the [November 18 defect-refresh record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-18.md),
-and the [November 19 refreshed-v4 record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-19.md)
+the [November 19 refreshed-v4 record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-19.md),
+and the [November 20 retained-lineage record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-20.md)
 record candidate-specific local, independent and hosted results. Do not infer a new
 candidate's status from an earlier successful run.
 
