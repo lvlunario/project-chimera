@@ -336,6 +336,14 @@ Official checkout and Python-setup actions are pinned to exact commits rather th
 floating tags. The preparation step downloads setuptools/wheel from the package
 index; CI therefore still depends on GitHub runners, those action commits and PyPI.
 
+The current reviewed pins are `actions/checkout` v5.1.0 at
+`fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09` and `actions/setup-python` v6.3.0 at
+`ece7cb06caefa5fff74198d8649806c4678c61a1`. Both exact upstream `action.yml` files declare
+the Node 24 action runtime. A repository regression rejects a floating, shortened, unknown or
+unreviewed `uses` reference and confirms that checkout credentials remain disabled. This
+removes dependence on runner coercion for these two actions; it does not make the hosted
+runner image or package-index downloads reproducible.
+
 A workflow file in the repository is only a test plan. A CI claim requires an actual
 completed run for the relevant commit, both matrix jobs green, and inspected logs
 showing the regression and clean-install steps executed.

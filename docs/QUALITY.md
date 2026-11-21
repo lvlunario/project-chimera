@@ -241,10 +241,14 @@ permissions, do not retain checkout credentials, use no repository secrets, and
 are bounded by timeout and concurrency cancellation.
 
 Official checkout/setup Actions are pinned to commit SHAs; comments show the reviewed
-major tags. Build tools still come from the Python package index and GitHub-hosted
-runner images can change. Logs and action pins must be inspected at release review;
-a green badge alone is not complete release evidence. No deployment or publication
-occurs in this workflow.
+patch tags. The November 21 stabilization pins `actions/checkout` v5.1.0 at
+`fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09` and `actions/setup-python` v6.3.0 at
+`ece7cb06caefa5fff74198d8649806c4678c61a1`. Their upstream action metadata declares
+`node24`; `tests/test_ci_workflow.py` locks both job occurrences to those exact reviewed
+commit/tag pairs and retains `persist-credentials: false`. Build tools still come from the
+Python package index and GitHub-hosted runner images can change. Logs and action pins must be
+inspected at release review; a green badge alone is not complete release evidence. No
+deployment or publication occurs in this workflow.
 
 ## Local operator API boundary
 

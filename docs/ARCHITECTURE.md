@@ -1,5 +1,26 @@
 # Architecture decision 0001: deterministic core first
 
+## Decision 0037: move reviewed CI actions onto their declared Node 24 runtime
+
+November 21, 2026. Bounded CI stabilization increment; no candidate, phase, release or
+acceptance claim.
+
+Replace the two official GitHub Actions pins in both workflow jobs with the exact commits for
+`actions/checkout` v5.1.0 and `actions/setup-python` v6.3.0. The reviewed upstream
+`action.yml` at each commit declares `node24`, eliminating reliance on GitHub's temporary
+Node 20-to-24 runner coercion. Keep each 40-character commit SHA and patch tag together in
+the workflow, and regression-check both occurrences plus the disabled checkout credential.
+
+Preserve the existing events, read-only repository permission, interpreter matrix, timeouts,
+concurrency cancellation, no-secret boundary and no upload, release, deployment, tag or push
+step. The v4 nomination and its hosted runs remain immutable historical evidence; this later
+program head is not silently substituted as a new M4 nominee.
+
+Tradeoffs: future action updates now require an intentional workflow and regression-test
+change. Exact pins make reviewed bytes stable, but GitHub-hosted runner images and the Python
+package-index build-tool installation remain mutable external dependencies, and a successful
+workflow is still engineering evidence rather than product acceptance.
+
 ## Decision 0036: select the current nominee by validating retained lineage
 
 November 20, 2026. P7/M4 stabilization increment; no candidate, phase, release or acceptance

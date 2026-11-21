@@ -432,7 +432,7 @@ Tracked in [issue #6](https://github.com/lvlunario/project-chimera/issues/6).
 | CI-001 | Run every pull request and development/main push on Python 3.11 and 3.12 | GitHub Actions `test` workflow matrix |
 | CI-002 | Execute the full regression suite and isolated wheel-install check in each job | workflow steps and successful job logs |
 | CI-003 | Use read-only repository permissions, no persisted checkout credential and bounded execution | workflow `permissions`, checkout setting, timeout and concurrency |
-| CI-004 | Pin official third-party Actions to reviewed commit SHAs | checkout/setup-python `uses` references |
+| CI-004 | Pin official third-party Actions to reviewed commit SHAs | checkout v5.1.0 and setup-python v6.3.0 `uses` references; `tests/test_ci_workflow.py` |
 
 CI-001–004 are verified on development commit `35f3558d` by
 [test run 34744334003](https://github.com/lvlunario/project-chimera/actions/runs/34744334003):
