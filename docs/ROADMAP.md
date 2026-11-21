@@ -8,10 +8,10 @@ remain unperformed. Original dates below are unchanged; M0's scope decision was 
 September 22, three days after its September 19 target. Downstream forecasts
 remain October 3/17, November 7/28 and December 12 with no baseline movement.
 
-## Status update — November 20, 2026
+## Status update — November 21, 2026
 
-The October 17 M2 baseline was missed by thirty-four days. M3 November 7 is **missed and red,
-thirteen days late**. The engineering vertical, acceptance-preparation workspace, read-only
+The October 17 M2 baseline was missed by thirty-five days. M3 November 7 is **missed and red,
+fourteen days late**. The engineering vertical, acceptance-preparation workspace, read-only
 dashboard and evidence controls are implemented and verified, but no Leo walkthrough,
 manual-device/screen-reader observation or separate P3/P4/P5 disposition is recorded. This is
 a schedule slip, not a change to the original baseline. Recovery remains: freeze feature scope,
@@ -92,6 +92,13 @@ v3/v4 archive pairs. It validates both complete pairs, rejects duplicate candida
 versions or nonchronological nominations, and identifies v4 only after every check succeeds.
 This resolves stale-binder selection risk without changing either archive, nominating the later
 program head, refreshing defects or deciding M4.
+
+November 21 stabilization replaces both official CI dependencies with reviewed full-SHA
+Node-24-native releases and regression-locks the exact patch tags in both Python/browser jobs.
+Fresh push and PR-integration matrices passed Python 3.11, Python 3.12, retained-lineage,
+clean-install and Chromium controls without the previous Node 20 forced-runtime warning. This
+removes a branch-maintenance risk; it does not alter the retained v4 nominee or create a gate
+decision.
 
 M4 November 28 and M5 December 12 remain amber with the current nominee's local, portable and
 hosted evidence retained, provided feature scope stays frozen and November 29–December 12
