@@ -45,8 +45,8 @@ AI assistance cannot decide that missing evidence is a passing verification.
 - Avoid paid infrastructure and live hardware operations until separately authorized.
 
 ## Next tasks
-Current direction, November 21: the October 17 M2 exact-candidate disposition is thirty-five
-days late. M3 missed its November 7 baseline and is fourteen days late because no Leo walkthrough,
+Current direction, November 22: the October 17 M2 exact-candidate disposition is thirty-six
+days late. M3 missed its November 7 baseline and is fifteen days late because no Leo walkthrough,
 manual-device/screen-reader observation or separate P3/P4/P5 disposition is recorded. This is
 a schedule slip, not an engineering blocker and not implied acceptance. The
 [November 2 weekly review](reviews/2026-11-02.md) remains the 25–30 minute runbook, but its
@@ -141,12 +141,13 @@ evidence without changing it or granting P3/P4/P5, M4/M5 or human acceptance.
 
 The current program-head readiness inventory covers 138 declared requirements across 23 groups,
 six guides with 53 required headings, four open fixed/verified defect issues and zero declared
-release blockers in its dated November 18 snapshot. The connected open-issue listing at
-`2026-11-18T10:50:57Z` returned #4, #14, #25 and #28 after #28's title was normalized to the
-machine-checked `Defect:` prefix. Nominee `b6b6878` and its immutable v4 archive truthfully
-embed the preceding 136/136 readiness inventory and that four-defect snapshot; the later
-program head adds NOMINATE-008/009 and is not itself a new nominee. Its read-only lineage
-command validates both retained archive pairs before identifying v4 as current. Historical v3 remains unchanged
+release blockers in its dated November 22 snapshot. The connected open-issue listing at
+`2026-11-22T10:22:42Z` returned #4, #14, #25 and #28; connected issue/comment inspection
+confirmed their retained fixed/verified-pending-integration dispositions and no newly declared
+release blocker. Nominee `b6b6878` and its immutable v4 archive truthfully embed the preceding
+136/136 readiness inventory and November 18 four-defect snapshot; the later program head adds
+NOMINATE-008/009 and this refresh and is not itself a new nominee. Its read-only lineage command
+validates both retained archive pairs before identifying v4 as current. Historical v3 remains unchanged
 with its 134/134 inventory and three-defect November 9 snapshot. The v4 snapshot was 84,625
 seconds old at nomination; age is arithmetic evidence, not trusted time or a freshness decision.
 Refresh all defects again at the actual M4 disposition. Performance, threat-model, readiness,
@@ -162,7 +163,13 @@ regression fixes those commit/tag pairs in both jobs and retains disabled checko
 Fresh push and PR-integration matrices passed without the prior forced-runtime warning. This
 later program head is not a new M4 nominee; v4 and candidate `b6b6878` remain immutable.
 
-M4 November 28 and M5 December 12 remain amber now that the current nominee has retained local,
+November 22 program-head reconciliation refreshed READINESS-002 from the connected open-issue
+listing and issue records without changing the four-defect inventory or blocker dispositions.
+The retained v4 nomination/archive and its November 18 snapshot remain immutable; this newer
+offline inventory is preparation for M4 review, not an M4 decision or silent candidate change.
+
+M4 November 28 is six days away and M5 December 12 is twenty days away. Both remain amber now
+that the current nominee has retained local,
 portable and hosted evidence. Recovery keeps feature scope frozen and November 29–December 12 reserved for
 stabilization and acceptance. Next: support the existing worksheet, record Leo's actual
 observations and separate phase decisions, correct any critical defect, refresh live defects at

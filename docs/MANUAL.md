@@ -1009,11 +1009,14 @@ record, changes READINESS-002 to `blocked`, and exits 1. Invalid input or unsafe
 again before publication.
 
 The current program-head list is a dated offline snapshot of GitHub's open-issue listing at
-`2026-11-18T10:50:57Z`, filtered by the machine-checked `Defect:` title prefix. It includes
-#4, #14, #25 and the corrected release-rehearsal defect #28. Exact candidate `b6b6878` embeds
-that 136/136 inventory and four-defect snapshot in its separately retained v4 nomination and
-archive. The later program head adds NOMINATE-008/009 and validates 138/138; it is not a new
-candidate. Historical v3 remains immutable with its earlier three-defect November 9 snapshot.
+`2026-11-22T10:22:42Z`, filtered by the machine-checked `Defect:` title prefix. It includes
+#4, #14, #25 and the corrected release-rehearsal defect #28; connected inspection of those
+issues and their retained verification comments found all four still open, fixed/verified
+pending draft-PR integration, and not declared release blockers. Exact candidate `b6b6878`
+embeds the preceding 136/136 inventory and November 18 four-defect snapshot in its separately
+retained v4 nomination and archive. The later program head adds NOMINATE-008/009, validates
+138/138 and now carries the November 22 refresh; it is not a new candidate. Historical v3
+remains immutable with its earlier three-defect November 9 snapshot.
 Assessment schema v2 makes snapshot age machine-visible and the M4 packet rechecks the
 arithmetic, but that number is not a
 freshness threshold or trusted timestamp. Refresh again before the actual M4 disposition.

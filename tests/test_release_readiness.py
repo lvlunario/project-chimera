@@ -115,7 +115,7 @@ class ReleaseReadinessTests(unittest.TestCase):
                 record = release_readiness.assess_release_readiness(
                     output,
                     candidate_commit=self.candidate,
-                    generated_at_utc="2026-11-18T10:55:57Z",
+                    generated_at_utc="2026-11-22T10:27:42Z",
                 )
             self.assertEqual(2, validate_candidate.call_count)
             self.assertEqual("review_inputs_complete", record["status"])
@@ -251,7 +251,7 @@ class ReleaseReadinessTests(unittest.TestCase):
                 release_readiness.ReleaseReadinessError, "cannot be later"):
             release_readiness._build_assessment(
                 candidate_commit=self.candidate,
-                generated_at_utc="2026-11-18T10:55:57Z",
+                generated_at_utc="2026-11-22T10:27:42Z",
                 manifest_content=self.manifest_content,
                 summary=summary,
             )
@@ -278,7 +278,7 @@ class ReleaseReadinessTests(unittest.TestCase):
         summary = self._validate(document)
         record = release_readiness._build_assessment(
             candidate_commit=self.candidate,
-            generated_at_utc="2026-11-18T10:55:57Z",
+            generated_at_utc="2026-11-22T10:27:42Z",
             manifest_content=self.manifest_content,
             summary=summary,
         )
@@ -338,7 +338,7 @@ class ReleaseReadinessTests(unittest.TestCase):
     def test_cli_uses_pass_label_without_claiming_acceptance(self):
         record = release_readiness._build_assessment(
             candidate_commit=self.candidate,
-            generated_at_utc="2026-11-18T10:55:57Z",
+            generated_at_utc="2026-11-22T10:27:42Z",
             manifest_content=self.manifest_content,
             summary=self._validate(),
         )

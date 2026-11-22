@@ -16,8 +16,8 @@ from examples import operator_acceptance_prep, release_candidate_packet
 
 class ReleaseCandidatePacketTests(unittest.TestCase):
     candidate = "a" * 40
-    generated = "2026-11-18T10:56:57Z"
-    source_generated = "2026-11-18T10:55:57Z"
+    generated = "2026-11-22T10:28:42Z"
+    source_generated = "2026-11-22T10:27:42Z"
 
     def _acceptance_workspace(self, root: Path) -> Path:
         root.mkdir(parents=True, exist_ok=True)
@@ -437,7 +437,7 @@ class ReleaseCandidatePacketTests(unittest.TestCase):
             extra["defects"]["unexpected"] = 0
             cases.append(("extra", extra, "defect inventory changed"))
             changed_time = deepcopy(record)
-            changed_time["generated_at_utc"] = "2026-11-18T10:55:58Z"
+            changed_time["generated_at_utc"] = "2026-11-22T10:27:43Z"
             cases.append(("changed-time", changed_time, "snapshot age is inconsistent"))
 
             for label, changed, message in cases:
@@ -877,7 +877,7 @@ class ReleaseCandidatePacketTests(unittest.TestCase):
             future_members = dict(members)
             performance_path = release_candidate_packet.ASSESSMENT_NAMES["performance"]
             performance = json.loads(future_members[performance_path].decode("utf-8"))
-            performance["generated_at_utc"] = "2026-11-18T10:56:58Z"
+            performance["generated_at_utc"] = "2026-11-22T10:28:43Z"
             future_members[performance_path] = release_candidate_packet._compact(
                 performance
             )

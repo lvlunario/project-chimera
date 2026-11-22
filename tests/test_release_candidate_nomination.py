@@ -24,9 +24,9 @@ from examples import (
 
 class ReleaseCandidateNominationTests(unittest.TestCase):
     candidate = "a" * 40
-    rehearsal_generated = "2026-11-18T10:52:00Z"
-    inspected = "2026-11-18T10:53:00Z"
-    nominated = "2026-11-18T10:54:00Z"
+    rehearsal_generated = "2026-11-22T10:30:00Z"
+    inspected = "2026-11-22T10:31:00Z"
+    nominated = "2026-11-22T10:32:00Z"
 
     def _validators(self):
         tracked = release_readiness._tracked_repository_paths()
@@ -144,8 +144,8 @@ class ReleaseCandidateNominationTests(unittest.TestCase):
             "defects": {
                 "open_count": 4,
                 "open_release_blockers": [],
-                "snapshot_age_at_assessment_seconds": 60,
-                "snapshot_at_utc": "2026-11-18T10:50:57Z",
+                "snapshot_age_at_assessment_seconds": 438,
+                "snapshot_at_utc": "2026-11-22T10:22:42Z",
             }
         }
         (rehearsal / "sources/release-readiness.json").write_bytes(
@@ -402,7 +402,7 @@ class ReleaseCandidateNominationTests(unittest.TestCase):
                     output,
                     rehearsal_directory=review,
                     ci_evidence=ci_path,
-                    generated_at_utc="2026-11-18T10:52:30Z",
+                    generated_at_utc="2026-11-22T10:30:30Z",
                 )
 
     def test_inspection_rejects_tampered_authority_and_evidence(self):
@@ -742,7 +742,7 @@ class ReleaseCandidateNominationTests(unittest.TestCase):
 
             changed = deepcopy(record)
             changed["rehearsal"]["generated_at_utc"] = (
-                "2026-11-18T10:51:59Z"
+                "2026-11-22T10:29:59Z"
             )
             nomination_path.write_bytes(
                 release_candidate_nomination._canonical(changed)

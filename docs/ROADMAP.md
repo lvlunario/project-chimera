@@ -8,20 +8,22 @@ remain unperformed. Original dates below are unchanged; M0's scope decision was 
 September 22, three days after its September 19 target. Downstream forecasts
 remain October 3/17, November 7/28 and December 12 with no baseline movement.
 
-## Status update — November 21, 2026
+## Status update — November 22, 2026
 
-The October 17 M2 baseline was missed by thirty-five days. M3 November 7 is **missed and red,
-fourteen days late**. The engineering vertical, acceptance-preparation workspace, read-only
+The October 17 M2 baseline was missed by thirty-six days. M3 November 7 is **missed and red,
+fifteen days late**. The engineering vertical, acceptance-preparation workspace, read-only
 dashboard and evidence controls are implemented and verified, but no Leo walkthrough,
 manual-device/screen-reader observation or separate P3/P4/P5 disposition is recorded. This is
 a schedule slip, not a change to the original baseline. Recovery remains: freeze feature scope,
 run the existing worksheet, record actual observations, disposition defects and phases, and
 continue reversible release preparation without treating silence as approval.
 
-The November 18 connected open-issue listing returned four open `Defect:` issues: #4, #14,
-#25 and #28. All four are fixed/verified on the still-open development PR and none is currently
-declared a release blocker. Exact tested candidate `b6b6878` includes that dated four-defect
-snapshot and now has a separately retained v4 nomination/archive. Historical nominee
+The November 22 connected open-issue listing returned four open `Defect:` issues: #4, #14,
+#25 and #28. Connected issue/comment inspection confirmed all four remain fixed/verified on the
+still-open development PR and none is currently declared a release blocker. The program-head
+manifest carries the `2026-11-22T10:22:42Z` offline snapshot. Exact tested candidate `b6b6878`
+truthfully retains the preceding November 18 four-defect snapshot in its v4 nomination/archive;
+that retained evidence was not edited. Historical nominee
 `9edce78`, its archive and its embedded three-defect November 9 snapshot remain unchanged.
 This engineering supersession is not an M4 decision.
 
@@ -100,7 +102,13 @@ clean-install and Chromium controls without the previous Node 20 forced-runtime 
 removes a branch-maintenance risk; it does not alter the retained v4 nominee or create a gate
 decision.
 
-M4 November 28 and M5 December 12 remain amber with the current nominee's local, portable and
+November 22 program-head reconciliation refreshes the dated connected defect inventory while
+preserving the four issue records, their fixed/verified-pending-integration dispositions and zero
+declared release blockers. It deliberately does not rewrite v4, establish trusted time, close
+issue #23 or grant M4. Refresh the connected listing again at actual M4 disposition.
+
+M4 November 28 is six days away and M5 December 12 is twenty days away. Both remain amber with
+the current nominee's local, portable and
 hosted evidence retained, provided feature scope stays frozen and November 29–December 12
 remains reserved for stabilization and acceptance. Candidate-bound changes require a new
 candidate rehearsal, hosted evidence, retained archive and superseding nomination. Automation
