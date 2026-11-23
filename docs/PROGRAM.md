@@ -45,8 +45,8 @@ AI assistance cannot decide that missing evidence is a passing verification.
 - Avoid paid infrastructure and live hardware operations until separately authorized.
 
 ## Next tasks
-Current direction, November 22: the October 17 M2 exact-candidate disposition is thirty-six
-days late. M3 missed its November 7 baseline and is fifteen days late because no Leo walkthrough,
+Current direction, November 23: the October 17 M2 exact-candidate disposition is thirty-seven
+days late. M3 missed its November 7 baseline and is sixteen days late because no Leo walkthrough,
 manual-device/screen-reader observation or separate P3/P4/P5 disposition is recorded. This is
 a schedule slip, not an engineering blocker and not implied acceptance. The
 [November 2 weekly review](reviews/2026-11-02.md) remains the 25–30 minute runbook, but its
@@ -168,7 +168,15 @@ listing and issue records without changing the four-defect inventory or blocker 
 The retained v4 nomination/archive and its November 18 snapshot remain immutable; this newer
 offline inventory is preparation for M4 review, not an M4 decision or silent candidate change.
 
-M4 November 28 is six days away and M5 December 12 is twenty days away. Both remain amber now
+The [November 23 M4 engineering preflight](reviews/2026-11-23-m4-engineering-preflight.md)
+rechecked both retained archive pairs, freshly inspected candidate `b6b6878`'s connected push
+and PR-integration job logs, confirmed the same four connected `Defect:` issues and reproduced
+the full exact-candidate suite, clean wheel, complete rehearsal and portable archive from a
+new detached checkout. No engineering release blocker was found. The transient regenerated
+artifacts were removed and did not replace v4; this is an AI-assisted dry run, not a weekly
+meeting, human observation or gate decision.
+
+M4 November 28 is five days away and M5 December 12 is nineteen days away. Both remain amber now
 that the current nominee has retained local,
 portable and hosted evidence. Recovery keeps feature scope frozen and November 29–December 12 reserved for
 stabilization and acceptance. Next: support the existing worksheet, record Leo's actual

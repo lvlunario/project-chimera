@@ -8,10 +8,10 @@ remain unperformed. Original dates below are unchanged; M0's scope decision was 
 September 22, three days after its September 19 target. Downstream forecasts
 remain October 3/17, November 7/28 and December 12 with no baseline movement.
 
-## Status update — November 22, 2026
+## Status update — November 23, 2026
 
-The October 17 M2 baseline was missed by thirty-six days. M3 November 7 is **missed and red,
-fifteen days late**. The engineering vertical, acceptance-preparation workspace, read-only
+The October 17 M2 baseline was missed by thirty-seven days. M3 November 7 is **missed and red,
+sixteen days late**. The engineering vertical, acceptance-preparation workspace, read-only
 dashboard and evidence controls are implemented and verified, but no Leo walkthrough,
 manual-device/screen-reader observation or separate P3/P4/P5 disposition is recorded. This is
 a schedule slip, not a change to the original baseline. Recovery remains: freeze feature scope,
@@ -107,7 +107,14 @@ preserving the four issue records, their fixed/verified-pending-integration disp
 declared release blockers. It deliberately does not rewrite v4, establish trusted time, close
 issue #23 or grant M4. Refresh the connected listing again at actual M4 disposition.
 
-M4 November 28 is six days away and M5 December 12 is twenty days away. Both remain amber with
+November 23 engineering preflight independently repeated the exact `b6b6878` regression,
+optimized regression, isolated-wheel install, full rehearsal and portable-archive inspection
+from a clean detached checkout. Connected inspection reconfirmed both candidate matrices and
+the same four fixed/verified open `Defect:` issues. The ephemeral regenerated binder was deleted;
+retained v4 stayed immutable. This lowers setup-drift risk but does not perform the operator
+walkthrough, refresh the canonical manifest, disposition P3/P4/P5 or decide M4.
+
+M4 November 28 is five days away and M5 December 12 is nineteen days away. Both remain amber with
 the current nominee's local, portable and
 hosted evidence retained, provided feature scope stays frozen and November 29–December 12
 remains reserved for stabilization and acceptance. Candidate-bound changes require a new
