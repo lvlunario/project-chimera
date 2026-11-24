@@ -21,7 +21,7 @@ The 100-developer framing expresses ambition, not actual staffing or throughput.
 | P4 | Verification evidence | Requirement mapping, reproducible JSON/HTML reports, missing-evidence detection | In progress; canonical reports, deterministic handoff, missing-evidence control and exact-candidate preparation implemented; overdue gate disposition pending |
 | P5 | Operator product | API and accessible dashboard; end-to-end acceptance tests | In progress; API/dashboard, investigation views, handoff download, first-focus bypass/contextual run names, automated Chromium controls and operator worksheet implemented; manual-device, screen-reader and operator acceptance pending |
 | P6 | AI assistance | Provider adapter, bounded permissions, evaluation dataset and measured baseline comparison | Planned |
-| P7 | Release | Reproducible deployment, performance results, threat model, demo and operator guide | In progress; performance, threat-model, readiness, M4 packet/rehearsal, portable rehearsal archive, exact-SHA engineering nomination and Node-24-native pinned CI controls implemented; candidate `b6b6878` has retained v4 nomination/archive evidence; M4/M5 and human decisions pending |
+| P7 | Release | Reproducible deployment, performance results, threat model, demo and operator guide | In progress; performance, threat-model, readiness, M4 packet/rehearsal, portable archive with validate-first packet materialization, exact-SHA engineering nomination and Node-24-native pinned CI controls implemented; candidate `b6b6878` has retained v4 nomination/archive evidence; M4/M5 and human decisions pending |
 
 Prototype delivery target: December 12, 2026 (Asia/Manila). See [dated roadmap](ROADMAP.md).
 This supersedes the original undated plan. Dates are delivery targets; passing evidence and
@@ -45,8 +45,8 @@ AI assistance cannot decide that missing evidence is a passing verification.
 - Avoid paid infrastructure and live hardware operations until separately authorized.
 
 ## Next tasks
-Current direction, November 23: the October 17 M2 exact-candidate disposition is thirty-seven
-days late. M3 missed its November 7 baseline and is sixteen days late because no Leo walkthrough,
+Current direction, November 24: the October 17 M2 exact-candidate disposition is thirty-eight
+days late. M3 missed its November 7 baseline and is seventeen days late because no Leo walkthrough,
 manual-device/screen-reader observation or separate P3/P4/P5 disposition is recorded. This is
 a schedule slip, not an engineering blocker and not implied acceptance. The
 [November 2 weekly review](reviews/2026-11-02.md) remains the 25–30 minute runbook, but its
@@ -139,14 +139,14 @@ release blocker. The separately retained [v4 nomination](m4-candidate-nomination
 [issue #32](https://github.com/lvlunario/project-chimera/issues/32), supersede v3 as engineering
 evidence without changing it or granting P3/P4/P5, M4/M5 or human acceptance.
 
-The current program-head readiness inventory covers 138 declared requirements across 23 groups,
+The current program-head readiness inventory covers 139 declared requirements across 23 groups,
 six guides with 53 required headings, four open fixed/verified defect issues and zero declared
 release blockers in its dated November 22 snapshot. The connected open-issue listing at
-`2026-11-22T10:22:42Z` returned #4, #14, #25 and #28; connected issue/comment inspection
+`2026-11-24T10:31:42Z` returned #4, #14, #25 and #28; connected issue/comment inspection
 confirmed their retained fixed/verified-pending-integration dispositions and no newly declared
 release blocker. Nominee `b6b6878` and its immutable v4 archive truthfully embed the preceding
 136/136 readiness inventory and November 18 four-defect snapshot; the later program head adds
-NOMINATE-008/009 and this refresh and is not itself a new nominee. Its read-only lineage command
+NOMINATE-008/009, REHEARSAL-006 and this refresh and is not itself a new nominee. Its read-only lineage command
 validates both retained archive pairs before identifying v4 as current. Historical v3 remains unchanged
 with its 134/134 inventory and three-defect November 9 snapshot. The v4 snapshot was 84,625
 seconds old at nomination; age is arithmetic evidence, not trusted time or a freshness decision.
@@ -176,7 +176,15 @@ new detached checkout. No engineering release blocker was found. The transient r
 artifacts were removed and did not replace v4; this is an AI-assisted dry run, not a weekly
 meeting, human observation or gate decision.
 
-M4 November 28 is five days away and M5 December 12 is nineteen days away. Both remain amber now
+November 24 handoff stabilization, tracked in
+[issue #35](https://github.com/lvlunario/project-chimera/issues/35), closes the manual-unzip gap
+between the retained archive and its embedded M4 packet. The archive inspector now completes the
+full outer/rehearsal validation before privately staging and independently validating the packet,
+then delegates persistent output to the packet's existing new-directory, outside-checkout,
+no-overwrite extractor. The retained archive, nomination and exact candidate are unchanged; this
+later program-head tool is not a new nominee or gate result.
+
+M4 November 28 is four days away and M5 December 12 is eighteen days away. Both remain amber now
 that the current nominee has retained local,
 portable and hosted evidence. Recovery keeps feature scope frozen and November 29–December 12 reserved for
 stabilization and acceptance. Next: support the existing worksheet, record Leo's actual

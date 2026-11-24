@@ -166,6 +166,14 @@ inspector is reused. Normal and optimized-Python tests cover complete, coherentl
 tampered and publication-race paths. Exit 0/1 retains the rehearsal's complete/blocked
 distinction; exit 2 grants no success summary.
 
+The optional `inspect --extract-packet-to NEW_DIRECTORY` handoff is narrower than outer-archive
+extraction. It completes that full archive/rehearsal inspection first, privately stages only the
+receipt-indexed M4 packet, independently reinspects the packet, cross-checks its candidate,
+blockers and pending authority, and delegates persistent materialization to the packet's existing
+outside-checkout, new-directory extractor. Tests require invalid outer bytes to create no output,
+existing paths/symlinks to remain untouched, coherent blocker status to stay blocked and the
+blank M4 script to remain unperformed. This does not alter the retained archive or nominee.
+
 This is a local transport control, not hosted storage. CI builds and inspects an archive in
 runner-temporary storage but does not upload or retain it. The current vetted synthetic-candidate
 copy is `docs/evidence/chimera-m4-review-b6b6878.zip`; regression pins its 774,686-byte identity

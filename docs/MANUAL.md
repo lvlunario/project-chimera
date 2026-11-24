@@ -1008,14 +1008,16 @@ record, changes READINESS-002 to `blocked`, and exits 1. Invalid input or unsafe
 2. The command never replaces an output and checks the clean commit before assessment and
 again before publication.
 
-The current program-head list is a dated offline snapshot of GitHub's open-issue listing at
-`2026-11-22T10:22:42Z`, filtered by the machine-checked `Defect:` title prefix. It includes
+The current program-head list retains the dated November 22 offline manifest snapshot. A fresh
+connected listing at `2026-11-24T10:31:42Z`, filtered by the machine-checked `Defect:` title
+prefix, again returned
 #4, #14, #25 and the corrected release-rehearsal defect #28; connected inspection of those
 issues and their retained verification comments found all four still open, fixed/verified
 pending draft-PR integration, and not declared release blockers. Exact candidate `b6b6878`
 embeds the preceding 136/136 inventory and November 18 four-defect snapshot in its separately
-retained v4 nomination and archive. The later program head adds NOMINATE-008/009, validates
-138/138 and now carries the November 22 refresh; it is not a new candidate. Historical v3
+retained v4 nomination and archive. The later program head adds NOMINATE-008/009 and
+REHEARSAL-006, validates 139/139 and carries the November 22 manifest snapshot; it is not a new
+candidate. Historical v3
 remains immutable with its earlier three-defect November 9 snapshot.
 Assessment schema v2 makes snapshot age machine-visible and the M4 packet rechecks the
 arithmetic, but that number is not a
@@ -1118,6 +1120,24 @@ Expected: candidate `b6b6878a3c4fdc700683508a19b5a5bc2e178671`, archive SHA-256
 `9122615…1646`, `packet_complete_for_m4_review`, and pending P3/P4/P5, M4/M5 and
 human authority.
 
+To materialize the already validated embedded M4 packet for the actual review, use a new
+outside-checkout directory:
+
+```bash
+python -B -m examples.release_review_archive inspect \
+  docs/evidence/chimera-m4-review-b6b6878.zip \
+  --extract-packet-to /tmp/chimera-m4-v4-packet
+```
+
+The command validates the complete retained archive and rehearsal before creating persistent
+output, stages only the embedded packet privately, revalidates that packet and then reuses the
+packet's safe extractor. It refuses an existing path, symbolic link, unavailable parent or any
+output inside the checkout. It does not generally unpack the outer archive or call
+`ZipFile.extract`. Expect `M4-ACCEPTANCE-SCRIPT.md`, the assessments and the
+`operator-acceptance` workspace under the new directory; the script remains **NOT PERFORMED**.
+A coherent release-control blocker can still be extracted for investigation, but the command
+returns 1 and does not translate that evidence into readiness or acceptance.
+
 Before review, validate every retained archive pair and select the current engineering
 nominee with one read-only command:
 
@@ -1154,8 +1174,9 @@ Expected: `nominated_for_m4_review`, candidate `b6b6878…178671`, nomination SH
 `2e3adb3d…517a9`, the matching receipt/packet SHA-256 values, the resolved input paths and the
 explicit pending-authority statement. The single-pair command validates archive status and bytes
 internally but does not repeat the archive-only summary. Its embedded candidate readiness
-record remains 136/136 requirements. The later program head adds NOMINATE-008/009 and validates
-138/138; that does not change the immutable archive or nominate the program head.
+record remains 136/136 requirements. The later program head adds NOMINATE-008/009 and
+REHEARSAL-006 and validates 139/139; that does not change the immutable archive or nominate the
+program head.
 
 The expanded component procedure below remains useful for troubleshooting or separately
 retaining a blocked source record. Prepare every input from the same clean commit into new

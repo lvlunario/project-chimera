@@ -8,17 +8,17 @@ remain unperformed. Original dates below are unchanged; M0's scope decision was 
 September 22, three days after its September 19 target. Downstream forecasts
 remain October 3/17, November 7/28 and December 12 with no baseline movement.
 
-## Status update — November 23, 2026
+## Status update — November 24, 2026
 
-The October 17 M2 baseline was missed by thirty-seven days. M3 November 7 is **missed and red,
-sixteen days late**. The engineering vertical, acceptance-preparation workspace, read-only
+The October 17 M2 baseline was missed by thirty-eight days. M3 November 7 is **missed and red,
+seventeen days late**. The engineering vertical, acceptance-preparation workspace, read-only
 dashboard and evidence controls are implemented and verified, but no Leo walkthrough,
 manual-device/screen-reader observation or separate P3/P4/P5 disposition is recorded. This is
 a schedule slip, not a change to the original baseline. Recovery remains: freeze feature scope,
 run the existing worksheet, record actual observations, disposition defects and phases, and
 continue reversible release preparation without treating silence as approval.
 
-The November 22 connected open-issue listing returned four open `Defect:` issues: #4, #14,
+The November 24 connected open-issue listing returned four open `Defect:` issues: #4, #14,
 #25 and #28. Connected issue/comment inspection confirmed all four remain fixed/verified on the
 still-open development PR and none is currently declared a release blocker. The program-head
 manifest carries the `2026-11-22T10:22:42Z` offline snapshot. Exact tested candidate `b6b6878`
@@ -114,7 +114,13 @@ the same four fixed/verified open `Defect:` issues. The ephemeral regenerated bi
 retained v4 stayed immutable. This lowers setup-drift risk but does not perform the operator
 walkthrough, refresh the canonical manifest, disposition P3/P4/P5 or decide M4.
 
-M4 November 28 is five days away and M5 December 12 is nineteen days away. Both remain amber with
+November 24 handoff stabilization adds a validate-first path from the retained archive to a new
+outside-checkout packet directory. It validates the outer binder and embedded packet before
+persistent output, refuses overwrite/symlinks, preserves coherent blocked status and leaves the
+blank M4 script unperformed. This closes a manual-unzip trust gap without changing candidate
+`b6b6878`, retained v4 or feature scope.
+
+M4 November 28 is four days away and M5 December 12 is eighteen days away. Both remain amber with
 the current nominee's local, portable and
 hosted evidence retained, provided feature scope stays frozen and November 29–December 12
 remains reserved for stabilization and acceptance. Candidate-bound changes require a new

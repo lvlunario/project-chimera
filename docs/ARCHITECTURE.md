@@ -1,5 +1,26 @@
 # Architecture decision 0001: deterministic core first
 
+## Decision 0038: materialize the validated review packet, not the outer archive
+
+November 24, 2026. Bounded M4 handoff stabilization; no candidate, phase, release or
+acceptance claim.
+
+Extend the portable review-archive inspector with an optional `--extract-packet-to` path.
+Validate the complete outer deterministic archive first, stage its indexed packet only in a
+private temporary directory, independently run the existing packet inspector, cross-check the
+candidate, blocker and pending-authority summary, and then delegate persistent publication to
+the packet's existing new-directory, outside-checkout, no-overwrite extractor.
+
+Do not expose a general outer-archive extraction API or use `ZipFile.extract`. The retained v4
+archive, nomination and candidate remain byte-for-byte unchanged. A coherent blocked packet may
+still be materialized for review, but the command preserves exit 1 and every P3/P4/P5, M4/M5
+and human decision as pending.
+
+Tradeoffs: the M4 reviewer gets one repository-owned path from the retained binder to the
+actual blank script, assessments and operator workspace without a manual unzip trust gap. The
+later program-head tool is not part of candidate `b6b6878`; it proves safe handoff of retained
+bytes, not producer identity, operator usability or M4 approval.
+
 ## Decision 0037: move reviewed CI actions onto their declared Node 24 runtime
 
 November 21, 2026. Bounded CI stabilization increment; no candidate, phase, release or

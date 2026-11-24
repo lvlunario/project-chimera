@@ -272,6 +272,42 @@ class ReleaseReviewArchiveTests(unittest.TestCase):
                 output.getvalue(),
             )
 
+            extracted = root / "extracted-packet"
+            self.assertEqual(
+                summary,
+                release_review_archive.extract_review_packet(
+                    first, extracted
+                ),
+            )
+            self.assertFalse((extracted / ".PUBLISHING").exists())
+            manifest = json.loads(
+                (extracted / "manifest.json").read_text(encoding="utf-8")
+            )
+            self.assertEqual(self.candidate, manifest["candidate_commit_sha"])
+            script = (
+                extracted / release_candidate_packet.ACCEPTANCE_SCRIPT_NAME
+            ).read_text(encoding="utf-8")
+            self.assertIn("**NOT PERFORMED.**", script)
+            self.assertNotIn("- [x]", script.lower())
+
+            cli_extracted = root / "cli-extracted-packet"
+            output = io.StringIO()
+            with redirect_stdout(output):
+                result = release_review_archive.main([
+                    "inspect", str(first),
+                    "--extract-packet-to", str(cli_extracted),
+                ])
+            self.assertEqual(0, result)
+            self.assertIn(
+                f"extracted-packet: {cli_extracted.resolve()}",
+                output.getvalue(),
+            )
+            self.assertIn(
+                "Review archive inspection and packet materialization only",
+                output.getvalue(),
+            )
+            self.assertTrue((cli_extracted / "manifest.json").is_file())
+
     def test_coherent_blocked_rehearsal_remains_blocked(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -300,6 +336,17 @@ class ReleaseReviewArchiveTests(unittest.TestCase):
             self.assertEqual(1, result)
             self.assertIn("blocked_by_release_controls", output.getvalue())
             self.assertIn("remain pending", output.getvalue())
+
+            extracted = root / "blocked-packet"
+            output = io.StringIO()
+            with redirect_stdout(output):
+                result = release_review_archive.main([
+                    "inspect", str(archive),
+                    "--extract-packet-to", str(extracted),
+                ])
+            self.assertEqual(1, result)
+            self.assertTrue((extracted / "manifest.json").is_file())
+            self.assertIn("blocked_by_release_controls", output.getvalue())
 
     def test_archive_tampering_and_unsafe_members_fail_closed(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -583,6 +630,46 @@ class ReleaseReviewArchiveTests(unittest.TestCase):
                         review, corrupted
                     )
             self.assertFalse(corrupted.exists())
+
+    def test_packet_materialization_never_overwrites_or_trusts_invalid_outer_archive(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            review = root / "review"
+            self._prepare(review)
+            archive = root / "valid.zip"
+            release_review_archive.create_review_archive(review, archive)
+
+            existing = root / "existing"
+            existing.mkdir()
+            marker = existing / "user.txt"
+            marker.write_text("keep", encoding="utf-8")
+            with self.assertRaisesRegex(
+                release_candidate_packet.ReleaseCandidatePacketError,
+                "already exists",
+            ):
+                release_review_archive.extract_review_packet(
+                    archive, existing
+                )
+            self.assertEqual("keep", marker.read_text(encoding="utf-8"))
+
+            invalid = root / "invalid.zip"
+            invalid.write_bytes(archive.read_bytes() + b"trailing bytes")
+            absent = root / "absent"
+            with self.assertRaisesRegex(
+                release_review_archive.ReviewArchiveError,
+                "end-of-directory",
+            ):
+                release_review_archive.extract_review_packet(invalid, absent)
+            self.assertFalse(absent.exists())
+
+            linked = root / "linked"
+            linked.symlink_to(existing, target_is_directory=True)
+            with self.assertRaisesRegex(
+                release_candidate_packet.ReleaseCandidatePacketError,
+                "already exists",
+            ):
+                release_review_archive.extract_review_packet(archive, linked)
+            self.assertTrue(linked.is_symlink())
 
     def test_bounds_cli_errors_and_optimized_control_source(self):
         with tempfile.TemporaryDirectory() as directory:

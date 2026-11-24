@@ -465,6 +465,50 @@ def inspect_review_archive(archive: str | Path) -> dict:
     return _inspect_bytes(content)
 
 
+def extract_review_packet(
+    archive: str | Path, output: str | Path
+) -> dict:
+    """Validate an archive and safely materialize its embedded M4 packet."""
+    content = _read_regular(
+        Path(archive), "review archive", MAX_ARCHIVE_BYTES
+    )
+    summary = _inspect_bytes(content)
+    members = _read_members(content)
+    packet_content = members.get(release_review_rehearsal.PACKET_NAME)
+    _require(
+        type(packet_content) is bytes and bool(packet_content),
+        "review archive lacks its release-candidate packet",
+    )
+    with tempfile.TemporaryDirectory(
+        prefix="chimera-review-packet-"
+    ) as directory:
+        packet = Path(directory) / release_review_rehearsal.PACKET_NAME
+        try:
+            with packet.open("xb") as stream:
+                stream.write(packet_content)
+        except OSError as exc:
+            raise ReviewArchiveError(
+                "review archive packet cannot be staged for extraction"
+            ) from exc
+        manifest = release_candidate_packet.inspect_packet(packet)
+        _require(
+            manifest["candidate_commit_sha"]
+            == summary["candidate_commit_sha"]
+            and manifest["status"] == summary["rehearsal"]["packet_status"]
+            and manifest["release_blockers"] == summary["release_blockers"]
+            and manifest["m4_decision"] == summary["m4_decision"]
+            and manifest["m5_decision"] == summary["m5_decision"]
+            and manifest["human_acceptance"] == summary["human_acceptance"],
+            "review archive packet summary changed before extraction",
+        )
+        extracted = release_candidate_packet.extract_packet(packet, output)
+        _require(
+            extracted == manifest,
+            "review archive packet changed during extraction",
+        )
+    return summary
+
+
 def _file_identity(metadata: os.stat_result) -> tuple[int, int]:
     return metadata.st_dev, metadata.st_ino
 
@@ -871,20 +915,34 @@ def _parser() -> argparse.ArgumentParser:
     build.add_argument("--output", required=True, type=Path)
     inspect = commands.add_parser("inspect")
     inspect.add_argument("archive", type=Path)
+    inspect.add_argument("--extract-packet-to", type=Path)
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     args = _parser().parse_args(argv)
+    extracted_packet: Path | None = None
     try:
         if args.command == "build":
             summary = create_review_archive(args.rehearsal, args.output)
             location = args.output.resolve(strict=False)
             action = "creation"
         else:
-            summary = inspect_review_archive(args.archive)
+            if args.extract_packet_to is None:
+                summary = inspect_review_archive(args.archive)
+            else:
+                summary = extract_review_packet(
+                    args.archive, args.extract_packet_to
+                )
+                extracted_packet = args.extract_packet_to.resolve(
+                    strict=False
+                )
             location = args.archive.resolve(strict=False)
-            action = "inspection"
+            action = (
+                "inspection"
+                if extracted_packet is None
+                else "inspection and packet materialization"
+            )
     except (
         ReviewArchiveError,
         release_review_rehearsal.ReviewRehearsalError,
@@ -900,6 +958,8 @@ def main(argv: list[str] | None = None) -> int:
     print(f"archive-sha256: {summary['archive']['sha256']}")
     print(f"receipt-sha256: {summary['receipt']['sha256']}")
     print(f"packet-sha256: {summary['packet']['sha256']}")
+    if extracted_packet is not None:
+        print(f"extracted-packet: {extracted_packet}")
     print(
         f"Review archive {action} only; P3/P4/P5, M4/M5 and human "
         "acceptance remain pending"
