@@ -49,6 +49,15 @@ class CiWorkflowTests(unittest.TestCase):
         workflow = WORKFLOW.read_text(encoding="utf-8")
         self.assertEqual(2, workflow.count("persist-credentials: false"))
 
+    def test_supported_python_jobs_run_normal_and_optimized_regressions(self):
+        workflow = WORKFLOW.read_text(encoding="utf-8")
+        normal = "run: python -m unittest discover -s tests -v"
+        optimized = "run: python -O -m unittest discover -s tests -v"
+
+        self.assertEqual(1, workflow.count(normal))
+        self.assertEqual(1, workflow.count(optimized))
+        self.assertLess(workflow.index(normal), workflow.index(optimized))
+
 
 if __name__ == "__main__":
     unittest.main()

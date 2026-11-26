@@ -43,6 +43,9 @@ jobs:
       - name: Run regression suite
         run: python -m unittest discover -s tests -v
 
+      - name: Run optimized regression suite
+        run: python -O -m unittest discover -s tests -v
+
       - name: Prepare and inspect exact M4 review rehearsal
         run: |
           CANDIDATE_SHA=$(git rev-parse HEAD)
