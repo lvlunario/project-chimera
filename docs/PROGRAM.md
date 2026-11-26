@@ -45,8 +45,8 @@ AI assistance cannot decide that missing evidence is a passing verification.
 - Avoid paid infrastructure and live hardware operations until separately authorized.
 
 ## Next tasks
-Current direction, November 24: the October 17 M2 exact-candidate disposition is thirty-eight
-days late. M3 missed its November 7 baseline and is seventeen days late because no Leo walkthrough,
+Current direction, November 26: the October 17 M2 exact-candidate disposition is forty
+days late. M3 missed its November 7 baseline and is nineteen days late because no Leo walkthrough,
 manual-device/screen-reader observation or separate P3/P4/P5 disposition is recorded. This is
 a schedule slip, not an engineering blocker and not implied acceptance. The
 [November 2 weekly review](reviews/2026-11-02.md) remains the 25–30 minute runbook, but its
@@ -184,7 +184,14 @@ then delegates persistent output to the packet's existing new-directory, outside
 no-overwrite extractor. The retained archive, nomination and exact candidate are unchanged; this
 later program-head tool is not a new nominee or gate result.
 
-M4 November 28 is four days away and M5 December 12 is eighteen days away. Both remain amber now
+November 26 CI stabilization, tracked in
+[issue #36](https://github.com/lvlunario/project-chimera/issues/36), makes the complete optimized
+regression a hosted control on Python 3.11 and 3.12 instead of local evidence only. Fresh push
+and PR-integration matrices passed 355 normal and 355 optimized tests in every Python job plus
+exact rehearsal, retained-lineage, clean-install and Chromium controls. This workflow-only
+program head is not a new candidate, nomination or gate result.
+
+M4 November 28 is two days away and M5 December 12 is sixteen days away. Both remain amber now
 that the current nominee has retained local,
 portable and hosted evidence. Recovery keeps feature scope frozen and November 29–December 12 reserved for
 stabilization and acceptance. Next: support the existing worksheet, record Leo's actual

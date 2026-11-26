@@ -27,7 +27,7 @@ entry point; the implementation has not been merged into `main`.
 | Ongoing changes, test evidence and next steps | [Daily engineering logs](https://github.com/lvlunario/project-chimera/tree/magnum-opus/development/docs/daily) |
 | Requirements and quality approach | [Requirements](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/REQUIREMENTS.md) · [Quality plan](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/QUALITY.md) |
 
-## Progress snapshot — November 24, 2026
+## Progress snapshot — November 26, 2026
 
 The development branch includes:
 
@@ -82,7 +82,8 @@ The development branch includes:
   preserves namespaced string blockers in a coherent failed rehearsal; the corrected exact
   candidate passed fresh local and hosted evidence before its separate superseding nomination.
 - An installable Python package and CI on Python 3.11 and 3.12, with reviewed full-SHA
-  checkout/setup pins whose exact upstream releases declare the Node 24 action runtime.
+  checkout/setup pins whose exact upstream releases declare the Node 24 action runtime. Both
+  hosted Python jobs enforce the complete normal and optimized regression suites.
 
 The [October 24 implementation evidence](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-10-24.md),
 [October 25 packet-publication record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-10-25.md),
@@ -109,11 +110,12 @@ the [November 20 retained-lineage record](https://github.com/lvlunario/project-c
 the [November 21 Node 24 CI record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-21.md),
 the [November 22 defect-refresh record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-22.md),
 the [November 23 M4 preflight record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-23.md),
-and the [November 24 binder-handoff record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-24.md)
+the [November 24 binder-handoff record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-24.md),
+and the [November 26 optimized-CI record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-26.md)
 record candidate-specific local, independent and hosted results. Do not infer a new
 candidate's status from an earlier successful run.
 
-**Acceptance state — November 24:** P0 scope (D-001–003) is approved by delegation.
+**Acceptance state — November 26:** P0 scope (D-001–003) is approved by delegation.
 P1 and P2 are conditionally accepted for continued development under the
 [delegated decision record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/reviews/2026-09-22-delegated-decisions.md). Leo's personal walkthroughs remain unperformed;
 final product validation remains open. P3/P4/P5 remain in progress; P7 release preparation
@@ -122,9 +124,8 @@ one-command preparation/reinspection, validate-first packet materialization and 
 nomination controls. A combined read-only
 lineage inspector checks every retained nomination/archive pair before identifying v4 as the
 current engineering nominee, without its removed source directory.
-The later development head moves both official CI actions to reviewed Node-24-native release
-pins and passes fresh push/PR matrices without the prior Node 20 coercion warning; it does not
-replace the v4 nominee.
+The later development head uses reviewed Node-24-native action pins and enforces both normal and
+optimized full regressions in hosted Python 3.11/3.12 matrices; it does not replace the v4 nominee.
 The current program-head readiness inventory covers 139 requirements across 23 groups.
 Nominee `b6b6878` and its retained v4 archive truthfully embed the preceding 136/136 inventory,
 the dated four-defect November 18 snapshot and zero declared release blockers; the program
@@ -132,7 +133,7 @@ head adds NOMINATE-008/009 and REHEARSAL-006 and is not a new nominee. Exact can
 `9edce78` remain truthful historical nomination evidence. Current candidate `b6b6878` passed
 its hosted matrices, fresh detached rehearsal and portable archive inspection and is
 separately retained in v4. No M4, M5 or acceptance is granted. The October 17 M2 exact-candidate
-disposition is thirty-eight days late. M3 missed its November 7 baseline and is seventeen days late: the
+disposition is forty days late. M3 missed its November 7 baseline and is nineteen days late: the
 engineering features and review inputs are verified, but
 no Leo walkthrough or P3/P4/P5 disposition is recorded. The November 2 packet is retained as a
 runbook, but its pinned candidate is historical; use the latest explicitly published full

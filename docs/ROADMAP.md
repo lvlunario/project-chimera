@@ -8,10 +8,10 @@ remain unperformed. Original dates below are unchanged; M0's scope decision was 
 September 22, three days after its September 19 target. Downstream forecasts
 remain October 3/17, November 7/28 and December 12 with no baseline movement.
 
-## Status update — November 24, 2026
+## Status update — November 26, 2026
 
-The October 17 M2 baseline was missed by thirty-eight days. M3 November 7 is **missed and red,
-seventeen days late**. The engineering vertical, acceptance-preparation workspace, read-only
+The October 17 M2 baseline was missed by forty days. M3 November 7 is **missed and red,
+nineteen days late**. The engineering vertical, acceptance-preparation workspace, read-only
 dashboard and evidence controls are implemented and verified, but no Leo walkthrough,
 manual-device/screen-reader observation or separate P3/P4/P5 disposition is recorded. This is
 a schedule slip, not a change to the original baseline. Recovery remains: freeze feature scope,
@@ -120,7 +120,13 @@ persistent output, refuses overwrite/symlinks, preserves coherent blocked status
 blank M4 script unperformed. This closes a manual-unzip trust gap without changing candidate
 `b6b6878`, retained v4 or feature scope.
 
-M4 November 28 is four days away and M5 December 12 is eighteen days away. Both remain amber with
+November 26 CI stabilization adds the complete optimized-Python regression to both hosted
+Python 3.11/3.12 jobs and regression-locks the normal/optimized commands and ordering. Fresh
+push and PR-integration matrices passed 355 tests in both modes on both Python versions, exact
+rehearsal, retained-lineage, clean-install and Chromium controls. This strengthens the release
+control without changing product behavior, candidate `b6b6878`, retained v4 or gate authority.
+
+M4 November 28 is two days away and M5 December 12 is sixteen days away. Both remain amber with
 the current nominee's local, portable and
 hosted evidence retained, provided feature scope stays frozen and November 29–December 12
 remains reserved for stabilization and acceptance. Candidate-bound changes require a new
