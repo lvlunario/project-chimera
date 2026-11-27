@@ -45,8 +45,8 @@ AI assistance cannot decide that missing evidence is a passing verification.
 - Avoid paid infrastructure and live hardware operations until separately authorized.
 
 ## Next tasks
-Current direction, November 26: the October 17 M2 exact-candidate disposition is forty
-days late. M3 missed its November 7 baseline and is nineteen days late because no Leo walkthrough,
+Current direction, November 27: the October 17 M2 exact-candidate disposition is forty-one
+days late. M3 missed its November 7 baseline and is twenty days late because no Leo walkthrough,
 manual-device/screen-reader observation or separate P3/P4/P5 disposition is recorded. This is
 a schedule slip, not an engineering blocker and not implied acceptance. The
 [November 2 weekly review](reviews/2026-11-02.md) remains the 25–30 minute runbook, but its
@@ -191,7 +191,15 @@ and PR-integration matrices passed 355 normal and 355 optimized tests in every P
 exact rehearsal, retained-lineage, clean-install and Chromium controls. This workflow-only
 program head is not a new candidate, nomination or gate result.
 
-M4 November 28 is two days away and M5 December 12 is sixteen days away. Both remain amber now
+November 27 CI stabilization, tracked in
+[issue #37](https://github.com/lvlunario/project-chimera/issues/37), exercises the exact retained
+v4 binder materialization in both hosted Python jobs after lineage inspection and before clean
+install. Fresh push and PR-integration matrices passed 356 tests normally and optimized on each
+Python version plus the packet handoff and Chromium controls. The
+[M4 disposition aid](reviews/2026-11-27-m4-disposition-readiness.md) recommends `ready for M4
+review; not approved`; actual observations and authority remain controlling.
+
+M4 November 28 is tomorrow and M5 December 12 is fifteen days away. Both remain amber now
 that the current nominee has retained local,
 portable and hosted evidence. Recovery keeps feature scope frozen and November 29–December 12 reserved for
 stabilization and acceptance. Next: support the existing worksheet, record Leo's actual
