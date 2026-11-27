@@ -78,6 +78,12 @@ jobs:
       - name: Inspect retained M4 nominee lineage
         run: python -B -m examples.release_candidate_nomination inspect-retained
 
+      - name: Materialize retained M4 review packet
+        run: |
+          python -B -m examples.release_review_archive inspect \
+            docs/evidence/chimera-m4-review-b6b6878.zip \
+            --extract-packet-to "$RUNNER_TEMP/chimera-m4-v4-packet"
+
       - name: Verify isolated wheel install
         run: scripts/verify_clean_install.sh
 

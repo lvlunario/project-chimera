@@ -58,6 +58,19 @@ class CiWorkflowTests(unittest.TestCase):
         self.assertEqual(1, workflow.count(optimized))
         self.assertLess(workflow.index(normal), workflow.index(optimized))
 
+    def test_retained_m4_packet_materialization_is_ordered_and_runner_temporary(self):
+        workflow = WORKFLOW.read_text(encoding="utf-8")
+        lineage = "run: python -B -m examples.release_candidate_nomination inspect-retained"
+        materialize = "python -B -m examples.release_review_archive inspect"
+        archive = "docs/evidence/chimera-m4-review-b6b6878.zip"
+        destination = '--extract-packet-to "$RUNNER_TEMP/chimera-m4-v4-packet"'
+        clean_install = "run: scripts/verify_clean_install.sh"
+
+        for expected in (lineage, materialize, archive, destination, clean_install):
+            self.assertEqual(1, workflow.count(expected), expected)
+        self.assertLess(workflow.index(lineage), workflow.index(materialize))
+        self.assertLess(workflow.index(materialize), workflow.index(clean_install))
+
 
 if __name__ == "__main__":
     unittest.main()
