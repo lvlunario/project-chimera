@@ -27,7 +27,7 @@ entry point; the implementation has not been merged into `main`.
 | Ongoing changes, test evidence and next steps | [Daily engineering logs](https://github.com/lvlunario/project-chimera/tree/magnum-opus/development/docs/daily) |
 | Requirements and quality approach | [Requirements](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/REQUIREMENTS.md) · [Quality plan](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/QUALITY.md) |
 
-## Progress snapshot — November 27, 2026
+## Progress snapshot — November 28, 2026
 
 The development branch includes:
 
@@ -113,11 +113,12 @@ the [November 22 defect-refresh record](https://github.com/lvlunario/project-chi
 the [November 23 M4 preflight record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-23.md),
 the [November 24 binder-handoff record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-24.md),
 the [November 26 optimized-CI record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-26.md),
-and the [November 27 hosted-handoff record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-27.md)
+the [November 27 hosted-handoff record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-27.md),
+and the [November 28 M4 gate record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/daily/2026-11-28.md)
 record candidate-specific local, independent and hosted results. Do not infer a new
 candidate's status from an earlier successful run.
 
-**Acceptance state — November 27:** P0 scope (D-001–003) is approved by delegation.
+**Acceptance state — November 28:** P0 scope (D-001–003) is approved by delegation.
 P1 and P2 are conditionally accepted for continued development under the
 [delegated decision record](https://github.com/lvlunario/project-chimera/blob/magnum-opus/development/docs/reviews/2026-09-22-delegated-decisions.md). Leo's personal walkthroughs remain unperformed;
 final product validation remains open. P3/P4/P5 remain in progress; P7 release preparation
@@ -135,12 +136,17 @@ head adds NOMINATE-008/009 and REHEARSAL-006 and is not a new nominee. Exact can
 `9edce78` remain truthful historical nomination evidence. Current candidate `b6b6878` passed
 its hosted matrices, fresh detached rehearsal and portable archive inspection and is
 separately retained in v4. No M4, M5 or acceptance is granted. The October 17 M2 exact-candidate
-disposition is forty-one days late. M3 missed its November 7 baseline and is twenty days late: the
+disposition is forty-two days late. M3 missed its November 7 baseline and is twenty-one days late: the
 engineering features and review inputs are verified, but
 no Leo walkthrough or P3/P4/P5 disposition is recorded. The November 2 packet is retained as a
 runbook, but its pinned candidate is historical; use the latest explicitly published full
 SHA. Synthetic fixtures establish software behavior; authorized measured-data validation,
 production deployment and certification are not claimed.
+
+At the November 28 18:07 Asia/Manila checkpoint, engineering status is `ready for M4 review` but
+sponsor validation and decision remain absent. M4 is **not achieved/pending** and forecast missed
+if unresolved at day close; it is not a failed candidate and not approved. The baseline is
+unchanged; PR #1 remains draft/unmerged and M5 stays pending.
 
 ## When you can try it
 
@@ -153,7 +159,7 @@ All dates below are 2026 delivery targets, subject to the documented scope and r
 | October 3 | M1 baseline; P1 retained as conditionally accepted for progression |
 | October 17 | M2 baseline missed; engineering candidate exists, exact disposition overdue |
 | November 7 | M3 baseline missed; engineering features verified, walkthrough and phase dispositions pending (red) |
-| November 28 | Release candidate for structured acceptance testing |
+| November 28 | Candidate ready for review; sponsor validation/M4 decision pending at gate-day checkpoint |
 | December 12 | Stabilized prototype, manuals and final acceptance demonstration |
 
 The implemented dashboard lists sealed completed runs, exposes PASS/FAIL and synthetic

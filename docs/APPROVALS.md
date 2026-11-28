@@ -195,7 +195,12 @@ Decision: **Pending**. Actual observations/conditions: **Not yet recorded**.
       limitations and remaining noncritical issues are explicit.
 
 M4 acceptance permits final testing; it does not constitute M5 product acceptance.
-M4 decision: **Pending**. Actual observations/conditions: **Not yet recorded**.
+M4 sponsor decision: **Pending**. M4 baseline status: **Not achieved/pending at the November 28
+18:07 Asia/Manila checkpoint; forecast missed if unresolved at day close**. Actual
+observations/conditions: **Not yet recorded**. Engineering evidence is ready for review, but the
+required sponsor validation and explicit response were absent; see the
+[gate disposition](reviews/2026-11-28-m4-gate-disposition.md). This is not candidate rejection
+or inferred approval.
 
 ### M5: prototype acceptance
 
